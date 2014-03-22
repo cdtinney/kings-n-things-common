@@ -12,7 +12,7 @@ public class LogHandler extends Handler {
 	
 	private Timer timer = new Timer();
 	
-	public static void setup(Logger logger) {
+	public static void setHandler(Logger logger) {
 		
 		Logger parent = logger.getParent();
 		
@@ -25,8 +25,8 @@ public class LogHandler extends Handler {
 		customHandler.setLevel(LogLevel.DEBUG);		
 		
 		parent.setLevel(LogLevel.DEBUG);
-		
 		parent.addHandler(customHandler);
+		
 	}
 
 	@Override

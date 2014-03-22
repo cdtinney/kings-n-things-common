@@ -105,6 +105,8 @@ public class GameServer  {
 						server.bind(port);
 						
 						LOGGER.log(LogLevel.INFO, "Game server successfully started on port " + port);
+						LOGGER.log(LogLevel.INFO, "Waiting for " + numPlayers + " players to connect");
+						
 						break;
 						
 					} catch (BindException e) {
@@ -133,6 +135,8 @@ public class GameServer  {
 	
 	private void addListener() {
 		
+		final GameServer instance = this;
+		
 		server.addListener(new Listener() {
 			
 			@Override
@@ -158,8 +162,20 @@ public class GameServer  {
 			@Override
 			public void disconnected(Connection c) {
 				
+				PlayerConnection connection = (PlayerConnection) c;
+				if (connection.name == null) {
+					return;
+				}
+				
 				// Remove the connection from the map
-				connectedPlayers.remove(((PlayerConnection) c).name);
+				connectedPlayers.remove(connection.name);
+				
+				LOGGER.info("Player disconnected: " + connection.name);
+				
+				PropertyChangeDispatcher.getInstance().notify(instance, "connectedPlayers", null, connectedPlayers);
+				
+				// Notify clients
+				server.sendToAllTCP(Status.PLAYER_DISCONNECTED);
 				
 				// TODO - End game if a player disconnects
 				
@@ -173,6 +189,7 @@ public class GameServer  {
 		
 		// Ignore connections if all players have already connected
 		if (allPlayersConnected) {
+			LOGGER.warning("Player cannot connect - all players already connected.");
 			c.close();
 			return;
 		}
@@ -180,6 +197,7 @@ public class GameServer  {
 		// Player has already been registered
 		if (c.name != null) {
 			LOGGER.warning("Player already registered: " + c.name);
+			c.close();
 			return;
 		}
 		
@@ -187,19 +205,21 @@ public class GameServer  {
 		String name = ((RegisterPlayer) object).name;
 		if (name == null || name.trim().length() == 0) {
 			LOGGER.warning("Invalid player name: " + name);
+			c.close();
 			return;
 		}
 		
 		// Player names must be unique
 		if (connectedPlayers.containsKey(name)) {
 			LOGGER.warning("A player has already connected with name: " + name);
+			c.close();
 			return;
 		} 
 		
 		addConnectedPlayer(name, c);
 		
-		LOGGER.log(LogLevel.DEBUG, "Player connection registered with name: " + name + 
-				". Current connections: " + server.getConnections().length);
+		LOGGER.info("Player connection registered: " + name);
+		LOGGER.info(numPlayersConnected() + " player(s) connected. Waiting for " + numPlayersRemaining() + " more player(s).");
 		
 	}
 	
@@ -210,6 +230,8 @@ public class GameServer  {
 		// Check if the number of players specified have connected
 		if (connectedPlayers.keySet().size() == numPlayers) {
 			allPlayersConnected = true;
+			LOGGER.info("All players connected");
+			
 			server.sendToAllTCP(Status.ALL_PLAYERS_CONNECTED);
 		}
 		
