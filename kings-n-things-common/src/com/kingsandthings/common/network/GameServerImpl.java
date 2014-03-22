@@ -1,15 +1,20 @@
 package com.kingsandthings.common.network;
 
 import java.net.BindException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.network.GameNetwork.RegisterPlayer;
+import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
+import com.kingsandthings.common.network.NetworkRegistry.Status;
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
 
 public class GameServerImpl implements GameServer {
@@ -25,14 +30,14 @@ public class GameServerImpl implements GameServer {
 	private Server server;
 	
 	// Members
-	private int numPlayers;							// # of players that will be connecting
-	private boolean allPlayersConnected = false;	// indicates whether all players have connected
-	private Map<String, PlayerConnection> players;	// connected players
+	private int numPlayers;										// # of players that will be connecting
+	private boolean allPlayersConnected = false;				// indicates whether all players have connected
+	private Map<String, PlayerConnection> connectedPlayers;		// connected players
 	
 	public GameServerImpl(int numPlayers) {
 		this.numPlayers = numPlayers;
 		
-		players = new HashMap<String, PlayerConnection>();
+		connectedPlayers = new HashMap<String, PlayerConnection>();
 	}
 	
 	@Override
@@ -50,18 +55,18 @@ public class GameServerImpl implements GameServer {
 			};
 			
 			server.start();
+			addListener();
+			
 		}
 
-		GameNetwork.register(server);
+		NetworkRegistry.register(server);
 		
-		// TODO - return success of server bind
-		boolean success = bind(port);
+		bind(port);
 
 	}
 
 	@Override
 	public void end() {
-		server.close();
 		server.stop();
 	}
 
@@ -74,6 +79,18 @@ public class GameServerImpl implements GameServer {
 	public Game requestGameState() {
 		// TODO - impl request game state method in server
 		return null;
+	}
+	
+	public List<String> connectedPlayerNames() {
+		return new ArrayList<String>(connectedPlayers.keySet());
+	}
+	
+	public int numPlayersConnected() {
+		return connectedPlayers.size();
+	}
+	
+	public int numPlayersRemaining() {
+		return numPlayers - numPlayersConnected();
 	}
 	
 	private boolean bind(final int port) {
@@ -90,7 +107,6 @@ public class GameServerImpl implements GameServer {
 					
 					try {
 						server.bind(port);
-						addListener();
 						
 						LOGGER.log(LogLevel.INFO, "Game server successfully started on port " + port);
 						break;
@@ -123,6 +139,7 @@ public class GameServerImpl implements GameServer {
 		
 		server.addListener(new Listener() {
 			
+			@Override
 			public void received(Connection c, Object object) {
 				
 				PlayerConnection connection = (PlayerConnection) c;
@@ -132,18 +149,23 @@ public class GameServerImpl implements GameServer {
 					return;
 				}
 				
-				if (!(object instanceof SomeRequest)) {
-					System.out.println(object);
+				if (object instanceof FrameworkMessage.KeepAlive) {
 					return;
 				}
-				
+
 				// TODO - dispatch objects depending on type
-				SomeRequest req = (SomeRequest) object;
-				LOGGER.log(LogLevel.INFO, "Request received - " + req.text);
+				System.out.println(object);
 				
-				SomeResponse resp = new SomeResponse();
-				resp.text = "Thanks";
-				connection.sendTCP(resp);
+				
+			}
+			
+			@Override
+			public void disconnected(Connection c) {
+				
+				// Remove the connection from the map
+				connectedPlayers.remove(((PlayerConnection) c).name);
+				
+				// TODO - End game if a player disconnects
 				
 			}
 			
@@ -153,35 +175,49 @@ public class GameServerImpl implements GameServer {
 	
 	private void registerPlayerConnection(PlayerConnection c, Object object) {
 		
+		// Ignore connections if all players have already connected
 		if (allPlayersConnected) {
-			// TODO - close connection properly
+			c.close();
 			return;
 		}
 		
 		// Player has already been registered
 		if (c.name != null) {
-			System.out.println("name already registered - " + c.name);
+			LOGGER.warning("Player already registered: " + c.name);
 			return;
 		}
 		
+		// Check if the name is valid
 		String name = ((RegisterPlayer) object).name;
 		if (name == null || name.trim().length() == 0) {
+			LOGGER.warning("Invalid player name: " + name);
 			return;
 		}
 		
-		if (players.containsKey(name)) {
-			System.out.println("A player has already connected with this name - need to return error");
+		// Player names must be unique
+		if (connectedPlayers.containsKey(name)) {
+			LOGGER.warning("A player has already connected with name: " + name);
 			return;
 		} 
 		
-		// Set connection name and add to list of players connected
-		players.put(c.name = name, c);
+		addConnectedPlayer(name, c);
 		
-		if (players.keySet().size() == numPlayers) {
+		LOGGER.log(LogLevel.DEBUG, "Player connection registered with name: " + name + 
+				". Current connections: " + server.getConnections().length);
+		
+	}
+	
+	private void addConnectedPlayer(String name, PlayerConnection c) {
+
+		connectedPlayers.put(c.name = name, c);
+		
+		// Check if the number of players specified have connected
+		if (connectedPlayers.keySet().size() == numPlayers) {
 			allPlayersConnected = true;
+			server.sendToAllTCP(Status.ALL_PLAYERS_CONNECTED);
 		}
 		
-		System.out.println("connection name: " + name + " registered. curr connections = " + server.getConnections().length);
+		PropertyChangeDispatcher.getInstance().notify(this, "connectedPlayers", null, connectedPlayers);
 		
 	}
 	

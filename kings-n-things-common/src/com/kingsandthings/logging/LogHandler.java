@@ -68,7 +68,7 @@ public class LogHandler extends Handler {
 		        	 
 		            public void run() {
 		            	
-		            	// TODO _- fix status updating w.r.t logging (use interface)
+		            	// TODO - fix status updating w.r.t logging (use interface)
 		            	//String status = GameView.getStatusText().replace("STATUS: ", "");
 		            	
 		            	// Ignore if the message has changed
