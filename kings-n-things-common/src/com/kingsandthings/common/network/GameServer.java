@@ -19,17 +19,15 @@ import com.kingsandthings.logging.LogLevel;
 
 public class GameServer  {
 	
-	// Logger
 	private static Logger LOGGER = Logger.getLogger(GameServer.class.getName());
 	
 	// Constants
 	private final int MAX_ATTEMPTS = 20;		// # of max connection attempts
 	private final int ATTEMPT_TIMEOUT = 5000; 	// milliseconds
 	
-	// Server instance
 	private Server server;
+	private Game game;
 	
-	// Members
 	private int numPlayers;										// # of players that will be connecting
 	private boolean allPlayersConnected = false;				// indicates whether all players have connected
 	private Map<String, PlayerConnection> connectedPlayers;		// connected players
@@ -37,7 +35,11 @@ public class GameServer  {
 	public GameServer(int numPlayers) {
 		this.numPlayers = numPlayers;
 		
+		game = new Game();
+		game.setNumPlayers(numPlayers);
+		
 		connectedPlayers = new HashMap<String, PlayerConnection>();
+		
 	}
 	
 	public void start(int port) {
@@ -69,12 +71,8 @@ public class GameServer  {
 	}
 
 	public void updateClients() {
-		// TODO - impl update clients method in server
-	}
-
-	public Game requestGameState() {
-		// TODO - impl request game state method in server
-		return null;
+		
+		// Send an updated game state object to all clients, force refresh/update
 	}
 	
 	public List<String> connectedPlayerNames() {
@@ -105,7 +103,7 @@ public class GameServer  {
 						server.bind(port);
 						
 						LOGGER.log(LogLevel.INFO, "Game server successfully started on port " + port);
-						LOGGER.log(LogLevel.INFO, "Waiting for " + numPlayers + " players to connect");
+						LOGGER.log(LogLevel.INFO, "Waiting for " + numPlayers + " players to connect...");
 						
 						break;
 						
@@ -155,7 +153,6 @@ public class GameServer  {
 
 				// TODO - dispatch objects depending on type
 				System.out.println(object);
-				
 				
 			}
 			
@@ -225,7 +222,11 @@ public class GameServer  {
 	
 	private void addConnectedPlayer(String name, PlayerConnection c) {
 
+		// Add to connection map
 		connectedPlayers.put(c.name = name, c);
+		
+		// Add to game
+		game.addPlayer(name);
 		
 		// Check if the number of players specified have connected
 		if (connectedPlayers.keySet().size() == numPlayers) {

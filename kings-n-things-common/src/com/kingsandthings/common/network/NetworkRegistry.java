@@ -19,7 +19,8 @@ public class NetworkRegistry {
 	
 	static public enum Status {
 		ALL_PLAYERS_CONNECTED,
-		PLAYER_DISCONNECTED
+		PLAYER_DISCONNECTED,
+		PLAYER_CONNECTED
 	}
 
 }

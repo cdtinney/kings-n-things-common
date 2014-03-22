@@ -12,7 +12,7 @@ public class Game {
 
 	private static Logger LOGGER = Logger.getLogger(Game.class.getName());
 
-	private PlayerManager playerManager = new PlayerManager();
+	private PlayerManager playerManager;
 	private PhaseManager phaseManager;
 	
 	private final int NUM_INITIAL_THINGS = 10;
@@ -24,7 +24,21 @@ public class Game {
 		cup = new Cup();
 		board = new Board(this);
 
+		playerManager = new PlayerManager();
 		phaseManager = new PhaseManager(this);
+	}
+	
+	public void begin() {
+		
+		// Generate the board
+		board.generateBoard(playerManager.getNumPlayers());
+		
+		// Set the first player to active
+		playerManager.setFirstPlayerActive();
+		
+		// Begin the phases
+		phaseManager.beginPhases();
+		
 	}
 	
 	public Player getActivePlayer() {
@@ -47,16 +61,17 @@ public class Game {
 		return cup;
 	}
 	
-	public void begin() {
-		playerManager.setFirstPlayerActive();
-		phaseManager.beginPhases();
+	public void setNumPlayers(int num) {
+		playerManager.setNumPlayers(num);
+	}
+	
+	public void addPlayer(String playerName) {
+		playerManager.addPlayer(playerName);
 	}
 	
 	public void addPlayers(List<String> playerNames) {
 		playerManager.setNumPlayers(playerNames.size());
 		playerManager.addAllPlayers(playerNames);
-		
-		board.generateBoard(playerNames.size());
 	}	
 	
 	public void addInitialThingsToPlayer(List<Thing> things, Player player) {

@@ -10,11 +10,11 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
+import com.kingsandthings.common.network.NetworkRegistry.Status;
 import com.kingsandthings.logging.LogLevel;
 
 public class GameClient {
 	
-	// Logger
 	private static Logger LOGGER = Logger.getLogger(GameClient.class.getName());
 	
 	// Constants
@@ -22,10 +22,9 @@ public class GameClient {
 	private final int ATTEMPT_TIMEOUT = 5000; 		// milliseconds
 	private final int CONNECTION_TIMEOUT = 5000;	// milliseconds
 	
-	// Client instance
 	private Client client;
 	
-	// Members
+	private boolean connected;
 	private String name;
 	private List<NetworkObjectHandler> handlers;
 	
@@ -60,11 +59,7 @@ public class GameClient {
 		return handlers;
 	}
 	
-	private boolean connect(final String ip, final int port) {
-		
-		if (client.isConnected()) {
-			return true;
-		}
+	private void connect(final String ip, final int port) {
 		
 		// connect on a new thread so the UI isn't blocked (i.e. frozen)
 		new Thread() {
@@ -105,8 +100,6 @@ public class GameClient {
 			
 		}.start();
 		
-		return true;
-		
 	}
 	
 	private void addListener() {
@@ -115,17 +108,23 @@ public class GameClient {
 			return;
 		}
 		
+		final GameClient instance = this;
+		
 		client.addListener(new Listener() {
 			
+			@Override
 			public void connected(Connection connection) {
 				
 				// Send a network object to register via name upon connection
 			    RegisterPlayer registerPlayer = new RegisterPlayer();
 			    registerPlayer.name = name;
 			    client.sendTCP(registerPlayer);
+			    
+			    dispatchObject(Status.PLAYER_CONNECTED);
 			
 			}
 			
+			@Override
 			public void received(Connection connection, Object object) {
 				
 				// Ignore keep alive messages
@@ -133,13 +132,26 @@ public class GameClient {
 					return;
 				}
 				
-				for (NetworkObjectHandler handler : handlers) {
-					handler.handleObject(object);
-				}
+				dispatchObject(object);
+				
+			}
+
+			@Override
+			public void disconnected(Connection connection) {
+				
+				dispatchObject(Status.PLAYER_DISCONNECTED);	
 				
 			}
 		
 		});
+		
+	}
+	
+	private void dispatchObject(Object object) {
+
+		for (NetworkObjectHandler handler : handlers) {
+			handler.handleObject(object);
+		}
 		
 	}
 
