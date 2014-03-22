@@ -122,6 +122,10 @@ public class PlayerManager {
 		return true;
 	}
 	
+	public boolean removePlayer(String name) {
+		return players.remove(name) != null;
+	}
+	
 	private void setControlMarkerImage(Player player, int position) {
 		String path = "/images/other/control_marker_" + position + ".png";
 		player.setControlMarker(new Image(path));	

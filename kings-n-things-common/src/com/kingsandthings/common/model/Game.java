@@ -65,8 +65,12 @@ public class Game {
 		playerManager.setNumPlayers(num);
 	}
 	
-	public void addPlayer(String playerName) {
-		playerManager.addPlayer(playerName);
+	public void addPlayer(String name) {
+		playerManager.addPlayer(name);
+	}
+	
+	public void removePlayer(String name) {
+		playerManager.removePlayer(name);
 	}
 	
 	public void addPlayers(List<String> playerNames) {

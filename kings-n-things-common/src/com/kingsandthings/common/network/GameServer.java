@@ -133,8 +133,6 @@ public class GameServer  {
 	
 	private void addListener() {
 		
-		final GameServer instance = this;
-		
 		server.addListener(new Listener() {
 			
 			@Override
@@ -164,17 +162,10 @@ public class GameServer  {
 					return;
 				}
 				
-				// Remove the connection from the map
-				connectedPlayers.remove(connection.name);
-				
-				LOGGER.info("Player disconnected: " + connection.name);
-				
-				PropertyChangeDispatcher.getInstance().notify(instance, "connectedPlayers", null, connectedPlayers);
+				removeConnectedPlayer(connection.name);
 				
 				// Notify clients
-				server.sendToAllTCP(Status.PLAYER_DISCONNECTED);
-				
-				// TODO - End game if a player disconnects
+				server.sendToAllTCP(Status.ALL_PLAYERS_NOT_CONNECTED);
 				
 			}
 			
@@ -215,27 +206,37 @@ public class GameServer  {
 		
 		addConnectedPlayer(name, c);
 		
-		LOGGER.info("Player connection registered: " + name);
-		LOGGER.info(numPlayersConnected() + " player(s) connected. Waiting for " + numPlayersRemaining() + " more player(s).");
+		// Send a status message to all clients if all players have connected
+		if (connectedPlayers.keySet().size() == numPlayers) {
+			allPlayersConnected = true;
+			server.sendToAllTCP(Status.ALL_PLAYERS_CONNECTED);
+			LOGGER.info("All players connected. Starting game in 5 seconds...");
+		}
 		
 	}
 	
 	private void addConnectedPlayer(String name, PlayerConnection c) {
 
-		// Add to connection map
 		connectedPlayers.put(c.name = name, c);
-		
-		// Add to game
 		game.addPlayer(name);
 		
-		// Check if the number of players specified have connected
-		if (connectedPlayers.keySet().size() == numPlayers) {
-			allPlayersConnected = true;
-			LOGGER.info("All players connected");
-			
-			server.sendToAllTCP(Status.ALL_PLAYERS_CONNECTED);
-		}
+		LOGGER.info("Player connected: " + name);
+		LOGGER.info(numPlayersConnected() + " player(s) connected. Waiting for " + numPlayersRemaining() + " more player(s).");
 		
+		PropertyChangeDispatcher.getInstance().notify(this, "connectedPlayers", null, connectedPlayers);
+		
+	}
+	
+	private void removeConnectedPlayer(String name) {
+		
+		allPlayersConnected = false;
+	
+		connectedPlayers.remove(name);
+		game.removePlayer(name);
+		
+		LOGGER.info("Player disconnected: " + name);
+		LOGGER.info(numPlayersConnected() + " player(s) connected. Waiting for " + numPlayersRemaining() + " more player(s).");
+
 		PropertyChangeDispatcher.getInstance().notify(this, "connectedPlayers", null, connectedPlayers);
 		
 	}
