@@ -14,8 +14,6 @@ import com.kingsandthings.logging.LogLevel;
 
 public class GameClient {
 	
-	private final Object connectedLock = new Object();
-	
 	// Logger
 	private static Logger LOGGER = Logger.getLogger(GameClient.class.getName());
 	
@@ -68,6 +66,7 @@ public class GameClient {
 			return true;
 		}
 		
+		// connect on a new thread so the UI isn't blocked (i.e. frozen)
 		new Thread() {
 			
 			public void run() {
@@ -79,10 +78,6 @@ public class GameClient {
 					
 					try {
 						client.connect(CONNECTION_TIMEOUT, ip, port);
-						
-						synchronized (connectedLock) {
-							connectedLock.notify();
-						}
 						
 						LOGGER.log(LogLevel.INFO, "Game client successfully connected to " + ip + ":" + port);
 						break;
