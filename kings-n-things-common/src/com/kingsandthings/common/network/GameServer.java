@@ -152,8 +152,7 @@ public class GameServer  {
 				if (object instanceof FrameworkMessage.KeepAlive) {
 					return;
 				}
-
-				// TODO - dispatch objects depending on type
+				
 				System.out.println(object);
 				
 			}

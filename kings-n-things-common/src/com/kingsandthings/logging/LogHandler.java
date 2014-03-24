@@ -44,8 +44,7 @@ public class LogHandler extends Handler {
 		
 		if (r.getLevel() == LogLevel.STATUS) {
 			
-			// Set the status message in the view
-			// TODO - fix status message updating (use interface passed to log handler)
+			// TODO - fix status updating w.r.t logging (use interface)
 			// GameView.setStatusText(r.getMessage());
 			
 			// Clear the status message after 5 seconds
@@ -68,8 +67,7 @@ public class LogHandler extends Handler {
 		        	 
 		            public void run() {
 		            	
-		            	// TODO - fix status updating w.r.t logging (use interface)
-		            	//String status = GameView.getStatusText().replace("STATUS: ", "");
+//		            	String status = GameView.getStatusText().replace("STATUS: ", "");
 		            	
 		            	// Ignore if the message has changed
 //		            	if (!status.equals(message)) {

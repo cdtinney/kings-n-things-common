@@ -114,7 +114,7 @@ public class PlayerManager {
 		Player player = new Player(name);
 		players.put(name, player);
 
-		// TASK - should this be done here?
+		// TODO - set control marker images elsewhere (in Game, probably)
 		setControlMarkerImage(player, players.size());
 		
 		setInitialPosition(player, players.size());

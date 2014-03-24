@@ -249,7 +249,6 @@ public class CombatPhase extends Phase {
 	
 	
 	
-	// TODO handle towers
 	public void initiateCombat(Player playerDefender, Player playerAttacker, List<Creature> defenders, List<Creature> attackers) {
 		
 		int damageToAttacker = 0;

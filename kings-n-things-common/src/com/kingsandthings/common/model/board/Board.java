@@ -40,7 +40,6 @@ public class Board {
 		return tiles;
 	}
 	
-	// TODO - store creatures in Player object (not sure why this isn't done already)
 	public boolean movementPossible(Player player) {
 		
 		for (Tile[] row : tiles) {
@@ -72,7 +71,7 @@ public class Board {
 	public void moveThingsToUnexploredTile(int roll, Tile beginTile, Tile endTile, List<Thing> things) {
 		
 		if (roll != 1 && roll != 6) {
-			// TASK - Exploring tiles.
+			// TASK - Explore tiles.
 			return;
 		}
 		
