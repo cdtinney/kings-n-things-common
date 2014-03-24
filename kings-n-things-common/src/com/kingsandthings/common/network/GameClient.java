@@ -10,7 +10,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
-import com.kingsandthings.common.network.NetworkRegistry.Status;
+import com.kingsandthings.common.network.NetworkRegistry.ConnectionStatus;
 import com.kingsandthings.logging.LogLevel;
 
 public class GameClient {
@@ -24,7 +24,6 @@ public class GameClient {
 	
 	private Client client;
 	
-	private boolean connected;
 	private String name;
 	private List<NetworkObjectHandler> handlers;
 	
@@ -38,7 +37,7 @@ public class GameClient {
 		
 		if (client == null) {
 			
-			client = new Client();
+			client = new Client(8192, 4096);
 			client.start();
 			
 			NetworkRegistry.register(client);
@@ -108,8 +107,6 @@ public class GameClient {
 			return;
 		}
 		
-		final GameClient instance = this;
-		
 		client.addListener(new Listener() {
 			
 			@Override
@@ -120,7 +117,7 @@ public class GameClient {
 			    registerPlayer.name = name;
 			    client.sendTCP(registerPlayer);
 			    
-			    dispatchObject(Status.PLAYER_CONNECTED);
+			    dispatchObject(ConnectionStatus.PLAYER_CONNECTED);
 			
 			}
 			
@@ -139,7 +136,7 @@ public class GameClient {
 			@Override
 			public void disconnected(Connection connection) {
 				
-				dispatchObject(Status.PLAYER_DISCONNECTED);	
+				dispatchObject(ConnectionStatus.PLAYER_DISCONNECTED);	
 				
 			}
 		

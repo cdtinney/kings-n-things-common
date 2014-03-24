@@ -10,7 +10,7 @@ import com.kingsandthings.common.model.things.Thing;
 
 public class Game {
 
-	private static Logger LOGGER = Logger.getLogger(Game.class.getName());
+	private transient static Logger LOGGER = Logger.getLogger(Game.class.getName());
 
 	private PlayerManager playerManager;
 	private PhaseManager phaseManager;
@@ -28,10 +28,11 @@ public class Game {
 		phaseManager = new PhaseManager(this);
 	}
 	
-	public void begin() {
-		
-		// Generate the board
+	public void generateBoard() {
 		board.generateBoard(playerManager.getNumPlayers());
+	}
+	
+	public void begin() {
 		
 		// Set the first player to active
 		playerManager.setFirstPlayerActive();

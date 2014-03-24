@@ -20,22 +20,26 @@ public class Player {
 	private static Logger LOGGER = Logger.getLogger(Player.class.getName());
 	
 	private String name;
-	private Image controlMarker;
+	private transient Image controlMarker;
 	
-	private Tile startingTile;
-	private List<Tile> controlledTiles;
+	private transient Tile startingTile;
+	private transient List<Tile> controlledTiles;
 	
 	private int numGold = 0;
 	
-	private Rack rack;
+	private transient Rack rack;
 	
-	private List<Fort> forts;
-	private List<SpecialIncome> specialIncomeCounters;
-	private List<SpecialCharacter> specialCharacters;
-	private List<Treasure> treasures;
-	private List<RandomEvent> randomEvents;
+	private transient List<Fort> forts;
+	private transient List<SpecialIncome> specialIncomeCounters;
+	private transient List<SpecialCharacter> specialCharacters;
+	private transient List<Treasure> treasures;
+	private transient List<RandomEvent> randomEvents;
 	
-	private List<Creature> creatures;
+	private transient List<Creature> creatures;
+	
+	public Player() {
+		
+	}
 	
 	public Player(String name) {
 		this.name = name;

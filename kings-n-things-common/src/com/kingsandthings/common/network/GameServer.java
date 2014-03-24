@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -12,8 +14,9 @@ import com.esotericsoftware.kryonet.FrameworkMessage;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.network.NetworkRegistry.ConnectionStatus;
+import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
-import com.kingsandthings.common.network.NetworkRegistry.Status;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
 
@@ -37,6 +40,7 @@ public class GameServer  {
 		
 		game = new Game();
 		game.setNumPlayers(numPlayers);
+		game.generateBoard();
 		
 		connectedPlayers = new HashMap<String, PlayerConnection>();
 		
@@ -165,7 +169,7 @@ public class GameServer  {
 				removeConnectedPlayer(connection.name);
 				
 				// Notify clients
-				server.sendToAllTCP(Status.ALL_PLAYERS_NOT_CONNECTED);
+				server.sendToAllTCP(ConnectionStatus.ALL_PLAYERS_NOT_CONNECTED);
 				
 			}
 			
@@ -209,9 +213,25 @@ public class GameServer  {
 		// Send a status message to all clients if all players have connected
 		if (connectedPlayers.keySet().size() == numPlayers) {
 			allPlayersConnected = true;
-			server.sendToAllTCP(Status.ALL_PLAYERS_CONNECTED);
+			server.sendToAllTCP(ConnectionStatus.ALL_PLAYERS_CONNECTED);
 			LOGGER.info("All players connected. Starting game in 5 seconds...");
+			
+			new Timer().schedule(new TimerTask() {
+			    public void run() {
+			    	sendInitializeGame();
+					LOGGER.info("Game started!");
+			    }
+			}, 5000);
+			
 		}
+		
+	}
+	
+	private void sendInitializeGame() {
+		    	
+    	InitializeGame initialize = new InitializeGame();
+    	initialize.game = this.game;
+    	server.sendToAllTCP(initialize);
 		
 	}
 	

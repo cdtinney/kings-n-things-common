@@ -12,10 +12,14 @@ public class PhaseManager {
 	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PhaseManager.class.getName());
 	
-	protected Game game;
+	protected transient Game game;
 	
-	private List<Phase> phases;
+	private transient List<Phase> phases;
 	private int currentPhaseNumber = 0;
+	
+	public PhaseManager() {
+		
+	}
 	
 	public PhaseManager(Game game) {
 		
@@ -54,9 +58,6 @@ public class PhaseManager {
 	}
 	
 	public void nextPhase() {
-		
-		// TODO - reset instruction
-		//BoardView.setInstructionText("");
 		
 		Phase oldPhase = getCurrentPhase();
 		

@@ -19,18 +19,20 @@ public class Board {
 	
 	private final int NUM_INITIAL_TILES = 3;
 	
-	private Game game;
+	private transient Game game;
 	private Tile[][] tiles;
+	
+	public Board() {
+		
+	}
 	
 	public Board(Game game) {
 		this.game = game;
 	}
 	
 	public void generateBoard(int numPlayers) {
-		
-		if (numPlayers == 4) {
-			tiles = generateTiles(10);
-		}
+
+		tiles = generateTiles(10);
 		
 	}
 	

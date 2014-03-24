@@ -14,6 +14,10 @@ public abstract class Thing implements Serializable {
 	
 	protected String name;
 	private transient Image image;
+	
+	public Thing() {
+		
+	}
 
     public Thing(String name, Image image) {
     	this.name = name;

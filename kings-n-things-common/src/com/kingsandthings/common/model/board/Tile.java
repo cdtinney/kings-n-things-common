@@ -23,9 +23,9 @@ public class Tile {
 	private static Logger LOGGER = Logger.getLogger(Tile.class.getName());
 	
 	private static final Image defaultImg = new Image("/images/tiles/back.png");
-	private Image image;
+	private transient Image image;
 
-	private List<Tile> neighbours;
+	private transient List<Tile> neighbours;
 	
 	private Terrain type = null;
 	private boolean discovered = false;
@@ -35,6 +35,9 @@ public class Tile {
 	private Map<Player, List<Thing>> things;
 	
 	private boolean battleToResolve = false;
+	
+	public Tile() {
+	}
 	
 	public Tile(Terrain type) {
 		

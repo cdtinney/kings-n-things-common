@@ -3,8 +3,13 @@ package com.kingsandthings.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import com.kingsandthings.common.network.GameServer;
 
 public class FileUtils {
+	
+	private static Logger LOGGER = Logger.getLogger(FileUtils.class.getName());
 	
 	public final static String[] imageExtensions = {"jpg", "png"};
 
@@ -18,6 +23,12 @@ public class FileUtils {
         File directory = new File(directoryName);
         
         File[] fList = directory.listFiles();
+        
+        if (fList == null) {
+        	LOGGER.warning("Cannot list files of a directory which does not exit - " + directoryName);
+        	return results;
+        }
+        
         for (File file : fList) {
         	
         	if (file.isDirectory()) {
