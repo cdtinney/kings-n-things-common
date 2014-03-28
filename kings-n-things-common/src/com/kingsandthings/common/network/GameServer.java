@@ -5,17 +5,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.FrameworkMessage;
+import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.kryonet.rmi.ObjectSpace;
+import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethod;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.network.NetworkRegistry.ConnectionStatus;
 import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
+import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
+import com.kingsandthings.common.network.NetworkRegistry.PlayerConnection;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
@@ -28,10 +29,16 @@ public class GameServer  {
 	private final int MAX_ATTEMPTS = 20;		// # of max connection attempts
 	private final int ATTEMPT_TIMEOUT = 5000; 	// milliseconds
 	
+	// Networking
+	private final ObjectSpace objectSpace = new ObjectSpace();
 	private Server server;
+	
+	// Model
 	private Game game;
 	
 	private int numPlayers;										// # of players that will be connecting
+	private int numConnected;									// # of players currently connected
+	private int numInitialized = 0;								// # of players who have initialized a game (i.e. view displayed)
 	private boolean allPlayersConnected = false;				// indicates whether all players have connected
 	private Map<String, PlayerConnection> connectedPlayers;		// connected players
 	
@@ -40,7 +47,6 @@ public class GameServer  {
 		
 		game = new Game();
 		game.setNumPlayers(numPlayers);
-		game.generateBoard();
 		
 		connectedPlayers = new HashMap<String, PlayerConnection>();
 		
@@ -60,11 +66,15 @@ public class GameServer  {
 			};
 			
 			server.start();
-			addListener();
+			server.addListener(new GameServerListener());
+
+			NetworkRegistry.registerClasses(server);
+			NetworkRegistry.registerRMIObject(objectSpace, NetworkRegistry.GAME_ID, game);
+			
+			PropertyChangeDispatcher.getInstance().setServer(this);
+			PropertyChangeDispatcher.getInstance().setNetworkSend(true);
 			
 		}
-
-		NetworkRegistry.register(server);
 		
 		bind(port);
 
@@ -73,27 +83,146 @@ public class GameServer  {
 	public void end() {
 		server.stop();
 	}
-
-	public void updateClients() {
-		
-		// Send an updated game state object to all clients, force refresh/update
+	
+	public void sendAll(Object object) {
+		server.sendToAllTCP(object);
 	}
 	
-	public List<String> connectedPlayerNames() {
+	public void sendToPlayer(String playerName, Object object) {
+		
+		PlayerConnection c = connectedPlayers.get(playerName);
+		if (c == null) {
+			return;
+		}
+		
+		c.sendTCP(object);
+		
+	}
+	
+	public List<String> getConnectedPlayerNames() {
 		return new ArrayList<String>(connectedPlayers.keySet());
 	}
 	
-	public int numPlayersConnected() {
-		return connectedPlayers.size();
+	public int getNumConnected() {
+		return numConnected;
 	}
 	
-	public int numPlayersRemaining() {
-		return numPlayers - numPlayersConnected();
+	public int getNumRemaining() {
+		return numPlayers - numConnected;
+	}
+	
+	private void onAllPlayersConnected() {
+
+		allPlayersConnected = true;
+		server.sendToAllTCP(NetworkPlayerStatus.ALL_PLAYERS_CONNECTED);
+		
+		LOGGER.info("All players connected. Initializing game.");
+		
+		game.initalize();
+    	server.sendToAllTCP(new InitializeGame(game));
+		
+	}
+	
+	private void onAllPlayersInitialized() {
+		
+		game.start();
+		LOGGER.log(LogLevel.DEBUG, "Game started");
+		
+	}
+	
+	private void handleStatus(NetworkPlayerStatus status) {
+		
+		LOGGER.log(LogLevel.DEBUG, "Status received - " + status);
+		
+		if (status == NetworkPlayerStatus.PLAYER_INITIALIZED) {
+			numInitialized++;
+			
+			if (numInitialized == numConnected) {
+				onAllPlayersInitialized();
+			}
+			
+		}
+		
+	}
+	
+	private void handleRegisterPlayer(PlayerConnection c, RegisterPlayer registerPlayer) {
+		
+		boolean valid = isValidPlayerConnection(c, registerPlayer);
+		if (!valid) {
+			c.close();
+			return;
+		}
+		
+		addConnectedPlayer(registerPlayer.name, c);
+		
+	}
+	
+	private boolean isValidPlayerConnection(PlayerConnection c, RegisterPlayer registerPlayer) {
+
+		// Invalid if all players have already connected
+		if (allPlayersConnected) {
+			LOGGER.warning("Player cannot connect - all players already connected.");
+			return false;
+		}
+		
+		// Player has already been registered
+		if (c.name != null) {
+			LOGGER.warning("Player already registered: " + c.name);
+			return false;
+		}
+		
+		// Name is non-empty
+		String name = registerPlayer.name;
+		if (name == null || name.trim().length() == 0) {
+			LOGGER.warning("Invalid player name: " + name);
+			return false;
+		}
+		
+		// Player names must be unique
+		if (connectedPlayers.containsKey(name)) {
+			LOGGER.warning("A player has already connected with name: " + name);
+			return false;
+		} 
+		
+		return true;
+		
+	}
+	
+	private void addConnectedPlayer(String name, PlayerConnection c) {
+
+		connectedPlayers.put(c.name = name, c);
+		PropertyChangeDispatcher.getInstance().notifyListeners(this, "connectedPlayers", null, connectedPlayers);
+		
+		game.addPlayer(name);
+		numConnected++;
+		
+		LOGGER.info("Player connected: " + name);
+		LOGGER.info(numConnected + " player(s) connected. Waiting for " + getNumRemaining() + " more player(s).");
+		
+		if (connectedPlayers.keySet().size() == numPlayers) {
+			onAllPlayersConnected();
+		}
+		
+	}
+	
+	private void removeConnectedPlayer(String name) {
+		
+		allPlayersConnected = false;
+	
+		connectedPlayers.remove(name);
+		game.removePlayer(name);
+		numConnected--;
+		
+		LOGGER.info("Player disconnected: " + name);
+		LOGGER.info(numConnected + " player(s) connected. Waiting for " + getNumRemaining() + " more player(s).");
+
+		PropertyChangeDispatcher.getInstance().notifyListeners(this, "connectedPlayers", null, connectedPlayers);
+		
 	}
 	
 	private boolean bind(final int port) {
 		
-		// Create a new thread so the UI isn't blocked
+		// Run on a new thread so the UI isn't blocked
 		new Thread() {
 			
 			public void run() {
@@ -101,7 +230,7 @@ public class GameServer  {
 				int currentAttempt = 0;
 				while (currentAttempt < MAX_ATTEMPTS) {
 					
-					LOGGER.log(LogLevel.DEBUG, "Attempting to bind game server to port " + port);
+					LOGGER.log(LogLevel.INFO, "Attempting to bind game server to port " + port);
 					
 					try {
 						server.bind(port);
@@ -135,133 +264,54 @@ public class GameServer  {
 		
 	}
 	
-	private void addListener() {
+	private class GameServerListener extends Listener {
 		
-		server.addListener(new Listener() {
+		@Override
+		public void connected(Connection c) {
 			
-			@Override
-			public void received(Connection c, Object object) {
-				
-				PlayerConnection connection = (PlayerConnection) c;
-				
-				if (object instanceof RegisterPlayer) {
-					registerPlayerConnection(connection, object);
-					return;
-				}
-				
-				if (object instanceof FrameworkMessage.KeepAlive) {
-					return;
-				}
-				
-				System.out.println(object);
-				
+			NetworkRegistry.addRMIConnection(objectSpace, c);
+			
+		}
+		
+		@Override
+		public void received(Connection c, Object object) {
+			
+			// Ignore keep alive messages and RMI method invocation
+			if (object instanceof KeepAlive || object instanceof InvokeMethod) {
+				return;
 			}
 			
-			@Override
-			public void disconnected(Connection c) {
-				
-				PlayerConnection connection = (PlayerConnection) c;
-				if (connection.name == null) {
-					return;
-				}
-				
-				removeConnectedPlayer(connection.name);
-				
-				// Notify clients
-				server.sendToAllTCP(ConnectionStatus.ALL_PLAYERS_NOT_CONNECTED);
-				
+			PlayerConnection connection = (PlayerConnection) c;
+			
+			if (object instanceof RegisterPlayer) {
+				handleRegisterPlayer(connection, (RegisterPlayer) object);
+				return;
 			}
 			
-		});
-		
-	}
-	
-	private void registerPlayerConnection(PlayerConnection c, Object object) {
-		
-		// Ignore connections if all players have already connected
-		if (allPlayersConnected) {
-			LOGGER.warning("Player cannot connect - all players already connected.");
-			c.close();
-			return;
-		}
-		
-		// Player has already been registered
-		if (c.name != null) {
-			LOGGER.warning("Player already registered: " + c.name);
-			c.close();
-			return;
-		}
-		
-		// Check if the name is valid
-		String name = ((RegisterPlayer) object).name;
-		if (name == null || name.trim().length() == 0) {
-			LOGGER.warning("Invalid player name: " + name);
-			c.close();
-			return;
-		}
-		
-		// Player names must be unique
-		if (connectedPlayers.containsKey(name)) {
-			LOGGER.warning("A player has already connected with name: " + name);
-			c.close();
-			return;
-		} 
-		
-		addConnectedPlayer(name, c);
-		
-		// Send a status message to all clients if all players have connected
-		if (connectedPlayers.keySet().size() == numPlayers) {
-			allPlayersConnected = true;
-			server.sendToAllTCP(ConnectionStatus.ALL_PLAYERS_CONNECTED);
-			LOGGER.info("All players connected. Starting game in 5 seconds...");
+			if (object instanceof NetworkPlayerStatus) {
+				handleStatus((NetworkPlayerStatus) object);
+				return;
+			}
 			
-			new Timer().schedule(new TimerTask() {
-			    public void run() {
-			    	sendInitializeGame();
-					LOGGER.info("Game started!");
-			    }
-			}, 5000);
+			LOGGER.log(LogLevel.DEBUG, object.toString());
 			
 		}
 		
-	}
-	
-	private void sendInitializeGame() {
-		    	
-    	InitializeGame initialize = new InitializeGame();
-    	initialize.game = this.game;
-    	server.sendToAllTCP(initialize);
+		@Override
+		public void disconnected(Connection c) {
+			
+			PlayerConnection connection = (PlayerConnection) c;
+			if (connection.name == null) {
+				return;
+			}
+			
+			removeConnectedPlayer(connection.name);
+			
+			// Notify clients	
+			server.sendToAllTCP(NetworkPlayerStatus.ALL_PLAYERS_NOT_CONNECTED);
+			
+		}
 		
-	}
-	
-	private void addConnectedPlayer(String name, PlayerConnection c) {
-
-		connectedPlayers.put(c.name = name, c);
-		game.addPlayer(name);
-		
-		LOGGER.info("Player connected: " + name);
-		LOGGER.info(numPlayersConnected() + " player(s) connected. Waiting for " + numPlayersRemaining() + " more player(s).");
-		
-		PropertyChangeDispatcher.getInstance().notify(this, "connectedPlayers", null, connectedPlayers);
-		
-	}
-	
-	private void removeConnectedPlayer(String name) {
-		
-		allPlayersConnected = false;
-	
-		connectedPlayers.remove(name);
-		game.removePlayer(name);
-		
-		LOGGER.info("Player disconnected: " + name);
-		LOGGER.info(numPlayersConnected() + " player(s) connected. Waiting for " + numPlayersRemaining() + " more player(s).");
-
-		PropertyChangeDispatcher.getInstance().notify(this, "connectedPlayers", null, connectedPlayers);
-		
-	}
-	
-	static private class PlayerConnection extends Connection {
-		public String name;
 	}
 	
 }

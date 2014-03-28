@@ -1,21 +1,29 @@
 package com.kingsandthings.common.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.scene.image.Image;
+
 import com.kingsandthings.common.model.board.Board;
+import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.phase.PhaseManager;
+import com.kingsandthings.common.model.things.Creature;
+import com.kingsandthings.common.model.things.Creature.Ability;
 import com.kingsandthings.common.model.things.Thing;
 
-public class Game {
+public class Game implements IGame {
 
-	private transient static Logger LOGGER = Logger.getLogger(Game.class.getName());
+	private static Logger LOGGER = Logger.getLogger(Game.class.getName());
+	
+	private final int NUM_INITIAL_THINGS = 10;
 
 	private PlayerManager playerManager;
 	private PhaseManager phaseManager;
-	
-	private final int NUM_INITIAL_THINGS = 10;
 	
 	private Cup cup;
 	private Board board;
@@ -28,11 +36,19 @@ public class Game {
 		phaseManager = new PhaseManager(this);
 	}
 	
-	public void generateBoard() {
+	public void initalize() {
+		
 		board.generateBoard(playerManager.getNumPlayers());
+		
 	}
 	
-	public void begin() {
+	public void start() {
+		
+		// Set starting tiles
+		for (Player player : playerManager.getPlayers()) {
+			int pos = playerManager.getPosition(player);
+			board.setStartingTile(player, pos);
+		}
 		
 		// Set the first player to active
 		playerManager.setFirstPlayerActive();
@@ -74,11 +90,6 @@ public class Game {
 		playerManager.removePlayer(name);
 	}
 	
-	public void addPlayers(List<String> playerNames) {
-		playerManager.setNumPlayers(playerNames.size());
-		playerManager.addAllPlayers(playerNames);
-	}	
-	
 	public void addInitialThingsToPlayer(List<Thing> things, Player player) {
 
 		boolean success = player.getRack().addThings(things);
@@ -108,6 +119,41 @@ public class Game {
 		}
 		
 		addInitialThingsToPlayer(things, player);
+		
+	}
+	
+	public static List<Class<?>> getMemberClasses() {
+		
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		
+		classes.add(IGame.class);
+		classes.add(Game.class);
+		
+		classes.add(PlayerManager.class);
+		classes.add(Player.class);
+		
+		classes.add(PhaseManager.class);
+		
+		classes.add(Cup.class);
+		classes.add(Creature.class);
+		classes.add(Ability.class);
+		classes.add(Terrain.class);
+		
+		classes.add(Board.class);
+		classes.add(Tile.class);
+		classes.add(Tile[][].class);
+		classes.add(Tile[].class);
+	    
+		// JDK classes
+		classes.add(ArrayList.class);
+		classes.add(HashMap.class);
+		classes.add(LinkedHashMap.class);
+	    
+		// Java FX
+		classes.add(Image.class);
+		
+		return classes;
+		
 	}
 
 }

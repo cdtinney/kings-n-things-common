@@ -13,6 +13,8 @@ import com.kingsandthings.util.Dialog.Type;
 public class GoldCollectionPhase extends Phase {
 	
 	private static Logger LOGGER = Logger.getLogger(GoldCollectionPhase.class.getName());
+	
+	public GoldCollectionPhase() { }
 
 	public GoldCollectionPhase(Game game) {
 		super(game, "Gold Collection", true, false, 1, false);

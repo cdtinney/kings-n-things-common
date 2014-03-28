@@ -9,6 +9,8 @@ public class InitialPlacementPhase extends Phase {
 	
 	private final static BooleanProperty active = new SimpleBooleanProperty(false);
 
+	public InitialPlacementPhase () { }
+	
 	public InitialPlacementPhase(Game game) {
 		super(game, "Thing Placement", false, true, 2, true);
 	}

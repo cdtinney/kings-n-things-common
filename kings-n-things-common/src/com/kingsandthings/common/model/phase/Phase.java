@@ -32,6 +32,8 @@ public abstract class Phase {
 	private int numPlayerTurns;
 	private int currentNumberTurns = 0;
 	
+	public Phase () { }
+	
 	public Phase(Game game, String name, boolean mandatory, boolean playerInteraction, int numPlayerTurns, boolean initial) {
 		this.game = game;
 		this.name = name;

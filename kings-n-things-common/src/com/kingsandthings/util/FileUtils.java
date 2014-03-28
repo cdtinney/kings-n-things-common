@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.kingsandthings.common.network.GameServer;
-
 public class FileUtils {
 	
 	private static Logger LOGGER = Logger.getLogger(FileUtils.class.getName());

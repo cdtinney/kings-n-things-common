@@ -22,18 +22,14 @@ public class Board {
 	private transient Game game;
 	private Tile[][] tiles;
 	
-	public Board() {
-		
-	}
+	public Board() { }
 	
 	public Board(Game game) {
 		this.game = game;
 	}
 	
 	public void generateBoard(int numPlayers) {
-
 		tiles = generateTiles(10);
-		
 	}
 	
 	public Tile[][] getTiles() {

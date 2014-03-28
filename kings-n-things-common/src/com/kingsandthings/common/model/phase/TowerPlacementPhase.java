@@ -5,6 +5,8 @@ import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
 
 public class TowerPlacementPhase extends Phase {
+	
+	public TowerPlacementPhase () { }
 
 	public TowerPlacementPhase(Game game) {
 		super(game, "Tower Placement", true, true, 1, true);

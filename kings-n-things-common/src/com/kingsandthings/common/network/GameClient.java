@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
+
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethodResult;
+import com.kingsandthings.common.network.NetworkRegistry.PropertyChange;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
-import com.kingsandthings.common.network.NetworkRegistry.ConnectionStatus;
+import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
 
 public class GameClient {
@@ -22,7 +26,9 @@ public class GameClient {
 	private final int ATTEMPT_TIMEOUT = 5000; 		// milliseconds
 	private final int CONNECTION_TIMEOUT = 5000;	// milliseconds
 	
+	// Networking
 	private Client client;
+	private boolean connected = false;
 	
 	private String name;
 	private List<NetworkObjectHandler> handlers;
@@ -39,10 +45,9 @@ public class GameClient {
 			
 			client = new Client(8192, 4096);
 			client.start();
+			client.addListener(new ClientListener());
 			
-			NetworkRegistry.register(client);
-			
-			addListener();
+			NetworkRegistry.registerClasses(client);
 			
 		}
 		
@@ -56,6 +61,10 @@ public class GameClient {
 
 	public List<NetworkObjectHandler> getHandlers() {
 		return handlers;
+	}
+	
+	public void send(Object object) {
+		client.sendTCP(object);
 	}
 	
 	private void connect(final String ip, final int port) {
@@ -101,42 +110,16 @@ public class GameClient {
 		
 	}
 	
-	private void addListener() {
+	private void handlePropertyChange(final PropertyChange propertyChange) {
 		
-		if (client == null) {
-			return;
-		}
-		
-		client.addListener(new Listener() {
-			
-			@Override
-			public void connected(Connection connection) {
-				
-				// Send a network object to register via name upon connection
-			    RegisterPlayer registerPlayer = new RegisterPlayer();
-			    registerPlayer.name = name;
-			    client.sendTCP(registerPlayer);
-			    
-			    dispatchObject(ConnectionStatus.PLAYER_CONNECTED);
-			
-			}
-			
-			@Override
-			public void received(Connection connection, Object object) {
-				
-				// Ignore keep alive messages
-				if (object instanceof KeepAlive) {
-					return;
-				}
-				
-				dispatchObject(object);
-				
-			}
+		// Run on JavaFX thread
+		Platform.runLater(new Runnable() {
 
 			@Override
-			public void disconnected(Connection connection) {
+			public void run() {
 				
-				dispatchObject(ConnectionStatus.PLAYER_DISCONNECTED);	
+				PropertyChangeDispatcher.getInstance().notify(propertyChange.source, propertyChange.property, 
+						propertyChange.oldValue, propertyChange.newValue);
 				
 			}
 		
@@ -148,6 +131,44 @@ public class GameClient {
 
 		for (NetworkObjectHandler handler : handlers) {
 			handler.handleObject(object);
+		}
+		
+	}
+	
+	private class ClientListener extends Listener {
+		
+		@Override
+		public void connected(final Connection connection) {
+			
+		    RegisterPlayer registerPlayer = new RegisterPlayer(name);
+		    client.sendTCP(registerPlayer);
+
+			PropertyChangeDispatcher.getInstance().notify(GameClient.this, "connected", connected, connected = true);
+		
+		}
+		
+		@Override
+		public void received(Connection connection, Object object) {
+			
+			// Ignore keep alive messages and RMI method return
+			if (object instanceof KeepAlive || object instanceof InvokeMethodResult) {
+				return;
+			}
+			
+			if (object instanceof PropertyChange) {
+				handlePropertyChange((PropertyChange) object);
+				return;
+			}
+			
+			dispatchObject(object);
+			
+		}
+
+		@Override
+		public void disconnected(Connection connection) {
+			
+			PropertyChangeDispatcher.getInstance().notify(GameClient.this, "connected", connected, connected = false);
+			
 		}
 		
 	}

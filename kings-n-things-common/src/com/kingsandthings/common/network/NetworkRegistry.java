@@ -1,73 +1,107 @@
 package com.kingsandthings.common.network;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javafx.scene.image.Image;
+import java.util.List;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
-import com.kingsandthings.common.model.Cup;
+import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.common.model.Player;
-import com.kingsandthings.common.model.PlayerManager;
-import com.kingsandthings.common.model.board.Board;
-import com.kingsandthings.common.model.board.Tile;
-import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.phase.PhaseManager;
-import com.kingsandthings.common.model.things.Creature;
-import com.kingsandthings.common.model.things.Creature.Ability;
 
 public class NetworkRegistry {
 	
-    static public void register (EndPoint endPoint) {
+	static public final int GAME_ID = 42;
+	
+    static public void registerClasses (EndPoint endPoint) {
+    	
 	    Kryo kryo = endPoint.getKryo();
+
+	    // Property change dispatcher
+	    kryo.register(PropertyChange.class);
 	    
+	    // Network message classes
 	    kryo.register(RegisterPlayer.class);
-	    kryo.register(ConnectionStatus.class);
+	    kryo.register(InitializeGame.class);
+	    kryo.register(NetworkPlayerStatus.class);
 	    
-	    registerGameClasses(kryo);
+	    // Model classes
+	    registerClasses(kryo, Game.getMemberClasses());	   
+	    registerClasses(kryo, PhaseManager.getMemberClasses());	   
+	    
+	    // RMI
+	    ObjectSpace.registerClasses(kryo);
 	    
 	}
+    
+    static public void registerRMIObject(ObjectSpace objSpace, int id, Object object) {
+    	objSpace.register(id, object);
+    }
+    
+    static public void addRMIConnection(ObjectSpace objSpace, Connection c) {
+    	objSpace.addConnection(c);
+    }
+    
+    static private void registerClasses(Kryo kryo, List<Class<?>> classes) {
+    	
+    	for (Class<?> clazz : classes) {
+    		kryo.register(clazz);
+    	}
+    	    	
+    }
 	
-	static public class RegisterPlayer {
-	    public String name;
-	}
-	
-	static public class InitializeGame {
-		public Game game;
-	}
-	
-	static public enum ConnectionStatus {
+	static public enum NetworkPlayerStatus {
 		ALL_PLAYERS_CONNECTED,
 		ALL_PLAYERS_NOT_CONNECTED,
 		PLAYER_DISCONNECTED,
-		PLAYER_CONNECTED
+		PLAYER_CONNECTED,
+		PLAYER_INITIALIZED
 	}
     
-    static private void registerGameClasses(Kryo kryo) {
-	    
-	    kryo.register(InitializeGame.class);
-	    kryo.register(Game.class);
-	    kryo.register(PlayerManager.class);
-	    kryo.register(PhaseManager.class);
-	    kryo.register(Cup.class);
-	    kryo.register(Board.class);
-	    kryo.register(Tile.class);
-	    kryo.register(Tile[][].class);
-	    kryo.register(Tile[].class);
-	    kryo.register(Player.class);
-	    kryo.register(Creature.class);
-	    kryo.register(Ability.class);
-	    kryo.register(Terrain.class);
-	    
-	    kryo.register(ArrayList.class);
-	    kryo.register(HashMap.class);
-	    
-	    kryo.register(Image.class);
-	    
-	    
-    	    	
+    static public class PropertyChange {
+    	
+    	public Object source;
+    	public String property;
+    	public Object oldValue;
+    	public Object newValue;
+    	
+    	public PropertyChange() { }
+    	
+    	public PropertyChange(Object source, String property, Object oldValue, Object newValue) {
+    		this.source = source;
+    		this.property = property;
+    		this.oldValue = oldValue;
+    		this.newValue = newValue;
+    	}
+    	
     }
-
+	
+	static public class RegisterPlayer {
+		
+	    public String name;
+	    
+	    public RegisterPlayer() { }
+	    
+	    public RegisterPlayer(String name) {
+	    	this.name = name;
+	    }
+	    
+	}
+	
+	static public class InitializeGame {
+		
+		public Game game;
+		
+		public InitializeGame() { }
+		
+		public InitializeGame(Game game) {
+			this.game = game;
+		}
+		
+	}
+	
+	static public class PlayerConnection extends Connection {
+		public String name;
+	}
+    
 }

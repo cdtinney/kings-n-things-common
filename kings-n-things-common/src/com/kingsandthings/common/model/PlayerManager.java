@@ -2,6 +2,7 @@ package com.kingsandthings.common.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -22,7 +23,7 @@ public class PlayerManager {
 	private Player activePlayer;
 	
 	public PlayerManager() {
-		players = new HashMap<String, Player>();
+		players = new LinkedHashMap<String, Player>();
 		positions = new HashMap<Player, Integer>();
 	}
 	
@@ -126,6 +127,16 @@ public class PlayerManager {
 		return players.remove(name) != null;
 	}
 	
+	public int getPosition(Player player) { 
+		
+		if (positions.containsKey(player)) {
+			return positions.get(player);
+		}
+		
+		return 0;
+		
+	}
+	
 	private void setControlMarkerImage(Player player, int position) {
 		String path = "/images/other/control_marker_" + position + ".png";
 		player.setControlMarker(new Image(path));	
@@ -150,16 +161,6 @@ public class PlayerManager {
 		}
 		
 		return false;		
-	}
-	
-	public int getPosition(Player player) { 
-		
-		if (positions.containsKey(player)) {
-			return positions.get(player);
-		}
-		
-		return 0;
-		
 	}
 
 }

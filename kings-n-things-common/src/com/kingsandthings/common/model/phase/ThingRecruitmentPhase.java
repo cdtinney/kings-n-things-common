@@ -8,6 +8,8 @@ import com.kingsandthings.common.model.Game;
 public class ThingRecruitmentPhase extends Phase {
 	
 	private final static BooleanProperty active = new SimpleBooleanProperty(false);
+	
+	public ThingRecruitmentPhase() { }
 
 	public ThingRecruitmentPhase(Game game) {
 		super(game, "Thing Recruitment", true, true, 2, false);

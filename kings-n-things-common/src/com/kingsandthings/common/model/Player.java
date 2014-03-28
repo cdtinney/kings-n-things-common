@@ -160,5 +160,25 @@ public class Player {
 	public void setControlMarker(Image controlMarker) {
 		this.controlMarker = controlMarker;
 	}
+	
+	@Override
+	public boolean equals(Object that) {
+		
+		if (this == that) {
+			return true;
+		}
+		
+		if (!(that instanceof Player)) {
+			return false;
+		}
+		
+		return ((Player) that).name.equals(this.name);
+		
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 
 }

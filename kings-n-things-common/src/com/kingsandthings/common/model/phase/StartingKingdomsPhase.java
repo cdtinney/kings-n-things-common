@@ -10,14 +10,12 @@ public class StartingKingdomsPhase extends Phase {
 	
 	private final static BooleanProperty active = new SimpleBooleanProperty(false);
 	
-	private int initialNumGold = 10;
+	private final int initialNumGold = 10;
+	
+	public StartingKingdomsPhase() { }
 	
 	public StartingKingdomsPhase(Game game) {
 		super(game, "Starting Kingdoms", true, true, 2, true);
-	}
-	
-	public static BooleanProperty getActive() {
-		return active;
 	}
 	
 	@Override
@@ -26,7 +24,6 @@ public class StartingKingdomsPhase extends Phase {
 		active.set(true);
 		
 		currentInstruction = "please place a control marker";
-		//BoardView.setInstructionText("please place a control marker");
 		
 		for (Player player: game.getPlayerManager().getPlayers()) {
 			
@@ -42,5 +39,10 @@ public class StartingKingdomsPhase extends Phase {
 		super.end();
 		active.set(false);
 	}
+	
+	public static BooleanProperty getActive() {
+		return active;
+	}
+	
 
 }

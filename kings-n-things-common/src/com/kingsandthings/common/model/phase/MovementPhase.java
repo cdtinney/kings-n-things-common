@@ -8,7 +8,10 @@ import com.kingsandthings.common.model.Game;
 public class MovementPhase extends Phase {
 	
 	private final static BooleanProperty active = new SimpleBooleanProperty(false);
+	
 	private Game game;	
+	
+	public MovementPhase() { }
 	
 	public MovementPhase(Game game) {
 		super(game, "Movement", false, true, 1, false);

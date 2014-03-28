@@ -10,15 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.network.GameServer;
+import com.kingsandthings.common.network.NetworkRegistry.PropertyChange;
+
 public class PropertyChangeDispatcher {
 	
 	private static Logger LOGGER = Logger.getLogger(PropertyChangeDispatcher.class.getName());
 	
-	// Single instance of the class
+	// Singleton
 	private static PropertyChangeDispatcher INSTANCE = null;
-	
-	// Maps classes to a second map which maps properties to listeners
+
 	private Map<Class<?>, Map<String, List<PropertyChangeListener>>> listeners;
+	
+	private GameServer gameServer;
+	private boolean networkSend = false;
 	
 	private PropertyChangeDispatcher() {
 		listeners = new HashMap<Class<?>, Map<String, List<PropertyChangeListener>>>();
@@ -33,8 +38,12 @@ public class PropertyChangeDispatcher {
 		return INSTANCE;
 	}
 	
-	public void addListener(Class<?> clazz, String property, final Object instance, PropertyChangeListener listener) {
-		getListeners(clazz, property).add(listener);
+	public void setServer(GameServer server) {
+		this.gameServer = server;
+	}
+	
+	public void setNetworkSend(boolean networkSend) {
+		this.networkSend = networkSend;
 	}
 	
 	public void addListener(Class<?> clazz, String property, final Object instance, final String handlerMethodName) {
@@ -54,18 +63,47 @@ public class PropertyChangeDispatcher {
 		
 	}
 	
-	private void handleEvent(PropertyChangeEvent evt, Object instance, Object data, Class<?> dataClass, String handlerMethodName) {
+	public void notify(Object source, String property, Object oldValue, Object newValue) {
+		
+		if (gameServer != null && networkSend) {
+			notifyClients(source, property, oldValue, newValue);	
+		}
+		
+		notifyListeners(source, property, oldValue, newValue);
+		
+	}
+	
+	public void notifyListeners(Object source, String property, Object oldValue, Object newValue) {
+
+		Class<?> clazz = source.getClass();
+		
+		for (PropertyChangeListener listener : getListeners(clazz, property)) {
+			listener.propertyChange(new PropertyChangeEvent(source, property, oldValue, newValue));
+		}
+		
+	}
+	
+	private void notifyClients(Object source, String property, Object oldValue, Object newValue) {
+		
+		PropertyChange obj = new PropertyChange(source, property, oldValue, newValue);
+		gameServer.sendAll(obj);
+		
+	}
+	
+	private void handleEvent(final PropertyChangeEvent evt, final Object instance, Object data, Class<?> dataClass, String handlerMethodName) {
 		
 		try {
 			
+			// No additional argument specified - handlerMethod(PropertyChangeEvent)
 			if (data == null) {
-				Method handlerMethod = instance.getClass().getDeclaredMethod(handlerMethodName, evt.getClass());
-				handlerMethod.setAccessible(true);
+				final Method handlerMethod = instance.getClass().getDeclaredMethod(handlerMethodName, evt.getClass());
+				handlerMethod.setAccessible(true);	
 				handlerMethod.invoke(instance, evt);
-				
+			
+			// Additional argument specified - handlerMethod(dataClass)
 			} else {
 				Method handlerMethod = instance.getClass().getDeclaredMethod(handlerMethodName, dataClass);
-				handlerMethod.setAccessible(true);
+				handlerMethod.setAccessible(true);	
 				handlerMethod.invoke(instance, data);
 				
 			}
@@ -76,6 +114,8 @@ public class PropertyChangeDispatcher {
 			
 		} catch (InvocationTargetException e) {
 			LOGGER.warning("Exception thrown in " + instance.getClass().getSimpleName() + "." + handlerMethodName);
+			
+			e.getTargetException().printStackTrace();
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,30 +124,16 @@ public class PropertyChangeDispatcher {
 		
 	}
 	
-	public void notify(Object source, String property, Object oldValue, Object newValue) {
-		
-		Class<?> clazz = source.getClass();
-		
-		for (PropertyChangeListener listener : getListeners(clazz, property)) {
-			listener.propertyChange(new PropertyChangeEvent(source, property, oldValue, newValue));
-		}
-		
-	}
-	
 	private List<PropertyChangeListener> getListeners(Class<?> clazz, String property) {
 		
+		// No listeners mapped to the class
 		if (listeners.get(clazz) == null) {
-			
-			// Add a new map for the class
 			listeners.put(clazz, new HashMap<String, List<PropertyChangeListener>>());
-			
 		}
 		
+		// No listeners mapped to the property
 		if (listeners.get(clazz).get(property) == null) {
-			
-			// Add a new list of listeners for each property of the class
 			listeners.get(clazz).put(property, new ArrayList<PropertyChangeListener>());
-			
 		}
 		
 		return listeners.get(clazz).get(property);

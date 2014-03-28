@@ -78,5 +78,27 @@ public class PhaseManager {
 	private void notifyPhaseChange(Phase oldPhase, Phase newPhase) {
 		PropertyChangeDispatcher.getInstance().notify(this, "currentPhase", oldPhase, newPhase);
 	}
+	
+	public static List<Class<?>> getMemberClasses() {
+		
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		
+		classes.add(StartingKingdomsPhase.class);
+		classes.add(TowerPlacementPhase.class);
+		classes.add(InitialPlacementPhase.class);
+		
+		classes.add(GoldCollectionPhase.class);
+		classes.add(RecruitCharactersPhase.class);
+		classes.add(ThingRecruitmentPhase.class);
+		classes.add(RandomEventsPhase.class);
+		classes.add(MovementPhase.class);
+		classes.add(ConstructionPhase.class);
+		classes.add(SpecialPowersPhase.class);
+		classes.add(ChangingPlayerOrderPhase.class);
+	
+		return classes;
+		
+	}
+	
 
 }
