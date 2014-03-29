@@ -21,6 +21,8 @@ public class Fort extends Thing {
 
 	private boolean neutralized = false;
 	private boolean isPlaced = false;
+	
+	public Fort() {}
 
 	public Fort(String type, int combatValue, Image image) {
         super(type, image);
@@ -36,7 +38,13 @@ public class Fort extends Thing {
     }
 	
 	public static Fort getTower() {
-		return new Fort("Tower", 1, new Image("/images/things/fort/-n Tower -a 1.jpg"));
+		
+		String imagePath = "/images/things/fort/-n Tower -a 1.jpg";
+		Fort f = new Fort("Tower", 1, new Image(imagePath));
+		f.setImagePath(imagePath);
+		
+		return f;
+		
 	}
 	
 	public int getCombatValue() {

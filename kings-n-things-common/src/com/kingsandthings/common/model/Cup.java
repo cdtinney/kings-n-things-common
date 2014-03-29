@@ -3,10 +3,7 @@ package com.kingsandthings.common.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Logger;
-
-import javafx.scene.image.Image;
 
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.things.Creature;
@@ -18,45 +15,20 @@ public class Cup {
 
 	private static Logger LOGGER = Logger.getLogger(Cup.class.getName());
 	
-	private List<Thing> things;
+	private List<Thing> things = new ArrayList<Thing>();
 	
-	private boolean playerOneDemoRecruit = false;
+	public Cup() { }
 	
-	public Cup() {
-		things = new ArrayList<Thing>();
+	public void importThings() {
 		
 		// TODO - Import all Things
 		addThings(ThingImport.importCreatures());
+		
 	}
 	
 	public boolean recruitThings(Player player, int numPaid) {
 		
-		// TASK - Demo only (Hardcoded recruitment for player 1)
-		if (player.getName().equals("Player 1") && !playerOneDemoRecruit) {
-			
-			List<Thing> things = new ArrayList<Thing>();
-			
-			String path = "images/things/defenders/mountain";
-			things.add(new Creature("Cyclops", "MOUNTAIN", 5, new Image(path + "/-n Cyclops -t Mountain -a 5.jpg")));
-			things.add(new Creature("Mountain Men", "MOUNTAIN", 1, new Image(path + "/-n Mountain_Men -c 2 -t Mountain -a 1.jpg")));
-			things.add(new Creature("Goblins", "MOUNTAIN", 1, new Image(path + "/-n Goblins -c 4 -t Mountain -a 1.jpg")));
-			
-			player.getRack().addThings(things);
-			
-			if (things.contains(null)) {
-				LOGGER.warning("Error when creating hardcoded Things for Player 1 recruitment");
-			}
-			
-			removeThings(things);
-			
-			playerOneDemoRecruit = true;
-			
-			return true;
-			
-		}
-		
 		int goldRequired = numPaid * 5;
-		
 		if (player.getNumGold() < goldRequired) {
 			LOGGER.log(LogLevel.STATUS, goldRequired + " gold is required to buy " + numPaid + " recruits.");
 			return false;
@@ -72,7 +44,7 @@ public class Cup {
 			LOGGER.log(LogLevel.STATUS, player.getName() + " received: " + numFree  + " free, " + numPaid + " paid.");
 			
 			// Remove the Things from the Cup
-			removeThings(drawn);
+			removeThingsFromCup(drawn);
 			
 			// Take away player's gold
 			player.removeGold(goldRequired);
@@ -87,7 +59,7 @@ public class Cup {
 				LOGGER.log(LogLevel.STATUS, player.getName() + " received " + available + " free recruits " + ignored);
 				
 				player.getRack().addThings(drawn);
-				removeThings(drawn);
+				removeThingsFromCup(drawn);
 				
 				return true;
 				
@@ -106,17 +78,22 @@ public class Cup {
 		
 	}
 	
+	public boolean recruitThingsInitial(Player player, int pos) {
+		
+		if (pos == 1) {
+			return player.getRack().addThings(getPlayerOneStack1());
+		}
+		
+		return false;
+		
+	}
+	
 	public List<Thing> drawThings(int num) {
 		
 		List<Thing> copy = new ArrayList<Thing>(things);
 		Collections.shuffle(copy);
 		return copy.subList(0, num);
 		
-	}
-	
-	public Thing drawThing() {
-		Random r = new Random();
-		return things.remove(r.nextInt(things.size()));
 	}
 	
 	public List<Thing> getThings() {
@@ -135,7 +112,7 @@ public class Cup {
 		
 	}
 	
-	public void removeThings(List<Thing> list) {
+	public void removeThingsFromCup(List<Thing> list) {
 		things.removeAll(list);
 	}
 	
@@ -145,6 +122,28 @@ public class Cup {
 	
 	private void addThings(List<? extends Thing> list) {
 		things.addAll(list);
+	}
+	
+	private List<Thing> getPlayerOneStack1() {
+
+		List<Thing> things = new ArrayList<Thing>();
+		
+		things.add(getCreatureThing("Crocodiles", Terrain.SWAMP, 2));
+		things.add(getCreatureThing("Mountain Men", Terrain.MOUNTAIN, 1));
+		things.add(getCreatureThing("Giant Lizard", Terrain.SWAMP, 2));
+		things.add(getCreatureThing("Swamp Beast", Terrain.SWAMP, 3));
+		things.add(getCreatureThing("Killer Racoon", Terrain.FOREST, 2));
+		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
+		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
+		
+		if (things.contains(null)) {
+			LOGGER.warning("Error creating Player 1 stack 1.");
+		}
+		
+		removeThingsFromCup(things);
+		
+		return things;
+		
 	}
 	
 	private Thing getCreatureThing(String name, Terrain terrain, int combatValue) {

@@ -83,14 +83,22 @@ public class PropertyChangeDispatcher {
 		
 	}
 	
-	private void notifyClients(Object source, String property, Object oldValue, Object newValue) {
+	private void notifyClients(final Object source, final String property, final Object oldValue, final Object newValue) {
 		
-		// Update game state of clients
-		gameServer.updateClientGameState();
+		new Thread() {
+			
+			public void run() {
+				
+				// Update game state of clients
+				gameServer.updateClientGameState();
+				
+				// Send property change events which will reflect the updated state
+				PropertyChange obj = new PropertyChange(source, property, oldValue, newValue);
+				gameServer.sendObject(obj);
+				
+			}
 		
-		// Send property change events which will reflect the updated state
-		PropertyChange obj = new PropertyChange(source, property, oldValue, newValue);
-		gameServer.sendObject(obj);
+		}.start();
 		
 	}
 	

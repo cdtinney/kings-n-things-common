@@ -23,6 +23,7 @@ public class TowerPlacementPhase extends Phase {
 			
 			// Give each player a tower
 			player.addFort(Fort.getTower());
+			
 		}
 		
 	}

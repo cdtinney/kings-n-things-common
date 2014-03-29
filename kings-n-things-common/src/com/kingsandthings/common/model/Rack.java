@@ -18,6 +18,8 @@ public class Rack {
 	
 	private Player owner;
 	
+	public Rack() { }
+	
 	public Rack(Player owner) {
 		this.owner = owner;
 		

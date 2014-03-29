@@ -57,6 +57,7 @@ public class Player {
 		randomEvents = new ArrayList<RandomEvent>();
 		
 		creatures = new ArrayList<Creature>();
+		
 	}
 	
 	public Rack getRack() {

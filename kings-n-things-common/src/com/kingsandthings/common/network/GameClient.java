@@ -12,6 +12,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethodResult;
 import com.kingsandthings.common.model.IGame;
+import com.kingsandthings.common.model.Player;
+import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.network.NetworkRegistry.PropertyChange;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
@@ -71,9 +73,18 @@ public class GameClient {
 	}
 	
 	public IGame requestGame() {
+		return ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.GAME_ID, IGame.class);
+	}
+	
+	public IBoard requestBoard() {
+		return ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.BOARD_ID, IBoard.class);
+	}
+	
+	public boolean activePlayer() {
 		
 		IGame game =  ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.GAME_ID, IGame.class);
-		return game;
+		Player player = game.getActivePlayer();
+		return player.getName().equals(name);
 		
 	}
 	

@@ -13,7 +13,7 @@ import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.logging.LogLevel;
 
-public class Board {
+public class Board implements IBoard {
 	
 	private static Logger LOGGER = Logger.getLogger(Board.class.getName());
 	
@@ -120,28 +120,24 @@ public class Board {
 		
 	}
 	
+	@Override
+	public boolean placeFort(Fort fort, Tile tile) {
+		
+		Player player = game.getActivePlayer();
+
+		player.placeFort(fort, tile);
+		game.getPhaseManager().endPlayerTurn();
+		
+		return true;
+		
+	}
+	
+	@Override
 	public boolean addThingsToTile(Tile tile, List<Thing> things) {
 
 		Player player = game.getActivePlayer();
 		
-		boolean success = false;
-		
-		for (Thing thing : things) {
-			
-			// TASK - Forts are always placed.
-			if (thing instanceof Fort) {
-				
-				success = player.placeFort((Fort) thing, tile);
-				if (success) {
-					game.getPhaseManager().endPlayerTurn();
-				}
-				return success;
-			}
-			
-		}
-		
-		success = tile.addThings(player, things);
-		
+		boolean success = tile.addThings(player, things);
 		if (success) {
 			player.getRack().removeThings(things);
 		}
@@ -149,9 +145,13 @@ public class Board {
 		return success;	
 		
 	}
-	
-	public boolean setTileControl(int r, int c, Player player, boolean initial) {
-		return setTileControl(tiles[r][c], player, initial);
+
+	@Override
+	public boolean setTileControl(int row, int col, boolean initial) {
+		
+		Player player = game.getActivePlayer();
+		return setTileControl(tiles[row][col], player, initial);
+		
 	}
 	
 	public boolean setTileControl(Tile tile, Player player, boolean initial) {
@@ -257,16 +257,18 @@ public class Board {
 		if (playerNeighbour && !enemyNeighbour) {
 			
 			if (numControlled++ < NUM_INITIAL_TILES) {
-				tile.setOwner(player);			
+				tile.setOwner(player);
+				game.getPhaseManager().endPlayerTurn();
 			}
+					
+			return true;
+			
+		} else {
+			LOGGER.log(LogLevel.STATUS, "Invalid tile. Player must own at least one adjacent tile, and no enemies can own adjacent tiles.");
 			
 		}
 		
-		if (!playerNeighbour || enemyNeighbour) {
-			LOGGER.log(LogLevel.STATUS, "Invalid tile. Player must own at least one adjacent tile, and no enemies can own adjacent tiles.");
-		}
-		
-		return playerNeighbour && !enemyNeighbour;
+		return false;
 	}
 	
 	private List<Tile> getNeighbours(Tile[][] tiles, Tile tile) {

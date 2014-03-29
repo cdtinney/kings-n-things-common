@@ -6,21 +6,20 @@ import java.util.logging.Logger;
 
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
+import com.kingsandthings.logging.LogLevel;
 
 public class PhaseManager {
 	
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(PhaseManager.class.getName());
 	
-	protected transient Game game;
+	private transient Game game;
 	
-	private transient List<Phase> phases;
+	private List<Phase> phases;
 	private int currentPhaseNumber = 0;
 	
-	public PhaseManager() {}
+	public PhaseManager() { }
 	
 	public PhaseManager(Game game) {
-		
 		this.game = game;
 
 		phases = new ArrayList<Phase>();
@@ -28,7 +27,7 @@ public class PhaseManager {
 		// Add the phases (in order)
 		phases.add(new StartingKingdomsPhase(game));
 		phases.add(new TowerPlacementPhase(game));
-		phases.add(new InitialPlacementPhase(game));
+		phases.add(new InitialRecruitmentPhase(game));
 		
 		// Main sequence
 		phases.add(new GoldCollectionPhase(game));
@@ -42,17 +41,26 @@ public class PhaseManager {
 		
 	}
 	
-	public void beginPhases() {
-		phases.get(0).begin();
-		PropertyChangeDispatcher.getInstance().notify(this, "currentPhase", null, getCurrentPhase());
-	}
-	
 	public void endPlayerTurn() {
-		getCurrentPhase().nextTurn();
+		
+		new Thread() {
+			
+			@Override
+			public void run() {
+				getCurrentPhase().nextTurn();
+			}
+			
+		}.start();
+		
 	}
 	
 	public Phase getCurrentPhase() {
 		return phases.get(currentPhaseNumber);
+	}
+	
+	public void beginPhases() {
+		phases.get(0).begin();
+		PropertyChangeDispatcher.getInstance().notify(this, "currentPhase", null, getCurrentPhase());
 	}
 	
 	public void nextPhase() {
@@ -67,6 +75,8 @@ public class PhaseManager {
 			phases.remove(oldPhase);
 			currentPhaseNumber--;
 		}
+		
+		LOGGER.log(LogLevel.DEBUG, "Beginning phase - " + newPhase.getName());
 		
 		newPhase.begin();
 		notifyPhaseChange(oldPhase, newPhase);
@@ -83,7 +93,7 @@ public class PhaseManager {
 		
 		classes.add(StartingKingdomsPhase.class);
 		classes.add(TowerPlacementPhase.class);
-		classes.add(InitialPlacementPhase.class);
+		classes.add(InitialRecruitmentPhase.class);
 		
 		classes.add(GoldCollectionPhase.class);
 		classes.add(RecruitCharactersPhase.class);
@@ -97,6 +107,5 @@ public class PhaseManager {
 		return classes;
 		
 	}
-	
 
 }

@@ -9,14 +9,10 @@ public class MovementPhase extends Phase {
 	
 	private final static BooleanProperty active = new SimpleBooleanProperty(false);
 	
-	private Game game;	
-	
 	public MovementPhase() { }
 	
 	public MovementPhase(Game game) {
 		super(game, "Movement", false, true, 1, false);
-		
-		this.game = game;
 	}
 	
 	public static BooleanProperty getActive() {
@@ -50,12 +46,10 @@ public class MovementPhase extends Phase {
 	private void setText() {
 
 		currentInstruction = "do some movement";
-		//BoardView.setInstructionText("do some movement");
 		
 		// Skip the player if they have no movement possible
 		if (!game.getBoard().movementPossible(game.getActivePlayer())) {
 			currentInstruction = "no movement possible! please end turn";
-			//BoardView.setInstructionText("no movement possible! please end turn");
 		}
 		
 		

@@ -66,8 +66,10 @@ public class ThingImport {
             	
             	if (specialAbilities.isEmpty()) {
             		creature = new Creature(creatureName, terrainType, combatValue, new Image(path));
+            		creature.setImagePath(path);
             	} else {
             		creature = new Creature(creatureName, terrainType, specialAbilities, combatValue, new Image(path));
+            		creature.setImagePath(path);
             	}
             	
             	creatures.add(creature);

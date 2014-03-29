@@ -17,11 +17,10 @@ public abstract class Phase {
 		STEP
 	}
 	
+	protected transient Game game;
 	
 	protected String currentStep = "none";
 	protected String currentInstruction = "Phase Instruction Placeholder";
-	
-	protected Game game;
 	
 	private String name;
 	

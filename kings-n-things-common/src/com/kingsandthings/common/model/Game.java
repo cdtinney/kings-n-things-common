@@ -10,11 +10,13 @@ import javafx.scene.image.Image;
 
 import com.kingsandthings.common.model.board.Board;
 import com.kingsandthings.common.model.board.Board.TileLocation;
+import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Creature.Ability;
+import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.Thing;
 
 public class Game implements IGame {
@@ -24,7 +26,7 @@ public class Game implements IGame {
 	private final int NUM_INITIAL_THINGS = 10;
 
 	private transient Cup cup;
-	private transient PhaseManager phaseManager;
+	private PhaseManager phaseManager;
 	
 	private PlayerManager playerManager;
 	private Board board;
@@ -36,6 +38,7 @@ public class Game implements IGame {
 	public void initalize() {
 		
 		cup = new Cup();
+		cup.importThings();
 		
 		board = new Board(this);
 		board.generateBoard(playerManager.getNumPlayers());
@@ -97,7 +100,7 @@ public class Game implements IGame {
 		boolean success = player.getRack().addThings(things);
 		
 		if (success) {
-			cup.removeThings(things);
+			cup.removeThingsFromCup(things);
 			
 			if (player.getRack().getThings().size() == NUM_INITIAL_THINGS) {
 				phaseManager.endPlayerTurn();
@@ -133,6 +136,7 @@ public class Game implements IGame {
 		
 		classes.add(PlayerManager.class);
 		classes.add(Player.class);
+		classes.add(Rack.class);
 		
 		classes.add(PhaseManager.class);
 		
@@ -140,12 +144,17 @@ public class Game implements IGame {
 		classes.add(Creature.class);
 		classes.add(Ability.class);
 		classes.add(Terrain.class);
-		
+
+		classes.add(IBoard.class);
 		classes.add(Board.class);
+		
 		classes.add(Tile.class);
 		classes.add(Tile[][].class);
 		classes.add(Tile[].class);
 		classes.add(TileLocation.class);
+		
+		classes.add(Fort.class);
+		classes.add(Fort.Type.class);
 	    
 		// JDK classes
 		classes.add(ArrayList.class);
@@ -160,10 +169,10 @@ public class Game implements IGame {
 	}
 
 	@Override
-	public boolean setTileControl(int r, int c, boolean initial) {
+	public void recruitThingsInitial() {
 		
-		Player player = getActivePlayer();
-		return board.setTileControl(r, c, player, initial);
+		final Player player = getActivePlayer();
+		cup.recruitThingsInitial(player, playerManager.getPosition(player));
 		
 	}
 

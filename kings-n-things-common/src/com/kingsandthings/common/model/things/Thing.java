@@ -13,11 +13,11 @@ public abstract class Thing implements Serializable {
 	public int id;
 	
 	protected String name;
-	private transient Image image;
 	
-	public Thing() {
-		
-	}
+	private transient Image image;
+	private String imagePath;
+	
+	public Thing() { }
 
     public Thing(String name, Image image) {
     	this.name = name;
@@ -31,11 +31,20 @@ public abstract class Thing implements Serializable {
     }
     
     public Image getImage() {
+    	
+    	if (image == null) {
+    		image = new Image(imagePath);
+    	}
+    	
     	return image;
     }
     
     public void setImage(Image image) {
     	this.image = image;
+    }
+    
+    public void setImagePath(String path) {
+    	imagePath = path;
     }
     
     @Override

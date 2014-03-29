@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -72,6 +73,10 @@ public class GameServer  {
 			NetworkRegistry.registerClasses(server);
 			NetworkRegistry.registerRMIObject(objectSpace, NetworkRegistry.GAME_ID, game);
 			
+			// Execute RMI on a new thread pool. Otherwise, if something is sent over the network
+			// before a method invocation returns, an exception is thrown.
+			objectSpace.setExecutor(Executors.newCachedThreadPool());
+			
 			PropertyChangeDispatcher.getInstance().setServer(this);
 			PropertyChangeDispatcher.getInstance().setNetworkSend(true);
 			
@@ -125,12 +130,14 @@ public class GameServer  {
 		
 		game.initalize();
     	server.sendToAllTCP(new InitializeGame(game));
+    	
+    	NetworkRegistry.registerRMIObject(objectSpace, NetworkRegistry.BOARD_ID, game.getBoard());
 		
 	}
 	
 	private void onAllPlayersInitialized() {
-		
-		LOGGER.log(LogLevel.DEBUG, "Game started");
+
+		LOGGER.log(LogLevel.DEBUG, "Sending initial game update.");
 		
 		game.start();
     	server.sendToAllTCP(new UpdateGame(game));
