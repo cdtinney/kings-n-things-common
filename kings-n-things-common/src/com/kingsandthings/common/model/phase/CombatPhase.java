@@ -54,7 +54,7 @@ public class CombatPhase extends Phase {
 			game.getPhaseManager().endPlayerTurn();
 		}
 		
-		currentInstruction = "please select a battle to resolve";
+		setInstruction("please select a battle to resolve");
 
 	}
 	

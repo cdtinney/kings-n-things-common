@@ -20,7 +20,6 @@ public abstract class Phase {
 	protected transient Game game;
 	
 	protected String currentStep = "none";
-	protected String currentInstruction = "Phase Instruction Placeholder";
 	
 	private String name;
 	
@@ -87,8 +86,13 @@ public abstract class Phase {
 		return currentStep;
 	}
 	
+	protected void setInstruction(String instruction) {
+		game.setInstruction(instruction);
+	}
+	
 	protected void begin() {
 		currentNumberTurns = 0;
+		setInstruction("no instruction");
 		notify(Notification.BEGIN);
 	}
 	

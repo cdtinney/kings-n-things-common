@@ -34,7 +34,7 @@ public class Cup {
 			return false;
 		}
 		
-		int numFree = numFreeRecruits(player);
+		int numFree = player.getNumControlledTiles() * 2;
 		
 		List<Thing> drawn = drawThings(numFree + numPaid);
 		
@@ -80,8 +80,16 @@ public class Cup {
 	
 	public boolean recruitThingsInitial(Player player, int pos) {
 		
+		List<Thing> things = null;
 		if (pos == 1) {
-			return player.getRack().addThings(getPlayerOneStack1());
+			things = getPlayerOneStack();
+		} else if (pos == 2) {
+			things = getPlayerTwoStack();
+		}
+		
+		if (things != null && player.getRack().addThings(things)) {
+			removeThingsFromCup(things);
+			return true;
 		}
 		
 		return false;
@@ -100,50 +108,12 @@ public class Cup {
 		return things;
 	}
 	
-	public List<String> getThingNames() {
-		
-		List<String> names = new ArrayList<String>();
-		
-		for (Thing thing : things) {
-			names.add(thing.toString());
-		}
-		
-		return names;
-		
-	}
-	
 	public void removeThingsFromCup(List<Thing> list) {
 		things.removeAll(list);
 	}
 	
-	private int numFreeRecruits(Player player) {
-		return player.getNumControlledTiles() * 2;
-	}
-	
 	private void addThings(List<? extends Thing> list) {
 		things.addAll(list);
-	}
-	
-	private List<Thing> getPlayerOneStack1() {
-
-		List<Thing> things = new ArrayList<Thing>();
-		
-		things.add(getCreatureThing("Crocodiles", Terrain.SWAMP, 2));
-		things.add(getCreatureThing("Mountain Men", Terrain.MOUNTAIN, 1));
-		things.add(getCreatureThing("Giant Lizard", Terrain.SWAMP, 2));
-		things.add(getCreatureThing("Swamp Beast", Terrain.SWAMP, 3));
-		things.add(getCreatureThing("Killer Racoon", Terrain.FOREST, 2));
-		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
-		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
-		
-		if (things.contains(null)) {
-			LOGGER.warning("Error creating Player 1 stack 1.");
-		}
-		
-		removeThingsFromCup(things);
-		
-		return things;
-		
 	}
 	
 	private Thing getCreatureThing(String name, Terrain terrain, int combatValue) {
@@ -164,6 +134,49 @@ public class Cup {
 		}
 		
 		return null;
+		
+	}
+	
+	private List<Thing> getPlayerOneStack() {
+
+		List<Thing> things = new ArrayList<Thing>();
+		
+		things.add(getCreatureThing("Crocodiles", Terrain.SWAMP, 2));
+		things.add(getCreatureThing("Mountain Men", Terrain.MOUNTAIN, 1));
+		things.add(getCreatureThing("Giant Lizard", Terrain.SWAMP, 2));
+		things.add(getCreatureThing("Swamp Beast", Terrain.SWAMP, 3));
+		things.add(getCreatureThing("Killer Racoon", Terrain.FOREST, 2));
+		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
+		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
+		
+		if (things.contains(null)) {
+			LOGGER.warning("Error creating stack 1 for Player 1.");
+			return null;
+		}
+		
+		return things;
+		
+	}
+	
+	private List<Thing> getPlayerTwoStack() {
+
+		List<Thing> things = new ArrayList<Thing>();
+		
+		things.add(getCreatureThing("Thing", Terrain.SWAMP, 2));
+		things.add(getCreatureThing("Giant Lizard", Terrain.SWAMP, 2));
+		things.add(getCreatureThing("Swamp Rat", Terrain.SWAMP, 1));
+		things.add(getCreatureThing("Unicorn", Terrain.FOREST, 4));
+		things.add(getCreatureThing("Bears", Terrain.FOREST, 2));
+		things.add(getCreatureThing("Giant Spider", Terrain.DESERT, 1));
+		things.add(getCreatureThing("Camel Corps", Terrain.DESERT, 3));
+		things.add(getCreatureThing("Sandworm", Terrain.DESERT, 3));
+		
+		if (things.contains(null)) {
+			LOGGER.warning("Error creating stack 2 for Player 2.");
+			return null;
+		}
+		
+		return things;
 		
 	}
 

@@ -40,19 +40,6 @@ public class DataImageView extends ImageView {
 		setFitWidth(width);
 	}
 	
-	public static void clear(List<DataImageView> imageViews, boolean removeSelection) {
-		
-		for (DataImageView imageView : imageViews) {
-			imageView.setData(null);
-			imageView.setImage(null);
-			
-			if (removeSelection) {
-				imageView.setSelected(false);
-			}
-		}
-		
-	}
-	
 	public void setData(Object object) {
 		this.data = object;
 	}
@@ -119,6 +106,19 @@ public class DataImageView extends ImageView {
 			setEffect(DropShadowBuilder.create().color(Color.TURQUOISE).spread(1).radius(3).build());
 		} else if (!selected) {
 			setEffect(null);
+		}
+		
+	}
+	
+	public static void clear(List<DataImageView> imageViews, boolean removeSelection) {
+		
+		for (DataImageView imageView : imageViews) {
+			imageView.setData(null);
+			imageView.setImage(null);
+			
+			if (removeSelection) {
+				imageView.setSelected(false);
+			}
 		}
 		
 	}

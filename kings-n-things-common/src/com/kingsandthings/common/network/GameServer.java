@@ -1,5 +1,6 @@
 package com.kingsandthings.common.network;
 
+import java.beans.PropertyChangeEvent;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,10 @@ import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethod;
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.model.Player;
+import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
+import com.kingsandthings.common.network.NetworkRegistry.Instruction;
 import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
 import com.kingsandthings.common.network.NetworkRegistry.PlayerConnection;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
@@ -79,6 +83,8 @@ public class GameServer  {
 			
 			PropertyChangeDispatcher.getInstance().setServer(this);
 			PropertyChangeDispatcher.getInstance().setNetworkSend(true);
+			
+			addListeners();
 			
 		}
 		
@@ -231,6 +237,39 @@ public class GameServer  {
 		
 		LOGGER.info("Player disconnected: " + name);
 		LOGGER.info(numConnected + " player(s) connected. Waiting for " + getNumRemaining() + " more player(s).");
+		
+	}
+	
+	public void sendInstructions() {
+
+		// Send actual instruction to active player only
+		String activePlayer = game.getActivePlayer().getName();
+		sendToPlayer(activePlayer, new Instruction(game.getInstruction()));
+		
+		List<Player> players = game.getPlayerManager().getPlayers();
+		for (Player player : players) {
+			if (player != game.getActivePlayer()) {
+				sendToPlayer(player.getName(), new Instruction("wait your turn"));
+			}
+		}
+		
+	}
+	
+	@SuppressWarnings("unused")
+	private void onActivePlayerChange(PropertyChangeEvent evt) {
+		sendInstructions();	
+	}
+	
+	@SuppressWarnings("unused")
+	private void onInstructionChange(PropertyChangeEvent evt) {
+		sendInstructions();
+	}
+	
+	private void addListeners() {
+
+		// Listen for game instruction changes
+		PropertyChangeDispatcher.getInstance().addListener(Game.class, "instruction", this, "onInstructionChange");
+		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "onActivePlayerChange");
 		
 	}
 	

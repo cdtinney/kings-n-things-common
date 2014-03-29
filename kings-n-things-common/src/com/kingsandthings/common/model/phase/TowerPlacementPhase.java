@@ -16,8 +16,7 @@ public class TowerPlacementPhase extends Phase {
 	public void begin() {
 		super.begin();
 		
-		//BoardView.setInstructionText("please place a tower");
-		currentInstruction = "please place a tower";
+		setInstruction("please place a tower");
 		
 		for (Player player: game.getPlayerManager().getPlayers()) {
 			

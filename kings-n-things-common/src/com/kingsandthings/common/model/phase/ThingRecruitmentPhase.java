@@ -26,7 +26,7 @@ public class ThingRecruitmentPhase extends Phase {
 		
 		//BoardView.setInstructionText("please recruit things");
 		currentStep = "Draw_Things";
-		currentInstruction = "please recruit Things";
+		setInstruction("please recruit Things");
 		
 	}
 	
@@ -36,7 +36,7 @@ public class ThingRecruitmentPhase extends Phase {
 		
 		//BoardView.setInstructionText("please place your Things");
 		currentStep = "Thing_Placement";
-		currentInstruction = "please place your Things";
+		setInstruction("please place your Things");
 		
 	}
 	

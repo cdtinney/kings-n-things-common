@@ -23,7 +23,7 @@ public class StartingKingdomsPhase extends Phase {
 		super.begin();
 		active.set(true);
 		
-		currentInstruction = "please place a control marker";
+		setInstruction("please place a control marker");
 		
 		for (Player player: game.getPlayerManager().getPlayers()) {
 			

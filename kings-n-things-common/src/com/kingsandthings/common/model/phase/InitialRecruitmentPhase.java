@@ -15,7 +15,7 @@ public class InitialRecruitmentPhase extends Phase {
 		super.begin();
 		
 		currentStep = "Draw_Things";
-		currentInstruction = "please draw 10 Things from the Cup";
+		setInstruction("please draw your initial Things (hardcoded)");
 		
 	}
 	
@@ -24,7 +24,7 @@ public class InitialRecruitmentPhase extends Phase {
 		notify(Notification.STEP);
 		
 		currentStep = "Thing_Placement";
-		currentInstruction = "please place your Things";
+		setInstruction("please place your Things");
 		
 	}
 

@@ -45,11 +45,11 @@ public class MovementPhase extends Phase {
 	
 	private void setText() {
 
-		currentInstruction = "do some movement";
+		setInstruction("do some movement");
 		
 		// Skip the player if they have no movement possible
 		if (!game.getBoard().movementPossible(game.getActivePlayer())) {
-			currentInstruction = "no movement possible! please end turn";
+			setInstruction("no movement possible! please end turn");
 		}
 		
 		

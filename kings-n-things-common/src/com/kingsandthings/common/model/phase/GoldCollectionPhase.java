@@ -7,8 +7,6 @@ import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.logging.LogLevel;
-import com.kingsandthings.util.Dialog;
-import com.kingsandthings.util.Dialog.Type;
 
 public class GoldCollectionPhase extends Phase {
 	
@@ -31,8 +29,7 @@ public class GoldCollectionPhase extends Phase {
 	public void next() {
 		super.next();
 
-		currentInstruction = "please collect gold";
-		//BoardView.setInstructionText("please collect gold");
+		setInstruction("please collect gold");
 		
 		Player player = game.getActivePlayer();
 		
@@ -46,7 +43,7 @@ public class GoldCollectionPhase extends Phase {
 	private int computeIncome(Player player) {
 		
 		// One gold piece for each land hex controlled
-		int controlledHexValue = player.getControlledTiles().size();
+		int controlledHexValue = player.getNumControlledTiles();
 		
 		// Add gold pieces for the combat value of controlled forts
 		int fortValue = 0;
@@ -77,7 +74,9 @@ public class GoldCollectionPhase extends Phase {
 		message += "\n\tSpecial Income: " + specialIncomeValue;
 		message += "\n\tSpecial Characters: " + specialCharacterValue;
 		message += "\n\nTotal: " + total;
-		Dialog.show(Type.NOTIFY, message);
+		LOGGER.log(LogLevel.DEBUG, "Player - " + player.getName() + message);
+		
+		//Dialog.show(Type.NOTIFY, message);
 		
 		return total;
 		
