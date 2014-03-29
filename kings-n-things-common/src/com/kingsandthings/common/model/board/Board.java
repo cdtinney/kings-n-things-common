@@ -123,21 +123,25 @@ public class Board implements IBoard {
 	@Override
 	public boolean placeFort(Fort fort, Tile tile) {
 		
+		Tile boardTile = getTile(tile.getId());
 		Player player = game.getActivePlayer();
 
-		player.placeFort(fort, tile);
-		game.getPhaseManager().endPlayerTurn();
+		boolean success = player.placeFort(fort, boardTile);
+		if (success) {
+			game.getPhaseManager().endPlayerTurn();
+		}
 		
-		return true;
+		return success;
 		
 	}
 	
 	@Override
 	public boolean addThingsToTile(Tile tile, List<Thing> things) {
 
+		Tile boardTile = getTile(tile.getId());
 		Player player = game.getActivePlayer();
 		
-		boolean success = tile.addThings(player, things);
+		boolean success = boardTile.addThings(player, things);
 		if (success) {
 			player.getRack().removeThings(things);
 		}
@@ -186,6 +190,23 @@ public class Board implements IBoard {
 				break;
 				
 		}
+		
+	}
+	
+	private Tile getTile(int tileId) {
+		
+		for (Tile[] row : tiles) {
+			for (Tile t : row) {
+				
+				// TODO - override Tile.equals
+				if (t != null && t.getId() == tileId) {
+					return t;
+				}
+				
+			}
+		}
+		
+		return null;
 		
 	}
 	
@@ -258,6 +279,7 @@ public class Board implements IBoard {
 			
 			if (numControlled++ < NUM_INITIAL_TILES) {
 				tile.setOwner(player);
+				// TODO - on a new thread?
 				game.getPhaseManager().endPlayerTurn();
 			}
 					
@@ -411,6 +433,7 @@ public class Board implements IBoard {
 				}
 				
 			}
+			
 		}
 		
 		return tiles;

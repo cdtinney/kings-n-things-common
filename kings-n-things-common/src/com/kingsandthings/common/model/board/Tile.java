@@ -18,9 +18,11 @@ import com.kingsandthings.logging.LogLevel;
 
 public class Tile {
 	
-	public static final int MAXIMUM_THINGS = 16;
-	
 	private static Logger LOGGER = Logger.getLogger(Tile.class.getName());
+	
+	private int id;
+	
+	public static final int MAXIMUM_THINGS = 16;
 	
 	private static final Image defaultImg = new Image("/images/tiles/back.png");
 	private transient Image image;
@@ -48,7 +50,13 @@ public class Tile {
 
 		imagePath ="/images/tiles/" + type.toString().toLowerCase() + ".png";
 		image = new Image(imagePath);
+    	
+    	this.id = System.identityHashCode(this);
 		
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public Player getOwner() {
