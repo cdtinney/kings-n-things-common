@@ -1,23 +1,9 @@
 package com.kingsandthings.common.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.logging.Logger;
 
-import javafx.scene.image.Image;
-
 import com.kingsandthings.common.model.board.Board;
-import com.kingsandthings.common.model.board.Board.TileLocation;
-import com.kingsandthings.common.model.board.IBoard;
-import com.kingsandthings.common.model.board.Tile;
-import com.kingsandthings.common.model.enums.Terrain;
-import com.kingsandthings.common.model.phase.Phase;
 import com.kingsandthings.common.model.phase.PhaseManager;
-import com.kingsandthings.common.model.things.Creature;
-import com.kingsandthings.common.model.things.Creature.Ability;
-import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class Game implements IGame {

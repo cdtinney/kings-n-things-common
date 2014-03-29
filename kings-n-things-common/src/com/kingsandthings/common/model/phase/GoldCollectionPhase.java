@@ -29,7 +29,7 @@ public class GoldCollectionPhase extends Phase {
 	public void next() {
 		super.next();
 
-		setInstruction("please collect gold");
+		setInstruction("gold collected - end turn now");
 		
 		Player player = game.getActivePlayer();
 		
@@ -74,7 +74,7 @@ public class GoldCollectionPhase extends Phase {
 		message += "\n\tSpecial Income: " + specialIncomeValue;
 		message += "\n\tSpecial Characters: " + specialCharacterValue;
 		message += "\n\nTotal: " + total;
-		LOGGER.log(LogLevel.DEBUG, "Player - " + player.getName() + message);
+		LOGGER.log(LogLevel.DEBUG, "Player - " + player.getName() + " - " + message);
 		
 		//Dialog.show(Type.NOTIFY, message);
 		

@@ -51,7 +51,7 @@ public class Tile {
 		imagePath ="/images/tiles/" + type.toString().toLowerCase() + ".png";
 		image = new Image(imagePath);
     	
-    	this.id = System.identityHashCode(this);
+    	id = System.identityHashCode(this);
 		
 	}
 	
@@ -63,29 +63,25 @@ public class Tile {
 		return owner;
 	}
 	
-	public void setOwner(Player player) {
-		
-		player.setNumControlledTiles(player.getNumControlledTiles() + 1);
-		discovered = true;
-		
-		PropertyChangeDispatcher.getInstance().notify(this, "owner", owner, owner = player);
-		
+	public Terrain getType() {
+		return type;
 	}
 	
-	public boolean hasBattleToResolve() {
-		return battleToResolve;
-	}
-	
-	public void setBattleToResolve(boolean battleToResolve) {
-		PropertyChangeDispatcher.getInstance().notify(this, "battleToResolve", this.battleToResolve, this.battleToResolve = battleToResolve);
+	public Image getImage() {
+		
+		if (!discovered) {
+			return defaultImg;
+		}
+		
+		if (image == null) {
+			image = new Image(imagePath);
+		}
+		
+		return image;		
 	}
 	
 	public List<Tile> getNeighbours() {
 		return neighbours;
-	}
-	
-	public void setNeighbours(List<Tile> neighbours) {
-		this.neighbours = neighbours;
 	}
 	
 	public int getMovementCost() {
@@ -93,12 +89,40 @@ public class Tile {
 		return doubleCost.contains(type) ? 2 : 1;
 	}
 	
+	public Fort getFort() {
+		return fort;
+	}
+	
+	public Map<Player, List<Thing>> getThings() {
+		return things;
+	}
+	
 	public boolean isDiscovered() {
 		return discovered;
 	}
 	
-	public Fort getFort() {
-		return fort;
+	public boolean hasThings() {
+		
+		for (List<Thing> playerThings : things.values()) {
+			if (!playerThings.isEmpty()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean hasBattleToResolve() {
+		return battleToResolve;
+	}
+	
+	public void setOwner(Player player) {
+		
+		player.setNumControlledTiles(player.getNumControlledTiles() + 1);
+		discovered = true;
+		
+		PropertyChangeDispatcher.getInstance().notify(this, "owner", owner, owner = player);
+		
 	}
 	
 	public boolean setFort(Fort fort) {
@@ -112,19 +136,12 @@ public class Tile {
 		return true;
 	}
 	
-	public Map<Player, List<Thing>> getThings() {
-		return things;
+	public void setNeighbours(List<Tile> neighbours) {
+		this.neighbours = neighbours;
 	}
 	
-	public boolean hasThings() {
-		
-		for (List<Thing> playerThings : things.values()) {
-			if (!playerThings.isEmpty()) {
-				return true;
-			}
-		}
-		
-		return false;
+	public void setBattleToResolve(boolean battleToResolve) {
+		PropertyChangeDispatcher.getInstance().notify(this, "battleToResolve", this.battleToResolve, this.battleToResolve = battleToResolve);
 	}
 	
 	public boolean addThings(Player player, List<Thing> list) {
@@ -183,23 +200,6 @@ public class Tile {
 		
 	}
 	
-	public Terrain getType() {
-		return type;
-	}
-	
-	public Image getImage() {
-		
-		if (!discovered) {
-			return defaultImg;
-		}
-		
-		if (image == null) {
-			image = new Image(imagePath);
-		}
-		
-		return image;		
-	}
-	
 	private boolean thingsContained(List<Thing> playerThings, List<Thing> list) {
 		
 		for (Thing thing : list) {
@@ -210,6 +210,22 @@ public class Tile {
 		
 		return false;
 	}
+    
+    @Override
+    public boolean equals(Object that) {
+    	
+    	if (this == that) {
+    		return true;
+    	}
+    	
+    	if (!(that instanceof Tile)) {
+    		return false;
+    	}
+    	
+    	Tile tile = (Tile) that;
+    	return tile.id == this.id;   
+    	
+    }
 	
 	
 }

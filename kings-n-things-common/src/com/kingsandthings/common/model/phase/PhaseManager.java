@@ -14,7 +14,8 @@ public class PhaseManager {
 	
 	private transient Game game;
 	
-	private List<Phase> phases;
+	private transient List<Phase> phases;
+	private Phase currentPhase;
 	private int currentPhaseNumber = 0;
 	
 	public PhaseManager() { }
@@ -39,6 +40,9 @@ public class PhaseManager {
 		phases.add(new SpecialPowersPhase(game));
 		phases.add(new ChangingPlayerOrderPhase(game));
 		
+		// Set current phase
+		currentPhase = phases.get(0);
+		
 	}
 	
 	public void endPlayerTurn() {
@@ -55,12 +59,13 @@ public class PhaseManager {
 	}
 	
 	public Phase getCurrentPhase() {
-		return phases.get(currentPhaseNumber);
+		return currentPhase;
+		//return phases.get(currentPhaseNumber);
 	}
 	
 	public void beginPhases() {
 		phases.get(0).begin();
-		PropertyChangeDispatcher.getInstance().notify(this, "currentPhase", null, getCurrentPhase());
+		notifyPhaseChange(null, currentPhase);
 	}
 	
 	public void nextPhase() {
@@ -77,7 +82,8 @@ public class PhaseManager {
 		}
 		
 		LOGGER.log(LogLevel.DEBUG, "Beginning phase - " + newPhase.getName());
-		
+
+		currentPhase = newPhase;
 		newPhase.begin();
 		notifyPhaseChange(oldPhase, newPhase);
 		

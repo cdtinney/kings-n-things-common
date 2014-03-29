@@ -9,10 +9,10 @@ public abstract class Thing implements Serializable {
 	
 	private static Image backImg = new Image("/images/other/thing_back.png");
 	private static Image stackImg = new Image("/images/other/thing_stack.png");
-	
-	public int id;
-	
+
 	protected String name;
+	
+	private int id;
 	
 	private transient Image image;
 	private String imagePath;
@@ -23,7 +23,7 @@ public abstract class Thing implements Serializable {
     	this.name = name;
     	this.image = image;
     	
-    	this.id = System.identityHashCode(this);
+    	id = System.identityHashCode(this);
     }
     
     public String getName() {
@@ -48,9 +48,17 @@ public abstract class Thing implements Serializable {
     }
     
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(Object that) {
     	
-    	Thing thing = (Thing) other;
+    	if (this == that) {
+    		return true;
+    	}
+    	
+    	if (!(that instanceof Thing)) {
+    		return false;
+    	}
+    	
+    	Thing thing = (Thing) that;
     	return thing.id == this.id;   
     	
     }

@@ -36,22 +36,6 @@ public class Board implements IBoard {
 		return tiles;
 	}
 	
-	public TileLocation getTileLocation(Tile tile) {
-		
-		for (int i=0; i<tiles.length; ++i) {
-			for (int j=0; j<tiles[i].length; ++j) {
-							
-				if (tiles[i][j] != null && tiles[i][j] == tile) {
-					return new TileLocation(i, j);
-				}
-				
-			}
-		}
-		
-		return null;
-		
-	}
-	
 	public boolean movementPossible(Player player) {
 		
 		for (Tile[] row : tiles) {
@@ -123,7 +107,7 @@ public class Board implements IBoard {
 	@Override
 	public boolean placeFort(Fort fort, Tile tile) {
 		
-		Tile boardTile = getTile(tile.getId());
+		Tile boardTile = getTile(tile);
 		Player player = game.getActivePlayer();
 
 		boolean success = player.placeFort(fort, boardTile);
@@ -138,7 +122,7 @@ public class Board implements IBoard {
 	@Override
 	public boolean addThingsToTile(Tile tile, List<Thing> things) {
 
-		Tile boardTile = getTile(tile.getId());
+		Tile boardTile = getTile(tile);
 		Player player = game.getActivePlayer();
 		
 		boolean success = boardTile.addThings(player, things);
@@ -149,22 +133,22 @@ public class Board implements IBoard {
 		return success;	
 		
 	}
-
-	@Override
-	public boolean setTileControl(int row, int col, boolean initial) {
+	
+	public boolean setTileControl(Tile tile, boolean initial) {
 		
 		Player player = game.getActivePlayer();
-		return setTileControl(tiles[row][col], player, initial);
+		Tile modelTile = getTile(tile);
 		
-	}
-	
-	public boolean setTileControl(Tile tile, Player player, boolean initial) {
-		
-		if (initial) {
-			return setInitialControlTile(tile, player);
+		if (modelTile == null) {
+			LOGGER.warning("Board tile not found");
+			return false;
 		}
 		
-		tile.setOwner(player);
+		if (initial) {
+			return setInitialControlTile(modelTile, player);
+		}
+		
+		modelTile.setOwner(player);
 		return true;
 		
 	}
@@ -193,13 +177,12 @@ public class Board implements IBoard {
 		
 	}
 	
-	private Tile getTile(int tileId) {
+	private Tile getTile(Tile tile) {
 		
 		for (Tile[] row : tiles) {
 			for (Tile t : row) {
 				
-				// TODO - override Tile.equals
-				if (t != null && t.getId() == tileId) {
+				if (tile.equals(t)) {
 					return t;
 				}
 				
@@ -438,19 +421,6 @@ public class Board implements IBoard {
 		
 		return tiles;
 		
-	}
-	
-	public class TileLocation {
-		
-		public int r;
-		public int c;
-		
-		public TileLocation() { }
-		
-		public TileLocation(int r, int c) {
-			this.r = r;
-			this.c = c;
-		}
 	}
 	
 }

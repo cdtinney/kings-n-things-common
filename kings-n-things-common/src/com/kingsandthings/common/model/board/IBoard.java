@@ -7,7 +7,7 @@ import com.kingsandthings.common.model.things.Thing;
 
 public interface IBoard {
 
-	public boolean setTileControl(int row, int col, boolean initial);
+	public boolean setTileControl(Tile tile, boolean initial);
 	
 	public boolean addThingsToTile(Tile tile, List<Thing> things);
 	public boolean placeFort(Fort fort, Tile tile);

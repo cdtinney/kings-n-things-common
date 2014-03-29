@@ -18,7 +18,6 @@ import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
 import com.kingsandthings.common.model.Rack;
 import com.kingsandthings.common.model.board.Board;
-import com.kingsandthings.common.model.board.Board.TileLocation;
 import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.enums.Terrain;
@@ -102,7 +101,6 @@ public class NetworkRegistry {
 		classes.add(Tile.class);
 		classes.add(Tile[][].class);
 		classes.add(Tile[].class);
-		classes.add(TileLocation.class);
 		
 		classes.add(Fort.class);
 		classes.add(Fort.Type.class);
