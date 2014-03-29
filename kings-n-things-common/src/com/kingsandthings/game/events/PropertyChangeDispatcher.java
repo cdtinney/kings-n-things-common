@@ -85,8 +85,12 @@ public class PropertyChangeDispatcher {
 	
 	private void notifyClients(Object source, String property, Object oldValue, Object newValue) {
 		
+		// Update game state of clients
+		gameServer.updateClientGameState();
+		
+		// Send property change events which will reflect the updated state
 		PropertyChange obj = new PropertyChange(source, property, oldValue, newValue);
-		gameServer.sendAll(obj);
+		gameServer.sendObject(obj);
 		
 	}
 	

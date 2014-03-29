@@ -140,7 +140,7 @@ public class Cup {
 	}
 	
 	private int numFreeRecruits(Player player) {
-		return player.getControlledTiles().size() * 2;
+		return player.getNumControlledTiles() * 2;
 	}
 	
 	private void addThings(List<? extends Thing> list) {

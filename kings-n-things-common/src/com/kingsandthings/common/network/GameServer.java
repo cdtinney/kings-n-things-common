@@ -18,6 +18,8 @@ import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
 import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
 import com.kingsandthings.common.network.NetworkRegistry.PlayerConnection;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
+import com.kingsandthings.common.network.NetworkRegistry.TileControl;
+import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
 
@@ -84,7 +86,11 @@ public class GameServer  {
 		server.stop();
 	}
 	
-	public void sendAll(Object object) {
+	public void updateClientGameState() {
+		sendObject(new UpdateGame(game));
+	}
+	
+	public void sendObject(Object object) {
 		server.sendToAllTCP(object);
 	}
 	
@@ -125,8 +131,10 @@ public class GameServer  {
 	
 	private void onAllPlayersInitialized() {
 		
-		game.start();
 		LOGGER.log(LogLevel.DEBUG, "Game started");
+		
+		game.start();
+    	server.sendToAllTCP(new UpdateGame(game));
 		
 	}
 	
@@ -210,13 +218,13 @@ public class GameServer  {
 		allPlayersConnected = false;
 	
 		connectedPlayers.remove(name);
+		PropertyChangeDispatcher.getInstance().notifyListeners(this, "connectedPlayers", null, connectedPlayers);
+		
 		game.removePlayer(name);
 		numConnected--;
 		
 		LOGGER.info("Player disconnected: " + name);
 		LOGGER.info(numConnected + " player(s) connected. Waiting for " + getNumRemaining() + " more player(s).");
-
-		PropertyChangeDispatcher.getInstance().notifyListeners(this, "connectedPlayers", null, connectedPlayers);
 		
 	}
 	

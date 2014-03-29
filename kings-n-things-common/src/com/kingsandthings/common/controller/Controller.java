@@ -1,5 +1,6 @@
 package com.kingsandthings.common.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -67,6 +68,10 @@ public abstract class Controller {
 						LOGGER.warning("Event handler cannot find method " + instance.getClass().getSimpleName() 
 								+ "." + handlerMethodName
 								+ "(" + Event.class.getSimpleName() + ")");
+						
+					} catch (InvocationTargetException e) {
+						LOGGER.warning("Exception thrown in " + instance.getClass().getSimpleName() + "." + handlerMethodName);
+						e.getTargetException().printStackTrace();
 						
 					} catch (Exception e) {
 						e.printStackTrace();

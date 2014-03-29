@@ -36,6 +36,22 @@ public class Board {
 		return tiles;
 	}
 	
+	public TileLocation getTileLocation(Tile tile) {
+		
+		for (int i=0; i<tiles.length; ++i) {
+			for (int j=0; j<tiles[i].length; ++j) {
+							
+				if (tiles[i][j] != null && tiles[i][j] == tile) {
+					return new TileLocation(i, j);
+				}
+				
+			}
+		}
+		
+		return null;
+		
+	}
+	
 	public boolean movementPossible(Player player) {
 		
 		for (Tile[] row : tiles) {
@@ -134,6 +150,10 @@ public class Board {
 		
 	}
 	
+	public boolean setTileControl(int r, int c, Player player, boolean initial) {
+		return setTileControl(tiles[r][c], player, initial);
+	}
+	
 	public boolean setTileControl(Tile tile, Player player, boolean initial) {
 		
 		if (initial) {
@@ -201,7 +221,7 @@ public class Board {
 	 */
 	private boolean setInitialControlTile(Tile tile, Player player) { 
 		
-		int numControlled = player.getControlledTiles().size();
+		int numControlled = player.getNumControlledTiles();
 		if (numControlled >= NUM_INITIAL_TILES) {
 			LOGGER.log(LogLevel.STATUS, "Only " + NUM_INITIAL_TILES + " control markers can be placed in the 'Starting Kingdoms' phase.");
 			return false;
@@ -212,6 +232,11 @@ public class Board {
 			return false;
 		}
 		
+		if (tile.getOwner() != null && !tile.getOwner().equals(player)) {
+			LOGGER.log(LogLevel.STATUS, "Tile is owned by another player.");
+			return false;
+		}
+		
 		List<Tile> neighbours = getNeighbours(tiles, tile);
 		
 		boolean playerNeighbour = false;
@@ -219,9 +244,11 @@ public class Board {
 		
 		for (Tile neighbour : neighbours) {
 			
-			if (neighbour.getOwner() == player) {
+			Player owner = neighbour.getOwner();
+			
+			if (owner != null && owner.equals(player)) {
 				playerNeighbour = true;
-			} else if (neighbour.getOwner() != null) {
+			} else if (owner != null) {
 				enemyNeighbour = true;
 			}
 			
@@ -256,7 +283,6 @@ public class Board {
 					r = i;
 					c = j;
 				}
-				
 			}
 		}
 		
@@ -324,7 +350,7 @@ public class Board {
 		Tile[][] tiles = new Tile[size][size];
 		
 		// column 0
-		tiles[0][0] = new Tile(Terrain.DESERT);		
+		tiles[0][0] = new Tile(Terrain.DESERT);
 		tiles[1][0] = new Tile(Terrain.FROZEN_WASTE);
 		tiles[2][0] = new Tile(Terrain.FOREST);
 		tiles[3][0] = new Tile(Terrain.MOUNTAIN);
@@ -387,6 +413,19 @@ public class Board {
 		
 		return tiles;
 		
+	}
+	
+	public class TileLocation {
+		
+		public int r;
+		public int c;
+		
+		public TileLocation() { }
+		
+		public TileLocation(int r, int c) {
+			this.r = r;
+			this.c = c;
+		}
 	}
 	
 }

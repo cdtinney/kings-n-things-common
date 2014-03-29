@@ -20,10 +20,14 @@ public class Player {
 	private static Logger LOGGER = Logger.getLogger(Player.class.getName());
 	
 	private String name;
+	
 	private transient Image controlMarker;
+	private String controlMarkerURL;
+
+	private transient List<Tile> controlledTiles;
+	private int numControlledTiles = 0;
 	
 	private transient Tile startingTile;
-	private transient List<Tile> controlledTiles;
 	
 	private int numGold = 0;
 	
@@ -37,9 +41,7 @@ public class Player {
 	
 	private transient List<Creature> creatures;
 	
-	public Player() {
-		
-	}
+	public Player() { }
 	
 	public Player(String name) {
 		this.name = name;
@@ -59,6 +61,14 @@ public class Player {
 	
 	public Rack getRack() {
 		return rack;
+	}
+	
+	public int getNumControlledTiles() {
+		return numControlledTiles;
+	}
+	
+	public void setNumControlledTiles(int num) {
+		numControlledTiles = num;
 	}
 	
 	public List<Tile> getControlledTiles() {
@@ -154,7 +164,16 @@ public class Player {
 	}
 	
 	public Image getControlMarker() {
+		
+		if (controlMarker == null) {
+			controlMarker = new Image(controlMarkerURL);
+		}
+		
 		return controlMarker;
+	}
+	
+	public void setControlMarkerPath(String path) {
+		this.controlMarkerURL = path;
 	}
 	
 	public void setControlMarker(Image controlMarker) {

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javafx.scene.image.Image;
 
 import com.kingsandthings.common.model.board.Board;
+import com.kingsandthings.common.model.board.Board.TileLocation;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.phase.PhaseManager;
@@ -22,23 +23,24 @@ public class Game implements IGame {
 	
 	private final int NUM_INITIAL_THINGS = 10;
 
-	private PlayerManager playerManager;
-	private PhaseManager phaseManager;
+	private transient Cup cup;
+	private transient PhaseManager phaseManager;
 	
-	private Cup cup;
+	private PlayerManager playerManager;
 	private Board board;
 	
-	public Game() {
-		cup = new Cup();
-		board = new Board(this);
-
+	public Game() { 
 		playerManager = new PlayerManager();
-		phaseManager = new PhaseManager(this);
 	}
 	
 	public void initalize() {
 		
+		cup = new Cup();
+		
+		board = new Board(this);
 		board.generateBoard(playerManager.getNumPlayers());
+		
+		phaseManager = new PhaseManager(this);
 		
 	}
 	
@@ -143,6 +145,7 @@ public class Game implements IGame {
 		classes.add(Tile.class);
 		classes.add(Tile[][].class);
 		classes.add(Tile[].class);
+		classes.add(TileLocation.class);
 	    
 		// JDK classes
 		classes.add(ArrayList.class);
@@ -153,6 +156,14 @@ public class Game implements IGame {
 		classes.add(Image.class);
 		
 		return classes;
+		
+	}
+
+	@Override
+	public boolean setTileControl(int r, int c, boolean initial) {
+		
+		Player player = getActivePlayer();
+		return board.setTileControl(r, c, player, initial);
 		
 	}
 

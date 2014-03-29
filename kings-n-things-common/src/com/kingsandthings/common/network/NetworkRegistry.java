@@ -12,6 +12,7 @@ import com.kingsandthings.common.model.phase.PhaseManager;
 public class NetworkRegistry {
 	
 	static public final int GAME_ID = 42;
+	static public final int BOARD_ID = 42;
 	
     static public void registerClasses (EndPoint endPoint) {
     	
@@ -23,6 +24,8 @@ public class NetworkRegistry {
 	    // Network message classes
 	    kryo.register(RegisterPlayer.class);
 	    kryo.register(InitializeGame.class);
+	    kryo.register(UpdateGame.class);
+	    kryo.register(TileControl.class);
 	    kryo.register(NetworkPlayerStatus.class);
 	    
 	    // Model classes
@@ -56,6 +59,10 @@ public class NetworkRegistry {
 		PLAYER_DISCONNECTED,
 		PLAYER_CONNECTED,
 		PLAYER_INITIALIZED
+	}
+	
+	static public class PlayerConnection extends Connection {
+		public String name;
 	}
     
     static public class PropertyChange {
@@ -100,8 +107,32 @@ public class NetworkRegistry {
 		
 	}
 	
-	static public class PlayerConnection extends Connection {
-		public String name;
+	static public class UpdateGame {
+
+		public Game game;
+		
+		public UpdateGame() { }
+		
+		public UpdateGame(Game game) {
+			this.game = game;
+		}
+		
+	}
+	
+	static public class TileControl {
+		
+		public int row;
+		public int col;
+		public boolean initial;
+		
+		public TileControl() { }
+		
+		public TileControl(int r, int c, boolean initial) {
+			this.row = r;
+			this.col = c;
+			this.initial = initial;
+		}
+		
 	}
     
 }

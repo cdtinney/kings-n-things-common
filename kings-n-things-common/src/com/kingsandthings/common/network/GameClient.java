@@ -1,8 +1,6 @@
 package com.kingsandthings.common.network;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -11,7 +9,9 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethodResult;
+import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.network.NetworkRegistry.PropertyChange;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
@@ -31,19 +31,18 @@ public class GameClient {
 	private boolean connected = false;
 	
 	private String name;
-	private List<NetworkObjectHandler> handlers;
+	
+	private NetworkObjectHandler objectHandler;
 	
 	public GameClient(String name) { 
 		this.name = name;
-		
-		handlers = new ArrayList<NetworkObjectHandler>();
 	}
 	
 	public void start(String ip, int port) {
 		
 		if (client == null) {
 			
-			client = new Client(8192, 4096);
+			client = new Client(8192, 8192);
 			client.start();
 			client.addListener(new ClientListener());
 			
@@ -58,13 +57,24 @@ public class GameClient {
 	public void end() {
 		client.stop();
 	}
-
-	public List<NetworkObjectHandler> getHandlers() {
-		return handlers;
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setHandler(NetworkObjectHandler handler) {
+		objectHandler = handler;
 	}
 	
 	public void send(Object object) {
 		client.sendTCP(object);
+	}
+	
+	public IGame requestGame() {
+		
+		IGame game =  ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.GAME_ID, IGame.class);
+		return game;
+		
 	}
 	
 	private void connect(final String ip, final int port) {
@@ -127,14 +137,6 @@ public class GameClient {
 		
 	}
 	
-	private void dispatchObject(Object object) {
-
-		for (NetworkObjectHandler handler : handlers) {
-			handler.handleObject(object);
-		}
-		
-	}
-	
 	private class ClientListener extends Listener {
 		
 		@Override
@@ -160,7 +162,12 @@ public class GameClient {
 				return;
 			}
 			
-			dispatchObject(object);
+			if (objectHandler == null) {
+				LOGGER.log(LogLevel.DEBUG, "No handler set - " + object);
+				return;
+			}
+			
+			objectHandler.handleObject(object);
 			
 		}
 

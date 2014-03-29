@@ -139,7 +139,8 @@ public class PlayerManager {
 	
 	private void setControlMarkerImage(Player player, int position) {
 		String path = "/images/other/control_marker_" + position + ".png";
-		player.setControlMarker(new Image(path));	
+		player.setControlMarker(new Image(path));
+		player.setControlMarkerPath(path);
 	}
 	
 	private boolean setInitialPosition(Player player, int position) {

@@ -17,9 +17,7 @@ public class PhaseManager {
 	private transient List<Phase> phases;
 	private int currentPhaseNumber = 0;
 	
-	public PhaseManager() {
-		
-	}
+	public PhaseManager() {}
 	
 	public PhaseManager(Game game) {
 		

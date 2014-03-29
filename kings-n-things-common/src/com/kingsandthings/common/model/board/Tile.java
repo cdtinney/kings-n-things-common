@@ -24,6 +24,7 @@ public class Tile {
 	
 	private static final Image defaultImg = new Image("/images/tiles/back.png");
 	private transient Image image;
+	private String imagePath;
 
 	private transient List<Tile> neighbours;
 	
@@ -36,8 +37,7 @@ public class Tile {
 	
 	private boolean battleToResolve = false;
 	
-	public Tile() {
-	}
+	public Tile() { }
 	
 	public Tile(Terrain type) {
 		
@@ -46,12 +46,22 @@ public class Tile {
 		neighbours = new ArrayList<Tile>();
 		things = new HashMap<Player, List<Thing>>();
 
-		image = new Image("/images/tiles/" + type.toString().toLowerCase() + ".png");
+		imagePath ="/images/tiles/" + type.toString().toLowerCase() + ".png";
+		image = new Image(imagePath);
 		
 	}
 	
 	public Player getOwner() {
 		return owner;
+	}
+	
+	public void setOwner(Player player) {
+		
+		player.setNumControlledTiles(player.getNumControlledTiles() + 1);
+		discovered = true;
+		
+		PropertyChangeDispatcher.getInstance().notify(this, "owner", owner, owner = player);
+		
 	}
 	
 	public boolean hasBattleToResolve() {
@@ -60,14 +70,6 @@ public class Tile {
 	
 	public void setBattleToResolve(boolean battleToResolve) {
 		PropertyChangeDispatcher.getInstance().notify(this, "battleToResolve", this.battleToResolve, this.battleToResolve = battleToResolve);
-	}
-	
-	public void setOwner(Player player) {
-		
-		player.getControlledTiles().add(this);
-		discovered = true;
-		
-		PropertyChangeDispatcher.getInstance().notify(this, "owner", owner, owner = player);
 	}
 	
 	public List<Tile> getNeighbours() {
@@ -183,6 +185,10 @@ public class Tile {
 			return defaultImg;
 		}
 		
+		if (image == null) {
+			image = new Image(imagePath);
+		}
+		
 		return image;		
 	}
 	
@@ -196,5 +202,6 @@ public class Tile {
 		
 		return false;
 	}
-
+	
+	
 }

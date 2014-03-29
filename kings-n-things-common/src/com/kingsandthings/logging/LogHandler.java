@@ -30,16 +30,6 @@ public class LogHandler extends Handler {
 	}
 
 	@Override
-	public void close() throws SecurityException {
-		// Do nothing
-	}
-
-	@Override
-	public void flush() {
-		// Do nothing
-	}
-
-	@Override
 	public void publish(LogRecord r) {
 		
 		if (r.getLevel() == LogLevel.STATUS) {
@@ -55,6 +45,16 @@ public class LogHandler extends Handler {
 		
 		System.out.println(getFormatter().format(r));
 		
+	}
+
+	@Override
+	public void close() throws SecurityException {
+		// Do nothing
+	}
+
+	@Override
+	public void flush() {
+		// Do nothing
 	}
 	
 	private void clearStatusMessage(int timeElapsed, final String message) {
