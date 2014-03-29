@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.things.Creature;
+import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.model.things.ThingImport;
 import com.kingsandthings.logging.LogLevel;
@@ -23,6 +24,7 @@ public class Cup {
 		
 		// TODO - Import all Things
 		addThings(ThingImport.importCreatures());
+		addThings(ThingImport.importSpecialIncomeCounters());
 		
 	}
 	
@@ -137,6 +139,27 @@ public class Cup {
 		
 	}
 	
+	private Thing findSpecialIncome(String name, Terrain terrain, int goldValue) {
+
+		for (Thing thing : things) {
+			
+			if (!(thing instanceof SpecialIncome)) {
+				continue;
+			}
+			
+			SpecialIncome specialIncome = (SpecialIncome) thing;
+			
+			if (specialIncome.getName().equals(name) && specialIncome.getTerrainType() == terrain &&
+					specialIncome.getGoldValue() == goldValue) {
+				return thing;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
 	private List<Thing> getPlayerOneStack() {
 
 		List<Thing> things = new ArrayList<Thing>();
@@ -148,6 +171,9 @@ public class Cup {
 		things.add(getCreatureThing("Killer Racoon", Terrain.FOREST, 2));
 		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
 		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
+		
+		things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
+		things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 1 for Player 1.");
@@ -170,6 +196,9 @@ public class Cup {
 		things.add(getCreatureThing("Giant Spider", Terrain.DESERT, 1));
 		things.add(getCreatureThing("Camel Corps", Terrain.DESERT, 3));
 		things.add(getCreatureThing("Sandworm", Terrain.DESERT, 3));
+		
+		things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
+		things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 2 for Player 2.");

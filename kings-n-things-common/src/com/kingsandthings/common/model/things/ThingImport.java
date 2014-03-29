@@ -19,10 +19,10 @@ public class ThingImport {
 	private static final String thingPath = "resources\\images\\things\\";
 	
 	private static final String creaturePath = thingPath + "defenders\\";
-	private static final String magicPath = thingPath + "magic";
+	private static final String specialIncomePath = thingPath + "special_income";
+//	private static final String magicPath = thingPath + "magic";
 //	private static final String fortPath = thingPath + "fort";
 //	private static final String specialPath = thingPath + "special";
-//	private static final String incomePath = thingPath + "special_income";
 //	private static final String treasurePath = thingPath + "treasure";
 	
 	private static final Map<String, String> options;
@@ -81,21 +81,44 @@ public class ThingImport {
         return creatures;
         
     }
+    
+    public static List<SpecialIncome> importSpecialIncomeCounters() {
 
-	@SuppressWarnings("unused")
-	public static List<Magic> importMagicItems() {
-
-    	List<Magic> magicItems = new ArrayList<Magic>();
+    	List<SpecialIncome> counters = new ArrayList<SpecialIncome>();
     	
-        List<File> files = FileUtils.listFiles(magicPath, FileUtils.imageExtensions);
+		List<File> files = FileUtils.listFiles(specialIncomePath, FileUtils.imageExtensions);
+        
+        for (File file : files) {
+        	
+        	String fileName = file.getName();
+        	
+        	String name = getValue(fileName, options.get("name")).replace("_", " ");
+        	Integer value = Integer.parseInt(getValue(fileName, options.get("value")));
+        	String terrainType = getValue(fileName, options.get("terrain"));
+        	
+        	String path = getImagePath(specialIncomePath, null, fileName);
+        	
+        	Integer numOccurrences = 1;
+        	String num = getValue(fileName, options.get("num"));
+        	if (num != null) {
+        		numOccurrences = Integer.parseInt(num);
+        	}
+        	
+        	for (int i=0; i<numOccurrences; ++i) {
+        		
+        		SpecialIncome counter = new SpecialIncome(name, value, terrainType, new Image(path));
+        		counter.setImagePath(path);
+        		
+        		counters.add(counter);
+            	
+        	}
+        	
+        }
     	
-    	for (File file : files) {
-    		// TODO - import magic items
-    	}
+    	return counters;
     	
-    	return magicItems;
-		
-	}
+    }
+    
    
 	private static List<String> getMultipleValues(String fileName, String optionSpecifier) {
     	

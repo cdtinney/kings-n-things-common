@@ -240,7 +240,7 @@ public class GameServer  {
 		
 	}
 	
-	public void sendInstructions() {
+	private void sendInstructions() {
 
 		// Send actual instruction to active player only
 		String activePlayer = game.getActivePlayer().getName();

@@ -15,6 +15,8 @@ public class SpecialIncome extends Thing {
 	private int goldValue;
 	
 	private boolean placedOnBoard = false;
+	
+	public SpecialIncome() { }
 
 	public SpecialIncome(String name, int value, String terrainType, Image image) {
 		super(name, image);
@@ -26,6 +28,7 @@ public class SpecialIncome extends Thing {
 		} catch (IllegalArgumentException e) {
 			LOGGER.warning(e.getMessage());
 		}
+		
 	}
 	
 	public int getGoldValue() {
