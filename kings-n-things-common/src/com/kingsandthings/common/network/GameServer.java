@@ -18,7 +18,6 @@ import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
 import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
 import com.kingsandthings.common.network.NetworkRegistry.PlayerConnection;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
-import com.kingsandthings.common.network.NetworkRegistry.TileControl;
 import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
