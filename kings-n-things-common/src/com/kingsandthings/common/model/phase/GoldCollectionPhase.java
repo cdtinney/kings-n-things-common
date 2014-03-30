@@ -56,7 +56,7 @@ public class GoldCollectionPhase extends Phase {
 		for (SpecialIncome counter : player.getSpecialIncomeCounters()) {
 			
 			// Special income counters placed on the board only
-			if (counter.placedOnBoard()) {
+			if (counter.isPlaced()) {
 				specialIncomeValue += counter.getGoldValue();
 			}
 			

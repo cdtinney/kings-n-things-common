@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.things.Fort;
+import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.game.events.PropertyChangeDispatcher;
 import com.kingsandthings.logging.LogLevel;
@@ -19,31 +20,31 @@ import com.kingsandthings.logging.LogLevel;
 public class Tile {
 	
 	private static Logger LOGGER = Logger.getLogger(Tile.class.getName());
-	
-	private int id;
-	
+
 	public static final int MAXIMUM_THINGS = 16;
 	
 	private static final Image defaultImg = new Image("/images/tiles/back.png");
 	private transient Image image;
 	private String imagePath;
-
-	private transient List<Tile> neighbours;
 	
-	private Terrain type = null;
-	private boolean discovered = false;
+	private int id;
+	
+	private transient List<Tile> neighbours;
 
 	private Player owner;
-	private Fort fort;
 	private Map<Player, List<Thing>> things;
+	private Terrain terrainType;
+	private Fort fort;
+	private SpecialIncome specialIncome;
 	
+	private boolean discovered = false;
 	private boolean battleToResolve = false;
 	
 	public Tile() { }
 	
 	public Tile(Terrain type) {
 		
-		this.type = type;
+		this.terrainType = type;
 		
 		neighbours = new ArrayList<Tile>();
 		things = new HashMap<Player, List<Thing>>();
@@ -63,8 +64,8 @@ public class Tile {
 		return owner;
 	}
 	
-	public Terrain getType() {
-		return type;
+	public Terrain getTerrainType() {
+		return terrainType;
 	}
 	
 	public Image getImage() {
@@ -86,11 +87,15 @@ public class Tile {
 	
 	public int getMovementCost() {
 		EnumSet<Terrain> doubleCost = EnumSet.of(Terrain.SWAMP, Terrain.MOUNTAIN, Terrain.FOREST, Terrain.JUNGLE);
-		return doubleCost.contains(type) ? 2 : 1;
+		return doubleCost.contains(terrainType) ? 2 : 1;
 	}
 	
 	public Fort getFort() {
 		return fort;
+	}
+	
+	public SpecialIncome getSpecialIncome() {
+		return specialIncome;
 	}
 	
 	public Map<Player, List<Thing>> getThings() {
@@ -134,6 +139,18 @@ public class Tile {
 		
 		PropertyChangeDispatcher.getInstance().notify(this, "fort", this.fort, this.fort = fort);
 		return true;
+	}
+	
+	public boolean setSpecialIncome(SpecialIncome specialIncome) {
+		
+		if (this.specialIncome != null) {
+			LOGGER.log(LogLevel.STATUS, "This tile already contains a special income counter.");
+			return false;
+		}
+		
+		PropertyChangeDispatcher.getInstance().notify(this, "specialIncome", this.specialIncome, this.specialIncome = specialIncome);
+		return true;
+		
 	}
 	
 	public void setNeighbours(List<Tile> neighbours) {
@@ -199,17 +216,6 @@ public class Tile {
 		return playerThings.remove(thing);
 		
 	}
-	
-	private boolean thingsContained(List<Thing> playerThings, List<Thing> list) {
-		
-		for (Thing thing : list) {
-			if (playerThings.contains(thing)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
     
     @Override
     public boolean equals(Object that) {
@@ -227,5 +233,15 @@ public class Tile {
     	
     }
 	
+	private boolean thingsContained(List<Thing> playerThings, List<Thing> list) {
+		
+		for (Thing thing : list) {
+			if (playerThings.contains(thing)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 }

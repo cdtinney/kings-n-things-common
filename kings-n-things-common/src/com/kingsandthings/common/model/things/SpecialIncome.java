@@ -14,7 +14,7 @@ public class SpecialIncome extends Thing {
 	private Terrain terrainType;
 	private int goldValue;
 	
-	private boolean placedOnBoard = false;
+	private boolean isPlaced = false;
 	
 	public SpecialIncome() { }
 
@@ -39,8 +39,12 @@ public class SpecialIncome extends Thing {
 		return terrainType;
 	}
 	
-	public boolean placedOnBoard() {
-		return placedOnBoard;
+	public boolean isPlaced() {
+		return isPlaced;
+	}
+	
+	public void setPlaced(boolean placed) {
+		isPlaced = placed;
 	}
 	
 }

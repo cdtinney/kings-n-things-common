@@ -60,31 +60,84 @@ public class Player {
 		
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
+	public Tile getStartingTile() {
+		return startingTile;
+	}
+	
+	public Image getControlMarker() {
+		
+		if (controlMarker == null) {
+			controlMarker = new Image(controlMarkerURL);
+		}
+		
+		return controlMarker;
+	}
+	
 	public Rack getRack() {
 		return rack;
-	}
-	
-	public int getNumControlledTiles() {
-		return numControlledTiles;
-	}
-	
-	public void setNumControlledTiles(int num) {
-		numControlledTiles = num;
 	}
 	
 	public List<Tile> getControlledTiles() {
 		return controlledTiles;
 	}
 	
+	public int getNumControlledTiles() {
+		return numControlledTiles;
+	}
+	
 	public List<Fort> getForts() {
 		return forts;
+	}
+	
+	public List<SpecialIncome> getSpecialIncomeCounters() {
+		return specialIncomeCounters;
+	}
+	
+	public List<SpecialCharacter> getSpecialCharacters() {
+		return specialCharacters;
+	}
+	
+	public List<Treasure> getTreasures() {
+		return treasures;
+	}
+	
+	public List<RandomEvent> getRandomEvents() {
+		return randomEvents;
+	}
+	
+	public List<Creature> getCreatures() {
+		return creatures;
+	}
+	
+	public int getNumGold() {
+		return numGold;
+	}
+	
+	public void setStartingTile(Tile tile) {
+		startingTile = tile;
+		startingTile.setOwner(this);
+	}
+	
+	public void setControlMarker(Image controlMarker) {
+		this.controlMarker = controlMarker;
+	}
+	
+	public void setControlMarkerPath(String path) {
+		this.controlMarkerURL = path;
+	}
+	
+	public void setNumControlledTiles(int num) {
+		numControlledTiles = num;
 	}
 	
 	public boolean placeFort(Fort fort, Tile tile) {
 		
 		boolean success = tile.setFort(fort);
-		if (success) {
-			// Drag and drop creates a duplicate object, so we have to find it in the list
+		if (success && forts.contains(fort)) {
 			forts.get(forts.indexOf(fort)).setPlaced(true);
 		}
 
@@ -118,33 +171,22 @@ public class Player {
 		PropertyChangeDispatcher.getInstance().notify(this, "forts", oldForts, forts);
 		
 	}
-	
-	public List<SpecialIncome> getSpecialIncomeCounters() {
-		return specialIncomeCounters;
-	}
-	
-	public List<SpecialCharacter> getSpecialCharacters() {
-		return specialCharacters;
-	}
-	
-	public List<Treasure> getTreasures() {
-		return treasures;
-	}
-	
-	public List<RandomEvent> getRandomEvents() {
-		return randomEvents;
-	}
-	
-	public List<Creature> getCreatures() {
-		return creatures;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public int getNumGold() {
-		return numGold;
+
+	public boolean placeSpecialIncome(SpecialIncome specialIncome, Tile tile) {
+		
+		boolean success = tile.setSpecialIncome(specialIncome);
+		if (success) {
+			
+			// Remove the counter from the rack and add to the list of placed counters
+			rack.removeThing(specialIncome);
+			
+			specialIncomeCounters.add(specialIncome);
+			specialIncome.setPlaced(true);
+			
+		}
+		
+		return success;
+		
 	}
 	
 	public void addGold(int num) {
@@ -153,32 +195,6 @@ public class Player {
 	
 	public void removeGold(int num) {
 		PropertyChangeDispatcher.getInstance().notify(this, "numGold", numGold, numGold = (numGold - num));
-	}
-	
-	public void setStartingTile(Tile tile) {
-		startingTile = tile;
-		startingTile.setOwner(this);
-	}
-	
-	public Tile getStartingTile() {
-		return startingTile;
-	}
-	
-	public Image getControlMarker() {
-		
-		if (controlMarker == null) {
-			controlMarker = new Image(controlMarkerURL);
-		}
-		
-		return controlMarker;
-	}
-	
-	public void setControlMarkerPath(String path) {
-		this.controlMarkerURL = path;
-	}
-	
-	public void setControlMarker(Image controlMarker) {
-		this.controlMarker = controlMarker;
 	}
 	
 	@Override

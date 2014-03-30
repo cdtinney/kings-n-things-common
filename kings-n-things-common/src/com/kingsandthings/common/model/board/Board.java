@@ -10,6 +10,7 @@ import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Fort;
+import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.logging.LogLevel;
 
@@ -120,10 +121,30 @@ public class Board implements IBoard {
 	}
 	
 	@Override
+	public boolean placeSpecialIncome(SpecialIncome specialIncome, Tile tile) {
+
+		Tile boardTile = getTile(tile);
+		Player player = game.getActivePlayer();
+		
+		if (boardTile.getTerrainType() != specialIncome.getTerrainType()) {
+			LOGGER.warning("Cannot place special income counter in a tile with different terrain type.");
+			return false;
+		}
+		
+		return player.placeSpecialIncome(specialIncome, boardTile);
+		
+	}
+	
+	@Override
 	public boolean addThingsToTile(Tile tile, List<Thing> things) {
 
 		Tile boardTile = getTile(tile);
 		Player player = game.getActivePlayer();
+		
+		if (!boardTile.getOwner().equals(player)) {
+			LOGGER.warning("Cannot add Things to a tile the player does not own.");
+			return false;
+		}
 		
 		boolean success = boardTile.addThings(player, things);
 		if (success) {
