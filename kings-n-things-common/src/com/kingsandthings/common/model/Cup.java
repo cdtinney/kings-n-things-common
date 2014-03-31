@@ -84,9 +84,9 @@ public class Cup {
 		
 		List<Thing> things = null;
 		if (pos == 1) {
-			things = getPlayerOneStack();
+			things = getPlayer1Stack1Min();
 		} else if (pos == 2) {
-			things = getPlayerTwoStack();
+			things = getPlayer2Stack2Min();
 		}
 		
 		if (things != null && player.getRack().addThings(things)) {
@@ -160,7 +160,7 @@ public class Cup {
 		
 	}
 	
-	private List<Thing> getPlayerOneStack() {
+	public List<Thing> getPlayer1Stack1Min() {
 
 		List<Thing> things = new ArrayList<Thing>();
 		
@@ -172,8 +172,8 @@ public class Cup {
 		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
 		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
 		
-		things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
-		things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
+//		things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
+//		things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 1 for Player 1.");
@@ -184,7 +184,7 @@ public class Cup {
 		
 	}
 	
-	private List<Thing> getPlayerTwoStack() {
+	public List<Thing> getPlayer2Stack2Min() {
 
 		List<Thing> things = new ArrayList<Thing>();
 		
@@ -197,8 +197,8 @@ public class Cup {
 		things.add(getCreatureThing("Camel Corps", Terrain.DESERT, 3));
 		things.add(getCreatureThing("Sandworm", Terrain.DESERT, 3));
 		
-		things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
-		things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
+//		things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
+//		things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 2 for Player 2.");

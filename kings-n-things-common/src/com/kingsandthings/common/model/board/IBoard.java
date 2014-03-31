@@ -13,5 +13,8 @@ public interface IBoard {
 	public boolean addThingsToTile(Tile tile, List<Thing> things);
 	public boolean placeFort(Fort fort, Tile tile);
 	public boolean placeSpecialIncome(SpecialIncome specialIncome, Tile tile);
+
+	public boolean moveThingsToUnexploredTile(int roll, Tile initialMovementTile, Tile tile, List<Thing> selectedThings);
+	public boolean moveThings(Tile initialMovementTile, Tile tile, List<Thing> selectedThings);
 	
 }

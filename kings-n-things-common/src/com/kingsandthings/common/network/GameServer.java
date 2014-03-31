@@ -82,9 +82,6 @@ public class GameServer  {
 			objectSpace.setExecutor(Executors.newCachedThreadPool());
 			
 			PropertyChangeDispatcher.getInstance().setServer(this);
-			PropertyChangeDispatcher.getInstance().setNetworkSend(true);
-			
-			addListeners();
 			
 		}
 		
@@ -134,10 +131,13 @@ public class GameServer  {
 		
 		LOGGER.info("All players connected. Initializing game.");
 		
-		game.initalize();
+		game.initalize(1);
     	server.sendToAllTCP(new InitializeGame(game));
     	
     	NetworkRegistry.registerRMIObject(objectSpace, NetworkRegistry.BOARD_ID, game.getBoard());
+
+		PropertyChangeDispatcher.getInstance().setNetworkSend(true);
+		addListeners();
 		
 	}
 	

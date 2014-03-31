@@ -1,6 +1,7 @@
 package com.kingsandthings.common.model.phase;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,9 +33,9 @@ public class PhaseManager {
 		
 		// Main sequence
 		phases.add(new GoldCollectionPhase(game));
-		phases.add(new RecruitCharactersPhase(game));
-		phases.add(new ThingRecruitmentPhase(game));
-		phases.add(new RandomEventsPhase(game));
+		//phases.add(new RecruitCharactersPhase(game));
+		//phases.add(new ThingRecruitmentPhase(game));
+		//phases.add(new RandomEventsPhase(game));
 		phases.add(new MovementPhase(game));
 		phases.add(new ConstructionPhase(game));
 		phases.add(new SpecialPowersPhase(game));
@@ -43,6 +44,10 @@ public class PhaseManager {
 		// Set current phase
 		currentPhase = phases.get(0);
 		
+	}
+	
+	public Phase getCurrentPhase() {
+		return currentPhase;
 	}
 	
 	public void endPlayerTurn() {
@@ -56,11 +61,6 @@ public class PhaseManager {
 			
 		}.start();
 		
-	}
-	
-	public Phase getCurrentPhase() {
-		return currentPhase;
-		//return phases.get(currentPhaseNumber);
 	}
 	
 	public void beginPhases() {
@@ -86,6 +86,19 @@ public class PhaseManager {
 		currentPhase = newPhase;
 		newPhase.begin();
 		notifyPhaseChange(oldPhase, newPhase);
+		
+	}
+	
+	public void skipInitialPhases() {
+		
+		Iterator<Phase> iter = phases.iterator();
+		while (iter.hasNext()) {
+			if (iter.next().isInitial()) {
+				iter.remove();
+			}
+		}
+		
+		currentPhase = phases.get(0);
 		
 	}
 	

@@ -59,7 +59,7 @@ public abstract class Phase {
 	
 	public void nextTurn() {
 		
-		game.getPlayerManager().nextPlayer();
+		game.getPlayerManager().setNextPlayerActive();
 		currentNumberTurns++;
 		
 		if (isLastTurn()) {

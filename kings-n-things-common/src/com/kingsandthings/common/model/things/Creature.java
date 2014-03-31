@@ -32,9 +32,7 @@ public class Creature extends Thing {
 	private Terrain terrainType;
 	private int combatValue;
 	
-	public Creature() {
-		
-	}
+	public Creature() { }
 	
 	public Creature(String name, String terrainType, int combatValue, Image image) {
 		this(name, terrainType, null, combatValue, image);

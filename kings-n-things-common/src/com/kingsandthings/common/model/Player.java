@@ -27,8 +27,6 @@ public class Player {
 	private transient List<Tile> controlledTiles;
 	private int numControlledTiles = 0;
 	
-	private transient Tile startingTile;
-	
 	private int numGold = 0;
 	
 	private transient Rack rack;
@@ -62,10 +60,6 @@ public class Player {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public Tile getStartingTile() {
-		return startingTile;
 	}
 	
 	public Image getControlMarker() {
@@ -115,11 +109,6 @@ public class Player {
 	
 	public int getNumGold() {
 		return numGold;
-	}
-	
-	public void setStartingTile(Tile tile) {
-		startingTile = tile;
-		startingTile.setOwner(this);
 	}
 	
 	public void setControlMarker(Image controlMarker) {

@@ -31,11 +31,89 @@ public class Board implements IBoard {
 	
 	public void generateBoard(int numPlayers) {
 		tiles = generateTiles(10);
+		setNeighbours();
 	}
 	
 	public Tile[][] getTiles() {
 		return tiles;
 	}
+	
+	public List<Tile> getNeighbours(Tile[][] tiles, Tile tile) {
+		
+		List<Tile> neighbours = new ArrayList<Tile>();
+		
+		int r = -1;
+		int c = -1;
+		
+		for (int i=0; i<tiles.length; ++i) {
+			for (int j=0; j<tiles[i].length; ++j) {
+				
+				if (tiles[i][j] != null && tiles[i][j].equals(tile)) {
+					r = i;
+					c = j;
+				}
+			}
+		}
+		
+		if (r == -1 || c == -1) {
+			return null;
+		}
+		
+		// Right above
+		if (c < 3) {
+			Tile rightAbove = tiles[r][c+1];
+			neighbours.add(rightAbove);
+			
+		} else if (r > 0 && c >= 3) {
+			Tile rightAbove = tiles[r-1][c+1];
+			neighbours.add(rightAbove);
+		} 
+		
+		// Right below
+		if (c < 6) {
+			int rBelowOffset = c < 3 ? 0 : 1;
+			Tile rightBelow = tiles[r+1-rBelowOffset][c+1];
+			neighbours.add(rightBelow);
+		}
+		
+		// Columns from left -> center
+		if (c > 0 && c <= 3) {
+			
+			if (r > 0) {
+				Tile leftAbove = tiles[r-1][c-1];
+				neighbours.add(leftAbove);
+			}
+			
+			Tile leftBelow = tiles[r][c-1];
+			neighbours.add(leftBelow);
+		}
+		
+		// Columns from center+1 -> right
+		if (c > 3) {
+			
+			Tile leftAbove = tiles[r][c-1];
+			Tile leftBelow = tiles[r+1][c-1];
+			
+			neighbours.add(leftAbove);
+			neighbours.add(leftBelow);
+		}
+		
+		if (r < 6) {
+			Tile below = tiles[r+1][c];
+			neighbours.add(below);
+		}
+		
+		if (r > 0) {
+			Tile above = tiles[r-1][c];
+			neighbours.add(above);
+		}
+		
+		neighbours.removeAll(Collections.singleton(null));
+		
+		return neighbours;
+		
+	}
+	
 	
 	public boolean movementPossible(Player player) {
 		
@@ -65,38 +143,76 @@ public class Board implements IBoard {
 		
 	}
 	
-	public void moveThingsToUnexploredTile(int roll, Tile beginTile, Tile endTile, List<Thing> things) {
+	public boolean moveThingsToUnexploredTile(int roll, Tile beginTile, Tile endTile, List<Thing> things) {
+		
+		Tile boardBeginTile = getTile(beginTile);
+		Tile boardEndTile = getTile(endTile);
 		
 		if (roll != 1 && roll != 6) {
 			// TASK - Explore tiles.
-			return;
+			return false;
 		}
 		
 		Player player = game.getActivePlayer();
 		
-		boolean success = moveThings(beginTile, endTile, things);
-		
+		boolean success = boardEndTile.addThings(player, things);
 		if (success) {
-			LOGGER.log(LogLevel.STATUS, player.getName() + " has rolled a 1 or 6 and captured an unexplored hex without combat.");
-			endTile.setOwner(player);
-			
-			// End movement for all the things
+
+			boardBeginTile.removeThings(player, things);
+			boardEndTile.setOwner(player);
 			endMovement(things);
+			
 		}
+		
+		return success;
 		
 	}
 	
 	public boolean moveThings(Tile beginTile, Tile endTile, List<Thing> things) {
-
+		
+		Tile boardBeginTile = getTile(beginTile);
+		Tile boardEndTile = getTile(endTile);
+		
 		Player player = game.getActivePlayer();
 		
-		boolean success =  endTile.addThings(player, things);
+		if (!boardEndTile.getOwner().equals(player)) {
+			
+			boolean success = false;
+			
+			// If the tile has enemy things with combat values, movement is stopped
+			if (boardEndTile.hasThings()) {
+				
+				success =  boardEndTile.addThings(player, things);
+				if (success) {
+					
+					boardBeginTile.removeThings(player, things);
+					endMovement(things);
+					
+				}
+			
+			// Otherwise, the hex is conquered 
+			} else {
+				
+				success =  boardEndTile.addThings(player, things);
+				if (success) {
+					
+					boardBeginTile.removeThings(player, things);
+					endMovement(things);
+					
+				}
+				
+				boardEndTile.setOwner(player);
+				
+			}
+			
+			return success;
+			
+		}
+		
+		boolean success =  boardEndTile.addThings(player, things);
 		if (success) {
 			
-			// Remove them from the initial tile
-			beginTile.removeThings(player, things);
-			
-			// Increment movement for each thing
+			boardBeginTile.removeThings(player, things);
 			decrementMovement(things);
 			
 		}
@@ -171,30 +287,6 @@ public class Board implements IBoard {
 		
 		modelTile.setOwner(player);
 		return true;
-		
-	}
-	
-	public void setStartingTile(Player player, int position) {
-		
-		switch(position) {
-		
-			case 1:
-				player.setStartingTile(tiles[0][5]);
-				break;
-		
-			case 2:
-				player.setStartingTile(tiles[4][5]);
-				break;
-		
-			case 3:
-				player.setStartingTile(tiles[4][1]);
-				break;
-		
-			case 4:
-				player.setStartingTile(tiles[0][1]);
-				break;
-				
-		}
 		
 	}
 	
@@ -283,93 +375,15 @@ public class Board implements IBoard {
 			
 			if (numControlled++ < NUM_INITIAL_TILES) {
 				tile.setOwner(player);
-				// TODO - on a new thread?
 				game.getPhaseManager().endPlayerTurn();
 			}
 					
 			return true;
 			
-		} else {
-			LOGGER.log(LogLevel.STATUS, "Invalid tile. Player must own at least one adjacent tile, and no enemies can own adjacent tiles.");
-			
 		}
-		
+			
+		LOGGER.log(LogLevel.STATUS, "Invalid tile. Player must own at least one adjacent tile, and no enemies can own adjacent tiles.");
 		return false;
-	}
-	
-	private List<Tile> getNeighbours(Tile[][] tiles, Tile tile) {
-		
-		List<Tile> neighbours = new ArrayList<Tile>();
-		
-		int r = -1;
-		int c = -1;
-		
-		for (int i=0; i<tiles.length; ++i) {
-			for (int j=0; j<tiles[i].length; ++j) {
-				
-				if (tiles[i][j] != null && tiles[i][j] == tile) {
-					r = i;
-					c = j;
-				}
-			}
-		}
-		
-		if (r == -1 || c == -1) {
-			return null;
-		}
-		
-		// Right above
-		if (c < 3) {
-			Tile rightAbove = tiles[r][c+1];
-			neighbours.add(rightAbove);
-			
-		} else if (r > 0 && c >= 3) {
-			Tile rightAbove = tiles[r-1][c+1];
-			neighbours.add(rightAbove);
-		} 
-		
-		// Right below
-		if (c < 6) {
-			int rBelowOffset = c < 3 ? 0 : 1;
-			Tile rightBelow = tiles[r+1-rBelowOffset][c+1];
-			neighbours.add(rightBelow);
-		}
-		
-		// Columns from left -> center
-		if (c > 0 && c <= 3) {
-			
-			if (r > 0) {
-				Tile leftAbove = tiles[r-1][c-1];
-				neighbours.add(leftAbove);
-			}
-			
-			Tile leftBelow = tiles[r][c-1];
-			neighbours.add(leftBelow);
-		}
-		
-		// Columns from center+1 -> right
-		if (c > 3) {
-			
-			Tile leftAbove = tiles[r][c-1];
-			Tile leftBelow = tiles[r+1][c-1];
-			
-			neighbours.add(leftAbove);
-			neighbours.add(leftBelow);
-		}
-		
-		if (r < 6) {
-			Tile below = tiles[r+1][c];
-			neighbours.add(below);
-		}
-		
-		if (r > 0) {
-			Tile above = tiles[r-1][c];
-			neighbours.add(above);
-		}
-		
-		neighbours.removeAll(Collections.singleton(null));
-		
-		return neighbours;
 		
 	}
 	
@@ -378,55 +392,55 @@ public class Board implements IBoard {
 		Tile[][] tiles = new Tile[size][size];
 		
 		// column 0
-		tiles[0][0] = new Tile(Terrain.DESERT);
-		tiles[1][0] = new Tile(Terrain.FROZEN_WASTE);
-		tiles[2][0] = new Tile(Terrain.FOREST);
-		tiles[3][0] = new Tile(Terrain.MOUNTAIN);
+		tiles[0][0] = new Tile(Terrain.PLAINS);
+		tiles[1][0] = new Tile(Terrain.FOREST);
+		tiles[2][0] = new Tile(Terrain.SWAMP);
+		tiles[3][0] = new Tile(Terrain.SEA);
 		
 		// column 1
 		tiles[0][1] = new Tile(Terrain.SWAMP);
-		tiles[1][1] = new Tile(Terrain.JUNGLE);
+		tiles[1][1] = new Tile(Terrain.FROZEN_WASTE);
 		tiles[2][1] = new Tile(Terrain.MOUNTAIN);
-		tiles[3][1] = new Tile(Terrain.PLAINS);
-		tiles[4][1] = new Tile(Terrain.JUNGLE);
+		tiles[3][1] = new Tile(Terrain.SEA);
+		tiles[4][1] = new Tile(Terrain.SWAMP);
 		
 		// column 3
-		tiles[0][2] = new Tile(Terrain.MOUNTAIN);
-		tiles[1][2] = new Tile(Terrain.PLAINS);
-		tiles[2][2] = new Tile(Terrain.SWAMP);
+		tiles[0][2] = new Tile(Terrain.PLAINS);
+		tiles[1][2] = new Tile(Terrain.DESERT);
+		tiles[2][2] = new Tile(Terrain.MOUNTAIN);
 		tiles[3][2] = new Tile(Terrain.FOREST);
-		tiles[4][2] = new Tile(Terrain.DESERT);
-		tiles[5][2] = new Tile(Terrain.PLAINS);
+		tiles[4][2] = new Tile(Terrain.PLAINS);
+		tiles[5][2] = new Tile(Terrain.FOREST);
 		
 		// column 4 (center)
-		tiles[0][3] = new Tile(Terrain.JUNGLE);
-		tiles[1][3] = new Tile(Terrain.FROZEN_WASTE);
-		tiles[2][3] = new Tile(Terrain.FOREST);
-		tiles[3][3] = new Tile(Terrain.FROZEN_WASTE);
-		tiles[4][3] = new Tile(Terrain.SEA);
-		tiles[5][3] = new Tile(Terrain.FOREST);
-		tiles[6][3] = new Tile(Terrain.DESERT);
+		tiles[0][3] = new Tile(Terrain.SEA);
+		tiles[1][3] = new Tile(Terrain.SWAMP);
+		tiles[2][3] = new Tile(Terrain.SEA);
+		tiles[3][3] = new Tile(Terrain.SWAMP);
+		tiles[4][3] = new Tile(Terrain.DESERT);
+		tiles[5][3] = new Tile(Terrain.MOUNTAIN);
+		tiles[6][3] = new Tile(Terrain.MOUNTAIN);
 		
 		// column 5
-		tiles[0][4] = new Tile(Terrain.SWAMP);
+		tiles[0][4] = new Tile(Terrain.JUNGLE);
 		tiles[1][4] = new Tile(Terrain.MOUNTAIN);
-		tiles[2][4] = new Tile(Terrain.JUNGLE);
-		tiles[3][4] = new Tile(Terrain.PLAINS);
-		tiles[4][4] = new Tile(Terrain.SWAMP);
-		tiles[5][4] = new Tile(Terrain.MOUNTAIN);
+		tiles[2][4] = new Tile(Terrain.PLAINS);
+		tiles[3][4] = new Tile(Terrain.FROZEN_WASTE);
+		tiles[4][4] = new Tile(Terrain.JUNGLE);
+		tiles[5][4] = new Tile(Terrain.FROZEN_WASTE);
 
 		// column 6
-		tiles[0][5] = new Tile(Terrain.DESERT);
-		tiles[1][5] = new Tile(Terrain.FROZEN_WASTE);
-		tiles[2][5] = new Tile(Terrain.SWAMP);
-		tiles[3][5] = new Tile(Terrain.DESERT);
-		tiles[4][5] = new Tile(Terrain.JUNGLE);
+		tiles[0][5] = new Tile(Terrain.FROZEN_WASTE);
+		tiles[1][5] = new Tile(Terrain.FOREST);
+		tiles[2][5] = new Tile(Terrain.DESERT);
+		tiles[3][5] = new Tile(Terrain.FOREST);
+		tiles[4][5] = new Tile(Terrain.DESERT);
 		
 		// column 7
-		tiles[0][6] = new Tile(Terrain.FOREST);
-		tiles[1][6] = new Tile(Terrain.PLAINS);
-		tiles[2][6] = new Tile(Terrain.FOREST);
-		tiles[3][6] = new Tile(Terrain.FROZEN_WASTE);
+		tiles[0][6] = new Tile(Terrain.PLAINS);
+		tiles[1][6] = new Tile(Terrain.FROZEN_WASTE);
+		tiles[2][6] = new Tile(Terrain.SWAMP);
+		tiles[3][6] = new Tile(Terrain.DESERT);
 		
 		// Set the neighbours
 		for (Tile[] row : tiles) {
@@ -441,6 +455,21 @@ public class Board implements IBoard {
 		}
 		
 		return tiles;
+		
+	}
+	
+	private void setNeighbours() {
+		
+		for (Tile[] row : tiles) {
+			for (Tile tile : row) {
+				
+				if (tile != null) {
+					tile.setNeighbours(getNeighbours(tiles, tile));
+				}
+				
+			}
+			
+		}
 		
 	}
 	

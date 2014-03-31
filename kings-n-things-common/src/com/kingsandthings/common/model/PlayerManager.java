@@ -27,8 +27,52 @@ public class PlayerManager {
 		positions = new HashMap<Player, Integer>();
 	}
 	
+	public List<Player> getPlayers() {
+		return new ArrayList<Player>(players.values());
+	}
+	
 	public Player getActivePlayer() {
 		return activePlayer;
+	}
+	
+	public Player getPlayer(String name) {
+		return players.get(name);
+	}
+	
+	public int getNumPlayers() {
+		return numPlayers;
+	}
+	
+	public int getPosition(Player player) { 
+		
+		if (positions.containsKey(player)) {
+			return positions.get(player);
+		}
+		
+		return 0;
+		
+	}
+	
+	public Player getPlayerInPosition(int pos) {
+		
+		if (pos > numPlayers) {
+			return null;
+		}
+		
+		for (Player player: players.values()) {
+			
+			if (getPosition(player) == pos) {
+				return player;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
+	public void setNumPlayers(int numPlayers) {
+		this.numPlayers = (this.numPlayers == null) ? numPlayers : this.numPlayers;
 	}
 	
 	public void setActivePlayer(Player player) {
@@ -47,7 +91,7 @@ public class PlayerManager {
 		
 	}
 	
-	public void nextPlayer() {
+	public void setNextPlayerActive() {
 		
 		int activePosition = positions.get(activePlayer);
 		
@@ -61,22 +105,6 @@ public class PlayerManager {
 			
 		}
 		
-	}
-	
-	public Player getPlayer(String name) {
-		return players.get(name);
-	}
-	
-	public List<Player> getPlayers() {
-		return new ArrayList<Player>(players.values());
-	}
-	
-	public int getNumPlayers() {
-		return numPlayers;
-	}
-	
-	public void setNumPlayers(int numPlayers) {
-		this.numPlayers = (this.numPlayers == null) ? numPlayers : this.numPlayers;
 	}
 	
 	public boolean addAllPlayers(List<String> names) {
@@ -125,16 +153,6 @@ public class PlayerManager {
 	
 	public boolean removePlayer(String name) {
 		return players.remove(name) != null;
-	}
-	
-	public int getPosition(Player player) { 
-		
-		if (positions.containsKey(player)) {
-			return positions.get(player);
-		}
-		
-		return 0;
-		
 	}
 	
 	private void setControlMarkerImage(Player player, int position) {

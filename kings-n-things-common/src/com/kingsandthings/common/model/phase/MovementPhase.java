@@ -52,7 +52,6 @@ public class MovementPhase extends Phase {
 			setInstruction("no movement possible! please end turn");
 		}
 		
-		
 	}
 
 }
