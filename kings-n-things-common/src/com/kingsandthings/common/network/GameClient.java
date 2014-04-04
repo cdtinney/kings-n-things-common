@@ -37,12 +37,15 @@ public class GameClient {
 	private NetworkObjectHandler objectHandler;
 	
 	public GameClient(String name) { 
-		this.name = name;
+		this.name = name; 
+		
 	}
 	
 	public void start(String ip, int port) {
 		
 		if (client == null) {
+			
+			//Log.DEBUG();
 			
 			client = new Client(8192, 8192);
 			client.start();
@@ -184,6 +187,8 @@ public class GameClient {
 
 		@Override
 		public void disconnected(Connection connection) {
+			
+			System.out.println("disconnected");
 			
 			PropertyChangeDispatcher.getInstance().notify(GameClient.this, "connected", connected, connected = false);
 			

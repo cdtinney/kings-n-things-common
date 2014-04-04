@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javafx.beans.property.SimpleStringProperty;
-
 import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
@@ -25,18 +23,12 @@ public class CombatPhase extends Phase {
 	private Game game;
 	private List<Tile> battleTiles;
 	
-	private SimpleStringProperty statusProperty = new SimpleStringProperty("combat phase");
-	
 	private Battle currentBattle;
 	
 	public CombatPhase(Game game) {
 		super(game, "Combat", 1, false);
 		
 		this.game = game;
-	}
-	
-	public SimpleStringProperty getStatus() {
-		return statusProperty;
 	}
 
 	@Override
@@ -49,12 +41,14 @@ public class CombatPhase extends Phase {
 		// Find battles involving the current player
 		List<Tile> playerBattles = findPlayerBattles(game.getActivePlayer(), battleTiles);
 		
-		// Skip the player if no battles were found
+		// Set instruction text depending on battles found
 		if (playerBattles.isEmpty()) {
-			game.getPhaseManager().endPlayerTurn();
+			setInstruction("you have no battles to resolve - please end your turn");
+			
+		} else {
+			setInstruction("please select a battle to resolve");
+			
 		}
-		
-		setInstruction("please select a battle to resolve");
 
 	}
 	
@@ -74,7 +68,7 @@ public class CombatPhase extends Phase {
 		
 		currentBattle = new Battle(tile, attackers.get(0), defender, attackerCreatures, defenderCreatures);
 
-		statusProperty.set("beginning round. " + currentBattle.getCurrentPlayer().getName() + ", please roll.");
+		//statusProperty.set("beginning round. " + currentBattle.getCurrentPlayer().getName() + ", please roll.");
 		
 	}
 	
@@ -129,7 +123,7 @@ public class CombatPhase extends Phase {
 		}
 		
 		if (currentBattle.allRolled()) {
-			statusProperty.set(currentBattle.getCurrentPlayer().getName() + " please select creatures to take hits from");
+			//statusProperty.set(currentBattle.getCurrentPlayer().getName() + " please select creatures to take hits from");
 			// disable roll dice button
 			return;
 		}

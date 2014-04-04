@@ -170,6 +170,8 @@ public class Board implements IBoard {
 	
 	public boolean moveThings(Tile beginTile, Tile endTile, List<Thing> things) {
 		
+		boolean success = false;
+	
 		Tile boardBeginTile = getTile(beginTile);
 		Tile boardEndTile = getTile(endTile);
 		
@@ -177,10 +179,12 @@ public class Board implements IBoard {
 		
 		if (!boardEndTile.getOwner().equals(player)) {
 			
-			boolean success = false;
+			LOGGER.log(LogLevel.DEBUG, "moving Things to an enemy tile");
 			
 			// If the tile has enemy things with combat values, movement is stopped
 			if (boardEndTile.hasThings()) {
+				
+				LOGGER.log(LogLevel.DEBUG, "enemy tile has things");
 				
 				success =  boardEndTile.addThings(player, things);
 				if (success) {
@@ -192,6 +196,8 @@ public class Board implements IBoard {
 			
 			// Otherwise, the hex is conquered 
 			} else {
+				
+				LOGGER.log(LogLevel.DEBUG, "hex is conquered");
 				
 				success =  boardEndTile.addThings(player, things);
 				if (success) {
@@ -209,7 +215,7 @@ public class Board implements IBoard {
 			
 		}
 		
-		boolean success =  boardEndTile.addThings(player, things);
+		success =  boardEndTile.addThings(player, things);
 		if (success) {
 			
 			boardBeginTile.removeThings(player, things);

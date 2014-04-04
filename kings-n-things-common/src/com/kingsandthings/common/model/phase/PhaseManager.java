@@ -32,14 +32,15 @@ public class PhaseManager {
 		phases.add(new InitialRecruitmentPhase(game));
 		
 		// Main sequence
-		phases.add(new GoldCollectionPhase(game));
+		//phases.add(new GoldCollectionPhase(game));
 		//phases.add(new RecruitCharactersPhase(game));
-		phases.add(new ThingRecruitmentPhase(game));
+		//phases.add(new ThingRecruitmentPhase(game));
 		//phases.add(new RandomEventsPhase(game));
 		phases.add(new MovementPhase(game));
-		phases.add(new ConstructionPhase(game));
+		phases.add(new CombatPhase(game));
+		//phases.add(new ConstructionPhase(game));
 		//phases.add(new SpecialPowersPhase(game));
-		phases.add(new ChangingPlayerOrderPhase(game));
+		//phases.add(new ChangingPlayerOrderPhase(game));
 		
 		// Set current phase
 		currentPhase = phases.get(0);

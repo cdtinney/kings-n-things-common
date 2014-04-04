@@ -15,6 +15,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethod;
+import com.esotericsoftware.minlog.Log;
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
@@ -62,7 +63,9 @@ public class GameServer  {
 		
 		if (server == null) {
 			
-			server = new Server() {
+			//Log.DEBUG();
+			
+			server = new Server(8192, 8192) {
 				
 				@Override
 				protected Connection newConnection () {
@@ -357,6 +360,8 @@ public class GameServer  {
 			if (connection.name == null) {
 				return;
 			}
+			
+			LOGGER.log(LogLevel.DEBUG, "Player disconnected: " + connection.name);
 			
 			removeConnectedPlayer(connection.name);
 			
