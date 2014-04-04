@@ -84,13 +84,13 @@ public class FortFactory {
 		Fort upgradedFort = null;
 		
 		if (type == Type.TOWER) {
-			upgradedFort = getFort(Type.KEEP, false, true);
+			upgradedFort = getFort(Type.KEEP, false, false);
 			
 		} else if (type == Type.KEEP) {
-			upgradedFort = getFort(Type.CASTLE, false, true);
+			upgradedFort = getFort(Type.CASTLE, false, false);
 			
 		} else if (type == Type.CASTLE) {
-			upgradedFort = getFort(Type.CITADEL, false, true);
+			upgradedFort = getFort(Type.CITADEL, false, false);
 			
 		}
 		

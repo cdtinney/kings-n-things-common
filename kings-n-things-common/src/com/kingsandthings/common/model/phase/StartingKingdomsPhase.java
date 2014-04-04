@@ -15,7 +15,7 @@ public class StartingKingdomsPhase extends Phase {
 	public StartingKingdomsPhase() { }
 	
 	public StartingKingdomsPhase(Game game) {
-		super(game, "Starting Kingdoms", true, true, 2, true);
+		super(game, "Starting Kingdoms", 2, true);
 	}
 	
 	@Override

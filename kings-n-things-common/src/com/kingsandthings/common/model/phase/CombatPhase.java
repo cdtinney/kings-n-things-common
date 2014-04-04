@@ -30,7 +30,7 @@ public class CombatPhase extends Phase {
 	private Battle currentBattle;
 	
 	public CombatPhase(Game game) {
-		super(game, "Combat", true, true, 1, false);
+		super(game, "Combat", 1, false);
 		
 		this.game = game;
 	}

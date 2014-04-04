@@ -35,6 +35,13 @@ public class Game implements IGame {
 		
 		if (state == 1) {
 			GameStateFactory.setGameState(this, 1);
+		} else {
+			
+			for (Player player : playerManager.getPlayers()) {
+				int pos = playerManager.getPosition(player);
+				board.setStartingTile(player, pos);
+			}
+			
 		}
 		
 	}

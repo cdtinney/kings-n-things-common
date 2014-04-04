@@ -22,8 +22,6 @@ public abstract class Phase {
 	
 	private String name;
 	
-	private boolean mandatory; 
-	private boolean playerInteraction;
 	private boolean initial;
 	
 	private int numPlayerTurns;
@@ -31,12 +29,10 @@ public abstract class Phase {
 	
 	public Phase () { }
 	
-	public Phase(Game game, String name, boolean mandatory, boolean playerInteraction, int numPlayerTurns, boolean initial) {
+	public Phase(Game game, String name, int numPlayerTurns, boolean initial) {
 		this.game = game;
 		this.name = name;
-		this.mandatory = mandatory;
 		this.numPlayerTurns = numPlayerTurns;
-		this.playerInteraction = playerInteraction;
 		this.initial = initial;
 	}
 
@@ -48,15 +44,7 @@ public abstract class Phase {
 		return currentStep;
 	}
 	
-	public boolean playerInteractionRequired() {
-		return playerInteraction;
-	}
-	
-	public boolean isMandatory() {
-		return mandatory;
-	}
-	
-	public boolean isInitial() {
+	public boolean getInitial() {
 		return initial;
 	}
 	
@@ -87,6 +75,10 @@ public abstract class Phase {
 	
 	protected void setInstruction(String instruction) {
 		game.setInstruction(instruction);
+	}
+	
+	protected void setStep(String text) {
+		currentStep = text;
 	}
 	
 	protected void begin() {

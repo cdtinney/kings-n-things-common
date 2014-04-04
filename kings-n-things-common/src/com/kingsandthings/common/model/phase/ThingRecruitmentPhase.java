@@ -10,7 +10,7 @@ public class ThingRecruitmentPhase extends Phase {
 	public ThingRecruitmentPhase() { }
 
 	public ThingRecruitmentPhase(Game game) {
-		super(game, "Thing Recruitment", true, true, 2, false);
+		super(game, "Thing Recruitment", 2, false);
 	}
 	
 	@Override

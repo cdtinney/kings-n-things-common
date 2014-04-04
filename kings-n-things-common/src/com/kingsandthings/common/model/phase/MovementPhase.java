@@ -12,7 +12,7 @@ public class MovementPhase extends Phase {
 	public MovementPhase() { }
 	
 	public MovementPhase(Game game) {
-		super(game, "Movement", false, true, 1, false);
+		super(game, "Movement", 1, false);
 	}
 	
 	public static BooleanProperty getActive() {

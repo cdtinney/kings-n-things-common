@@ -7,7 +7,7 @@ public class SpecialPowersPhase extends Phase {
 	public SpecialPowersPhase() { }
 
 	public SpecialPowersPhase(Game game) {
-		super(game, "Special Powers Phase (SKIP)", false, false, 1, false);
+		super(game, "Special Powers Phase (SKIP)", 1, false);
 	}
 
 }

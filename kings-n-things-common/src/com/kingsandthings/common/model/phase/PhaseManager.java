@@ -32,13 +32,13 @@ public class PhaseManager {
 		phases.add(new InitialRecruitmentPhase(game));
 		
 		// Main sequence
-		//phases.add(new GoldCollectionPhase(game));
+		phases.add(new GoldCollectionPhase(game));
 		//phases.add(new RecruitCharactersPhase(game));
-		//phases.add(new ThingRecruitmentPhase(game));
+		phases.add(new ThingRecruitmentPhase(game));
 		//phases.add(new RandomEventsPhase(game));
-		//phases.add(new MovementPhase(game));
+		phases.add(new MovementPhase(game));
 		phases.add(new ConstructionPhase(game));
-		phases.add(new SpecialPowersPhase(game));
+		//phases.add(new SpecialPowersPhase(game));
 		phases.add(new ChangingPlayerOrderPhase(game));
 		
 		// Set current phase
@@ -81,7 +81,7 @@ public class PhaseManager {
 		
 		Phase newPhase = phases.get(currentPhaseNumber);
 		
-		if (oldPhase.isInitial()) {
+		if (oldPhase.getInitial()) {
 			phases.remove(oldPhase);
 			currentPhaseNumber--;
 		}
@@ -98,7 +98,7 @@ public class PhaseManager {
 		
 		Iterator<Phase> iter = phases.iterator();
 		while (iter.hasNext()) {
-			if (iter.next().isInitial()) {
+			if (iter.next().getInitial()) {
 				iter.remove();
 			}
 		}

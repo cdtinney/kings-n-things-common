@@ -10,23 +10,23 @@ public class InitialRecruitmentPhase extends Phase {
 	public InitialRecruitmentPhase () { }
 	
 	public InitialRecruitmentPhase(Game game) {
-		super(game, "Initial Thing Recruitment", false, true, 2, true);
+		super(game, "Initial Thing Recruitment", 2, true);
 	}
 	
 	@Override
 	public void begin() {
 		super.begin();
 		
-		currentStep = PLACEMENT;
+		currentStep = DRAW;
 		setInstruction("please draw your initial Things (hardcoded)");
 		
 	}
 	
 	@Override
 	protected void nextStep() {
-		notify(Notification.STEP);
+		super.next();
 		
-		currentStep = DRAW;
+		currentStep = PLACEMENT;
 		setInstruction("please place your Things");
 		
 	}

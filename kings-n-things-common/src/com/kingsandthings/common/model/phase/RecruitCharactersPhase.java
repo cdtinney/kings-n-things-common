@@ -7,7 +7,7 @@ public class RecruitCharactersPhase extends Phase {
 	public RecruitCharactersPhase() { }
 
 	public RecruitCharactersPhase(Game game) {
-		super(game, "Recruit Characters (SKIP)", false, false, 1, false);
+		super(game, "Recruit Characters (SKIP)", 1, false);
 	}
 
 }

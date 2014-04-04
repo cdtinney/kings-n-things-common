@@ -461,6 +461,30 @@ public class Board implements IBoard {
 		
 	}
 	
+	public void setStartingTile(Player player, int position) {
+		
+		switch(position) {
+		
+			case 1:
+				tiles[0][5].setOwner(player);
+				break;
+		
+			case 2:
+				tiles[4][5].setOwner(player);
+				break;
+		
+			case 3:
+				tiles[4][1].setOwner(player);
+				break;
+		
+			case 4:
+				tiles[0][1].setOwner(player);
+				break;
+				
+		}
+		
+	}
+	
 	private Tile[][] generateTiles(int size) {
 
 		Tile[][] tiles = new Tile[size][size];

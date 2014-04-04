@@ -7,7 +7,7 @@ public class ChangingPlayerOrderPhase extends Phase {
 	public ChangingPlayerOrderPhase() { }
 
 	public ChangingPlayerOrderPhase(Game game) {
-		super(game, "Changing Player Order Phase (SKIP)", false, false, 1, false);
+		super(game, "Changing Player Order Phase (SKIP)", 1, false);
 	}
 	
 }

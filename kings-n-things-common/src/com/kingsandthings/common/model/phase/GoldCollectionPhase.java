@@ -15,7 +15,7 @@ public class GoldCollectionPhase extends Phase {
 	public GoldCollectionPhase() { }
 
 	public GoldCollectionPhase(Game game) {
-		super(game, "Gold Collection", true, false, 1, false);
+		super(game, "Gold Collection", 1, false);
 	}
 
 	@Override

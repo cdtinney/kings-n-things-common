@@ -10,7 +10,7 @@ public class TowerPlacementPhase extends Phase {
 	public TowerPlacementPhase () { }
 
 	public TowerPlacementPhase(Game game) {
-		super(game, "Tower Placement", true, true, 1, true);
+		super(game, "Tower Placement", 1, true);
 	}
 	
 	@Override
