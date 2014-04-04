@@ -110,6 +110,26 @@ public class Cup {
 		
 	}
 	
+	public void recruitHardcodedThings(Player player, int pos) {
+
+		List<Thing> things = new ArrayList<Thing>();
+		
+		if (pos == 1) {
+			things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
+			things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
+			
+		} else if (pos == 2) {
+			things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
+			things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
+			
+		}
+		
+		if (things != null && player.getRack().addThings(things)) {
+			removeThingsFromCup(things);
+		}
+		
+	}
+	
 	public void removeThingsFromCup(List<Thing> list) {
 		things.removeAll(list);
 	}
@@ -168,9 +188,6 @@ public class Cup {
 		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
 		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
 		
-//		things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
-//		things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
-		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 1 for Player 1.");
 			return null;
@@ -192,9 +209,6 @@ public class Cup {
 		things.add(getCreatureThing("Giant Spider", Terrain.DESERT, 1));
 		things.add(getCreatureThing("Camel Corps", Terrain.DESERT, 3));
 		things.add(getCreatureThing("Sandworm", Terrain.DESERT, 3));
-		
-//		things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
-//		things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 2 for Player 2.");

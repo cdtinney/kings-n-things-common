@@ -6,5 +6,6 @@ public interface IGame {
 	public void endTurn(String playerName);
 	
 	public void recruitThingsInitial();
+	public void recruitThings(int numPaidRecruits);
 
 }

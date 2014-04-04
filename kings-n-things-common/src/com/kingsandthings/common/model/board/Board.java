@@ -312,7 +312,7 @@ public class Board implements IBoard {
 			return false;
 		}
 		
-		Fort tower = FortFactory.getFort(Fort.Type.TOWER, false, true);
+		Fort tower = FortFactory.getFort(Fort.Type.TOWER, true, false);
 		tower.setUpgraded(true);
 		
 		player.addFort(tower);

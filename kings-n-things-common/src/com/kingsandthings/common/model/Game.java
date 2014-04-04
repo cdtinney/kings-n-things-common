@@ -109,6 +109,17 @@ public class Game implements IGame {
 	}
 
 	@Override
+	public void recruitThings(int numPaidRecruits) {
+		
+		// TODO - paid Things / non-hardcoded recruitment
+
+		final Player player = getActivePlayer();
+		cup.recruitHardcodedThings(player, playerManager.getPosition(player));
+		phaseManager.endPlayerTurn();		
+		
+	}
+
+	@Override
 	public void endTurn(String playerName) {
 		
 		if (!getActivePlayer().getName().equals(playerName)) {
