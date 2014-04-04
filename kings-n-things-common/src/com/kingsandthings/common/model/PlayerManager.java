@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javafx.scene.image.Image;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 
 public class PlayerManager {
 	
@@ -107,6 +108,25 @@ public class PlayerManager {
 		
 	}
 	
+	public void changePlayerOrder() {
+		
+		for (Player player : positions.keySet()) {
+			
+			int pos = positions.get(player);
+			
+			if (pos == numPlayers - 1) {
+				positions.put(player, numPlayers);
+			} else {
+				positions.put(player, (positions.get(player) + 1) % numPlayers);
+			}
+			
+		}
+		
+		setFirstPlayerActive();
+		LOGGER.log(LogLevel.INFO, "Player order changing. First player set to: " + activePlayer.getName());
+		
+	}
+	
 	public boolean addAllPlayers(List<String> names) {
 		
 		boolean modified = false;
@@ -142,10 +162,8 @@ public class PlayerManager {
 		
 		Player player = new Player(name);
 		players.put(name, player);
-
-		// TODO - set control marker images elsewhere (in Game, probably)
-		setControlMarkerImage(player, players.size());
 		
+		setControlMarkerImage(player, players.size());
 		setInitialPosition(player, players.size());
 		
 		return true;

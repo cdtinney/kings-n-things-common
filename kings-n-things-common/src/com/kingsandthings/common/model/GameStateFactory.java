@@ -6,9 +6,9 @@ import com.kingsandthings.common.model.board.Board;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.things.Fort;
+import com.kingsandthings.common.model.things.Fort.Type;
 import com.kingsandthings.common.model.things.FortFactory;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.common.model.things.Fort.Type;
 
 public class GameStateFactory {
 	

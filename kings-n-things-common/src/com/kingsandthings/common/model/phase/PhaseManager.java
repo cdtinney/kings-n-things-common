@@ -74,6 +74,11 @@ public class PhaseManager {
 		
 		currentPhaseNumber = (currentPhaseNumber + 1) % phases.size();
 		
+		// Change player order on every turn
+		if (currentPhaseNumber == 0) {
+			game.getPlayerManager().changePlayerOrder();
+		}
+		
 		Phase newPhase = phases.get(currentPhaseNumber);
 		
 		if (oldPhase.isInitial()) {

@@ -1,16 +1,10 @@
 package com.kingsandthings.common.model;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.board.Board;
-import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.phase.PhaseManager;
-import com.kingsandthings.common.model.things.Fort;
-import com.kingsandthings.common.model.things.Fort.Type;
-import com.kingsandthings.common.model.things.FortFactory;
-import com.kingsandthings.common.model.things.Thing;
 
 public class Game implements IGame {
 
