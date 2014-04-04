@@ -1,4 +1,4 @@
-package com.kingsandthings.game.events;
+package com.kingsandthings.common.events;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

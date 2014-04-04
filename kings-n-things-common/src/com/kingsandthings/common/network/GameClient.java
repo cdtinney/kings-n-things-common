@@ -11,13 +11,13 @@ import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethodResult;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.IGame;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.network.NetworkRegistry.PropertyChange;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.logging.LogLevel;
 
 public class GameClient {
 	

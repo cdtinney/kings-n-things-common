@@ -1,4 +1,4 @@
-package com.kingsandthings.game.events;
+package com.kingsandthings.common.events;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;

@@ -3,6 +3,9 @@ package com.kingsandthings.common.model.phase;
 import com.kingsandthings.common.model.Game;
 
 public class InitialRecruitmentPhase extends Phase {
+	
+	public static final String PLACEMENT = "Placement";
+	public static final String DRAW = "Draw";
 
 	public InitialRecruitmentPhase () { }
 	
@@ -14,7 +17,7 @@ public class InitialRecruitmentPhase extends Phase {
 	public void begin() {
 		super.begin();
 		
-		currentStep = "Draw_Things";
+		currentStep = PLACEMENT;
 		setInstruction("please draw your initial Things (hardcoded)");
 		
 	}
@@ -23,7 +26,7 @@ public class InitialRecruitmentPhase extends Phase {
 	protected void nextStep() {
 		notify(Notification.STEP);
 		
-		currentStep = "Thing_Placement";
+		currentStep = DRAW;
 		setInstruction("please place your Things");
 		
 	}

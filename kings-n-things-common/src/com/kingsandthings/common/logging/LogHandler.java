@@ -1,4 +1,4 @@
-package com.kingsandthings.logging;
+package com.kingsandthings.common.logging;
 
 import java.util.Timer;
 import java.util.TimerTask;

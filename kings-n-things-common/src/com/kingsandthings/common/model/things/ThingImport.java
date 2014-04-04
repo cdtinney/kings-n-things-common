@@ -9,7 +9,8 @@ import java.util.logging.Logger;
 
 import javafx.scene.image.Image;
 
-import com.kingsandthings.util.FileUtils;
+import com.kingsandthings.common.model.enums.Terrain;
+import com.kingsandthings.common.util.FileUtils;
 
 public class ThingImport {
 	
@@ -83,6 +84,9 @@ public class ThingImport {
     }
     
     public static List<SpecialIncome> importSpecialIncomeCounters() {
+    	
+    	final String CITY_NAME = "City";
+    	final String VILLAGE_NAME = "Village";
 
     	List<SpecialIncome> counters = new ArrayList<SpecialIncome>();
     	
@@ -94,7 +98,14 @@ public class ThingImport {
         	
         	String name = getValue(fileName, options.get("name")).replace("_", " ");
         	Integer value = Integer.parseInt(getValue(fileName, options.get("value")));
+        	
         	String terrainType = getValue(fileName, options.get("terrain"));
+    		if (terrainType == null) {
+    			terrainType = Terrain.NONE.toString();
+    		}
+        	
+        	// TODO - Import cities and villages
+        	String neutralised = getValue(fileName, options.get("special"));
         	
         	String path = getImagePath(specialIncomePath, null, fileName);
         	

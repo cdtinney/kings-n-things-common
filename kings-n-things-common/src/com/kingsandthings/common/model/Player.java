@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import javafx.scene.image.Image;
 
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Fort;
@@ -13,7 +14,6 @@ import com.kingsandthings.common.model.things.RandomEvent;
 import com.kingsandthings.common.model.things.SpecialCharacter;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Treasure;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
 
 public class Player {
 	

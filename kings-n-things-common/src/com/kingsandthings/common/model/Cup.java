@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.model.things.ThingImport;
-import com.kingsandthings.logging.LogLevel;
 
 public class Cup {
 
@@ -23,8 +23,20 @@ public class Cup {
 	public void importThings() {
 		
 		// TODO - Import all Things
-		addThings(ThingImport.importCreatures());
-		addThings(ThingImport.importSpecialIncomeCounters());
+		things.addAll(ThingImport.importCreatures());
+		things.addAll(ThingImport.importSpecialIncomeCounters());
+		
+	}
+	
+	public List<Thing> getThings() {
+		return things;
+	}
+	
+	public List<Thing> drawThings(int num) {
+		
+		List<Thing> copy = new ArrayList<Thing>(things);
+		Collections.shuffle(copy);
+		return copy.subList(0, num);
 		
 	}
 	
@@ -98,24 +110,8 @@ public class Cup {
 		
 	}
 	
-	public List<Thing> drawThings(int num) {
-		
-		List<Thing> copy = new ArrayList<Thing>(things);
-		Collections.shuffle(copy);
-		return copy.subList(0, num);
-		
-	}
-	
-	public List<Thing> getThings() {
-		return things;
-	}
-	
 	public void removeThingsFromCup(List<Thing> list) {
 		things.removeAll(list);
-	}
-	
-	private void addThings(List<? extends Thing> list) {
-		things.addAll(list);
 	}
 	
 	private Thing getCreatureThing(String name, Terrain terrain, int combatValue) {

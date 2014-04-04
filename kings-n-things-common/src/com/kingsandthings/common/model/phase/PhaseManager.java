@@ -5,17 +5,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.logging.LogLevel;
 
 public class PhaseManager {
 	
 	private static Logger LOGGER = Logger.getLogger(PhaseManager.class.getName());
 	
 	private transient Game game;
-	
 	private transient List<Phase> phases;
+	
 	private Phase currentPhase;
 	private int currentPhaseNumber = 0;
 	
@@ -32,11 +32,11 @@ public class PhaseManager {
 		phases.add(new InitialRecruitmentPhase(game));
 		
 		// Main sequence
-		phases.add(new GoldCollectionPhase(game));
+		//phases.add(new GoldCollectionPhase(game));
 		//phases.add(new RecruitCharactersPhase(game));
 		//phases.add(new ThingRecruitmentPhase(game));
 		//phases.add(new RandomEventsPhase(game));
-		phases.add(new MovementPhase(game));
+		//phases.add(new MovementPhase(game));
 		phases.add(new ConstructionPhase(game));
 		phases.add(new SpecialPowersPhase(game));
 		phases.add(new ChangingPlayerOrderPhase(game));

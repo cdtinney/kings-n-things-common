@@ -17,4 +17,7 @@ public interface IBoard {
 	public boolean moveThingsToUnexploredTile(int roll, Tile initialMovementTile, Tile tile, List<Thing> selectedThings);
 	public boolean moveThings(Tile initialMovementTile, Tile tile, List<Thing> selectedThings);
 	
+	public boolean buildFort(Tile tile);
+	public boolean upgradeFort(Tile tile);
+	
 }

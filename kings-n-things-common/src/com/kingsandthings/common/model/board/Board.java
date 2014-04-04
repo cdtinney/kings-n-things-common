@@ -5,14 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.enums.Terrain;
+import com.kingsandthings.common.model.phase.ConstructionPhase;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Fort;
+import com.kingsandthings.common.model.things.FortFactory;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.logging.LogLevel;
 
 public class Board implements IBoard {
 	
@@ -31,7 +33,6 @@ public class Board implements IBoard {
 	
 	public void generateBoard(int numPlayers) {
 		tiles = generateTiles(10);
-		setNeighbours();
 	}
 	
 	public Tile[][] getTiles() {
@@ -113,7 +114,6 @@ public class Board implements IBoard {
 		return neighbours;
 		
 	}
-	
 	
 	public boolean movementPossible(Player player) {
 		
@@ -222,21 +222,6 @@ public class Board implements IBoard {
 	}
 	
 	@Override
-	public boolean placeFort(Fort fort, Tile tile) {
-		
-		Tile boardTile = getTile(tile);
-		Player player = game.getActivePlayer();
-
-		boolean success = player.placeFort(fort, boardTile);
-		if (success) {
-			game.getPhaseManager().endPlayerTurn();
-		}
-		
-		return success;
-		
-	}
-	
-	@Override
 	public boolean placeSpecialIncome(SpecialIncome specialIncome, Tile tile) {
 
 		Tile boardTile = getTile(tile);
@@ -287,6 +272,95 @@ public class Board implements IBoard {
 		
 		modelTile.setOwner(player);
 		return true;
+		
+	}
+	
+	@Override
+	public boolean placeFort(Fort fort, Tile tile) {
+		
+		Tile boardTile = getTile(tile);
+		Player player = game.getActivePlayer();
+
+		boolean success = player.placeFort(fort, boardTile);
+		if (success) {
+			game.getPhaseManager().endPlayerTurn();
+		}
+		
+		return success;
+		
+	}
+	
+	@Override
+	public boolean buildFort(Tile tile) {
+		
+		Player player = game.getActivePlayer();
+		Tile modelTile = getTile(tile);
+		
+		if (!modelTile.getOwner().equals(player)) {
+			LOGGER.log(LogLevel.STATUS, "Cannot build a fort in a tile the player does not own.");
+			return false;
+		}
+		
+		if (modelTile.getFort() != null) {
+			LOGGER.log(LogLevel.STATUS, "Tile already contains a fort.");
+			return false;
+		}
+		
+		int gold = player.getNumGold();
+		if (gold < 5) {
+			LOGGER.log(LogLevel.STATUS, "5 gold is required to build a fort.");
+			return false;
+		}
+		
+		Fort tower = FortFactory.getFort(Fort.Type.TOWER, false, true);
+		tower.setUpgraded(true);
+		
+		player.addFort(tower);
+		player.removeGold(ConstructionPhase.BUILD_FORT_COST);
+		
+		modelTile.setFort(tower);
+		
+		return true;
+		
+	}
+
+	@Override
+	public boolean upgradeFort(Tile tile) {
+
+		Player player = game.getActivePlayer();
+		Tile modelTile = getTile(tile);
+		
+		if (!modelTile.getOwner().equals(player)) {
+			LOGGER.log(LogLevel.STATUS, "Cannot upgrade a fort in a tile the player does not own.");
+			return false;
+		}
+		
+		if (modelTile.getFort() == null) {
+			LOGGER.log(LogLevel.STATUS, "Tile does not contain a fort.");
+			return false;
+		}
+		
+		if (modelTile.getFort().getUpgraded()) {
+			LOGGER.log(LogLevel.STATUS, "Only one upgrade per fort per turn.");
+			return false;
+		}
+		
+		int gold = player.getNumGold();
+		if (gold < 5) {
+			LOGGER.log(LogLevel.STATUS, "5 gold is required to upgrade a fort.");
+			return false;
+		}
+		
+		Fort oldFort = modelTile.getFort();
+		Fort fort = FortFactory.getUpgradedFort(modelTile.getFort());
+		
+		player.addFort(fort);
+		player.removeFort(oldFort);
+		player.removeGold(ConstructionPhase.UPGRADE_FORT_COST);
+		
+		modelTile.setFort(fort);
+		
+		return false;
 		
 	}
 	

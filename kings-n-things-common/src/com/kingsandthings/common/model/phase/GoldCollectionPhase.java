@@ -2,11 +2,11 @@ package com.kingsandthings.common.model.phase;
 
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.SpecialIncome;
-import com.kingsandthings.logging.LogLevel;
 
 public class GoldCollectionPhase extends Phase {
 	

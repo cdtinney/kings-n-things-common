@@ -15,6 +15,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethod;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
@@ -24,8 +26,6 @@ import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
 import com.kingsandthings.common.network.NetworkRegistry.PlayerConnection;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
 import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.logging.LogLevel;
 
 public class GameServer  {
 	

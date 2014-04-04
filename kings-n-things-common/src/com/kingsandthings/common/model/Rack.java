@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.logging.LogLevel;
 
 public class Rack {
 	

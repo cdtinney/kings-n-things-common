@@ -9,6 +9,7 @@ public enum Terrain {
 	SWAMP,
 	MOUNTAIN,
 	DESERT,
-	SEA
+	SEA,
+	NONE
 	
 }

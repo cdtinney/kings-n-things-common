@@ -3,6 +3,7 @@ package com.kingsandthings.common.model.phase;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.things.Fort;
+import com.kingsandthings.common.model.things.FortFactory;
 
 public class TowerPlacementPhase extends Phase {
 	
@@ -21,7 +22,7 @@ public class TowerPlacementPhase extends Phase {
 		for (Player player: game.getPlayerManager().getPlayers()) {
 			
 			// Give each player a tower
-			player.addFort(Fort.getTower());
+			player.addFort(FortFactory.getFort(Fort.Type.TOWER, false, false));
 			
 		}
 		

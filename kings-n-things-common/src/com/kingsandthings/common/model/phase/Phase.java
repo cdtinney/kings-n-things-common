@@ -2,8 +2,8 @@ package com.kingsandthings.common.model.phase;
 
 import java.util.logging.Logger;
 
+import com.kingsandthings.common.events.NotificationDispatcher;
 import com.kingsandthings.common.model.Game;
-import com.kingsandthings.game.events.NotificationDispatcher;
 
 public abstract class Phase {
 	
@@ -18,8 +18,7 @@ public abstract class Phase {
 	}
 	
 	protected transient Game game;
-	
-	protected String currentStep = "none";
+	protected String currentStep = "NONE";
 	
 	private String name;
 	
@@ -43,6 +42,10 @@ public abstract class Phase {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getStep() {
+		return currentStep;
 	}
 	
 	public boolean playerInteractionRequired() {
@@ -80,10 +83,6 @@ public abstract class Phase {
 			
 		}
 		
-	}
-	
-	public String getStep() {
-		return currentStep;
 	}
 	
 	protected void setInstruction(String instruction) {

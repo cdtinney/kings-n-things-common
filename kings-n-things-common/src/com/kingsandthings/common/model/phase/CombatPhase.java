@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Board;
@@ -16,7 +17,6 @@ import com.kingsandthings.common.model.combat.Battle.Step;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Creature.Ability;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.logging.LogLevel;
 
 public class CombatPhase extends Phase {
 

@@ -1,4 +1,4 @@
-package com.kingsandthings.logging;
+package com.kingsandthings.common.logging;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;

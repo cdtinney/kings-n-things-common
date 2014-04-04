@@ -9,13 +9,13 @@ import java.util.logging.Logger;
 
 import javafx.scene.image.Image;
 
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
-import com.kingsandthings.logging.LogLevel;
 
 public class Tile {
 	
@@ -34,8 +34,9 @@ public class Tile {
 	private Player owner;
 	private Map<Player, List<Thing>> things;
 	private Terrain terrainType;
-	private Fort fort;
 	private SpecialIncome specialIncome;
+	
+	private Fort fort;
 	
 	private boolean discovered = false;
 	private boolean battleToResolve = false;
@@ -131,12 +132,6 @@ public class Tile {
 	}
 	
 	public boolean setFort(Fort fort) {
-		
-		if (this.fort != null) {
-			LOGGER.log(LogLevel.STATUS, "This tile already contains a fort.");
-			return false;
-		}
-		
 		PropertyChangeDispatcher.getInstance().notify(this, "fort", this.fort, this.fort = fort);
 		return true;
 	}

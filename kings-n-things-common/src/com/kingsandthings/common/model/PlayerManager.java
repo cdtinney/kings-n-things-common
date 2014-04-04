@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import javafx.scene.image.Image;
 
-import com.kingsandthings.game.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 
 public class PlayerManager {
 	

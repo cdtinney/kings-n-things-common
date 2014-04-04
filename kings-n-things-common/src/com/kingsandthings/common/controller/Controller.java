@@ -9,7 +9,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Parent;
 
-import com.kingsandthings.util.NodeUtils;
+import com.kingsandthings.common.util.NodeUtils;
 
 public abstract class Controller {
 	

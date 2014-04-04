@@ -1,4 +1,4 @@
-package com.kingsandthings.util;
+package com.kingsandthings.common.util;
 
 import javafx.scene.input.DataFormat;
 
