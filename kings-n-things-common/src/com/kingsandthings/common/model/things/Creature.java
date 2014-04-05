@@ -89,7 +89,7 @@ public class Creature extends Thing {
 	
 	public void setMovementEnded(boolean ended) {
 		movementEnded = ended;
-		setMovesLeft(0);
+		setMovesLeft(ended ? 0 : MAX_MOVES);
 	}
 	
 	public boolean getMovementEnded() {

@@ -19,16 +19,14 @@ import com.kingsandthings.common.model.things.Thing;
 public class CombatPhase extends Phase {
 
 	private static Logger LOGGER = Logger.getLogger(CombatPhase.class.getName());
-
-	private Game game;
-	private List<Tile> battleTiles;
 	
+	private List<Tile> battleTiles;
 	private Battle currentBattle;
+	
+	public CombatPhase() { }
 	
 	public CombatPhase(Game game) {
 		super(game, "Combat", 1, false);
-		
-		this.game = game;
 	}
 
 	@Override

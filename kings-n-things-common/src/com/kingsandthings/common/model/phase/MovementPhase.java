@@ -1,13 +1,17 @@
 package com.kingsandthings.common.model.phase;
 
+import java.util.Collection;
+import java.util.List;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import com.kingsandthings.common.model.Game;
+import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.common.model.things.Creature;
+import com.kingsandthings.common.model.things.Thing;
 
 public class MovementPhase extends Phase {
-	
-	private final static BooleanProperty active = new SimpleBooleanProperty(false);
 	
 	public MovementPhase() { }
 	
@@ -15,14 +19,9 @@ public class MovementPhase extends Phase {
 		super(game, "Movement", 1, false);
 	}
 	
-	public static BooleanProperty getActive() {
-		return active;
-	}
-	
 	@Override
 	public void begin() {
 		super.begin();
-		active.set(true);
 		
 		setText();
 		
@@ -39,7 +38,31 @@ public class MovementPhase extends Phase {
 	@Override
 	public void end() {
 		super.end();
-		active.set(false);
+		
+		resetMovement();
+		
+	}
+	
+	private void resetMovement() {
+
+		Tile[][] tiles = game.getBoard().getTiles();
+		for (Tile[] row : tiles) {
+			for (Tile tile : row) {
+
+				if (tile == null) continue;
+				
+				List<Thing> things = tile.getAllThings();
+				for (Thing thing : things) {
+					
+					if (thing instanceof Creature) {
+						((Creature) thing).setMovementEnded(false);
+					}
+					
+				}
+				
+
+			}
+		}
 		
 	}
 	

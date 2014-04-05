@@ -22,6 +22,7 @@ import com.kingsandthings.common.model.board.IBoard;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.enums.Terrain;
 import com.kingsandthings.common.model.phase.ChangingPlayerOrderPhase;
+import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.phase.ConstructionPhase;
 import com.kingsandthings.common.model.phase.GoldCollectionPhase;
 import com.kingsandthings.common.model.phase.InitialRecruitmentPhase;
@@ -132,6 +133,7 @@ public class NetworkRegistry {
 		classes.add(ThingRecruitmentPhase.class);
 		classes.add(RandomEventsPhase.class);
 		classes.add(MovementPhase.class);
+		classes.add(CombatPhase.class);
 		classes.add(ConstructionPhase.class);
 		classes.add(SpecialPowersPhase.class);
 		classes.add(ChangingPlayerOrderPhase.class);

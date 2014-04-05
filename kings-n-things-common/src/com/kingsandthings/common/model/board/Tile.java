@@ -1,6 +1,7 @@
 package com.kingsandthings.common.model.board;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +102,19 @@ public class Tile {
 	
 	public Map<Player, List<Thing>> getThings() {
 		return things;
+	}
+	
+	public List<Thing> getAllThings() {
+		
+		Collection<List<Thing>> lists = things.values();
+		
+		List<Thing> result = new ArrayList<Thing>();
+		for (List<Thing> list : lists) {
+			result.addAll(list);
+		}
+		
+		return result;
+		
 	}
 	
 	public boolean isDiscovered() {
