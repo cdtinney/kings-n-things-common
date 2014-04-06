@@ -1,10 +1,6 @@
 package com.kingsandthings.common.model.phase;
 
-import java.util.Collection;
 import java.util.List;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.board.Tile;
