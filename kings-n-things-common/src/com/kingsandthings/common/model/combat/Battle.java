@@ -1,25 +1,20 @@
 package com.kingsandthings.common.model.combat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Creature;
-import com.kingsandthings.common.model.things.Thing;
 
 public class Battle {
+
+	private static Logger LOGGER = Logger.getLogger(Battle.class.getName());
 	
-	public enum Step {
-		MAGIC,
-		RANGED,
-		MELEE,
-		RETREAT
-	}
-	
-	private Tile tile;
+	private transient Tile tile;
 	
 	private Player attacker;
 	private Player defender;
@@ -27,12 +22,14 @@ public class Battle {
 	private List<Creature> attackerCreatures;
 	private List<Creature> defenderCreatures;
 	
-	private Player currentPlayer;
-	private Step currentStep;
-	
-	private Map<Player, Integer> playerRolls;
+	private transient Player currentPlayer;
 	
 	private List<Creature> eliminated;
+	
+	private int attackerHits;
+	private int defenderHits;
+	
+	public Battle() { }
 	
 	public Battle(Tile tile, Player attacker, Player defender, List<Creature> attackerCreatures, List<Creature> defenderCreatures) {
 		this.tile = tile;
@@ -43,61 +40,70 @@ public class Battle {
 		this.attackerCreatures = attackerCreatures;
 		this.defenderCreatures = defenderCreatures;
 		
-		currentPlayer = attacker;
-		currentStep = Step.MAGIC;
-		
-		playerRolls = new HashMap<Player, Integer>();
 		eliminated = new ArrayList<Creature>();
 	}
 	
-	public boolean selectThingForHits(Player player, Thing thing) {
-		
-		if (thing instanceof Creature) {
-			eliminated.add((Creature) thing);
-			return true;
-		} else {
-			// subtract from the combat value of forts etc.
-		}
-		
-		return false;
-		
-	}
-	
-	public boolean allRolled() {
-		return playerRolls.get(attacker) != null && playerRolls.get(defender) != null;
-	}
-	
-	public List<Creature> currentPlayerCreatures() {
-		
-		if (currentPlayer == attacker) {
-			return attackerCreatures;
-		} else {
-			return defenderCreatures;
-		}
-		
+	public void start() {
+		currentPlayer = attacker;
 	}
 	
 	public Player getCurrentPlayer() {
 		return currentPlayer;
 	}
 	
-	public void setPlayerRolled(Player player, Integer roll) {
-		playerRolls.put(player, roll);
+	public Player getAttacker() {
+		return attacker;
 	}
 	
-	public void nextPlayer() {
+	public Player getDefender() {
+		return defender;
+	}
+	
+	public List<Creature> getAttackerCreatures() { 
+		return attackerCreatures;
+	}
+	
+	public List<Creature> getDefenderCreatures() {
+		return defenderCreatures;
+	}
+	
+	public List<Creature> getCurrentPlayerCreatures() {
 		
-		if (currentPlayer == attacker) {
-			currentPlayer = defender;
-		} else {
-			currentPlayer = attacker;
+		if (currentPlayer == attacker) return attackerCreatures;
+		if (currentPlayer == defender) return defenderCreatures;
+		
+		return null;
+		
+	}
+	
+	public void setHits(int hits) {
+		
+		if (currentPlayer == attacker) { 
+			LOGGER.log(LogLevel.DEBUG, "Setting attacker hits: " + hits);
+			attackerHits = hits;
+		}
+		
+		if (currentPlayer == defender) {
+			LOGGER.log(LogLevel.DEBUG, "Setting defender hits: " + hits);
+			defenderHits = hits;
 		}
 		
 	}
 	
-	public Step getStep() {
-		return currentStep;
+	public void setNextPlayer() {
+		
+		Player prevPlayer = currentPlayer;
+		
+		if (currentPlayer == attacker)  {
+			LOGGER.log(LogLevel.DEBUG, "Setting current player to defender");
+			currentPlayer = defender;
+		} else if (currentPlayer == defender) {
+			LOGGER.log(LogLevel.DEBUG, "Setting current player to attacker");
+			currentPlayer = attacker;
+		}
+		
+		PropertyChangeDispatcher.getInstance().notify(this, "currentPlayer", prevPlayer, currentPlayer);
+		
 	}
-	
 	
 }

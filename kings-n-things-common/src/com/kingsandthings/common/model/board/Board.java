@@ -370,7 +370,7 @@ public class Board implements IBoard {
 		
 	}
 	
-	private Tile getTile(Tile tile) {
+	public Tile getTile(Tile tile) {
 		
 		for (Tile[] row : tiles) {
 			for (Tile t : row) {

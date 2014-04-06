@@ -4,11 +4,12 @@ import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.board.Board;
+import com.kingsandthings.common.model.board.Tile;
+import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.phase.PhaseManager;
 
 public class Game implements IGame {
 
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(Game.class.getName());
 
 	private transient Cup cup;
@@ -111,7 +112,7 @@ public class Game implements IGame {
 	@Override
 	public void recruitThings(int numPaidRecruits) {
 		
-		// TODO - paid Things / non-hardcoded recruitment
+		// TASK - paid Things / non-hardcoded recruitment
 
 		final Player player = getActivePlayer();
 		cup.recruitHardcodedThings(player, playerManager.getPosition(player));
@@ -128,6 +129,33 @@ public class Game implements IGame {
 		
 		// TODO - only certain phases can be ended w/o interaction
 		phaseManager.endPlayerTurn();
+		
+	}
+
+	@Override
+	public void resolveCombat(Tile tile) {
+		
+		CombatPhase combatPhase = (CombatPhase) phaseManager.getCurrentPhase();
+		if (combatPhase == null) {
+			LOGGER.warning("Can only resolve combat during combat phase.");
+			return;
+		}
+		
+		Tile modelTile = board.getTile(tile);
+		combatPhase.setCurrentBattle(modelTile);
+		
+	}
+
+	@Override
+	public void rollCombatDice(String playerName) {
+
+		CombatPhase combatPhase = (CombatPhase) phaseManager.getCurrentPhase();
+		if (combatPhase == null) {
+			LOGGER.warning("Can only resolve roll dice during combat phase.");
+			return;
+		}
+		
+		combatPhase.rollForHits(playerName);
 		
 	}
 
