@@ -23,6 +23,7 @@ public class Tile {
 	private static Logger LOGGER = Logger.getLogger(Tile.class.getName());
 
 	public static final int MAXIMUM_THINGS = 16;
+	public static final int MAX_THINGS_PER_TILE = 10;
 	
 	private static final Image defaultImg = new Image("/images/tiles/back.png");
 	private transient Image image;
@@ -180,6 +181,11 @@ public class Tile {
 		
 		if (thingsContained(oldPlayerThings, list)) {
 			LOGGER.warning("One or more of the specified Things have already been added to this Tile.");
+			return false;
+		}
+		
+		if (oldPlayerThings.size() + list.size() > MAX_THINGS_PER_TILE) {
+			LOGGER.warning("Only " + MAX_THINGS_PER_TILE + " Things per player can be placed on a Tile");
 			return false;
 		}
 		

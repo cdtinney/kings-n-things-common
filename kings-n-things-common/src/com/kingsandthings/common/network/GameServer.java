@@ -49,8 +49,11 @@ public class GameServer  {
 	private boolean allPlayersConnected = false;				// indicates whether all players have connected
 	private Map<String, PlayerConnection> connectedPlayers;		// connected players
 	
-	public GameServer(int numPlayers) {
+	private String initialState;
+	
+	public GameServer(int numPlayers, String initialState) {
 		this.numPlayers = numPlayers;
+		this.initialState = initialState;
 		
 		game = new Game();
 		game.setNumPlayers(numPlayers);
@@ -134,7 +137,7 @@ public class GameServer  {
 		
 		LOGGER.info("All players connected. Initializing game.");
 		
-		game.initalize(1);
+		game.initalize(initialState);
     	server.sendToAllTCP(new InitializeGame(game));
     	
     	NetworkRegistry.registerRMIObject(objectSpace, NetworkRegistry.BOARD_ID, game.getBoard());

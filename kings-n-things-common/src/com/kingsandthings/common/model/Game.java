@@ -26,7 +26,7 @@ public class Game implements IGame {
 		playerManager = new PlayerManager();
 	}
 	
-	public void initalize(int state) {
+	public void initalize(String state) {
 		
 		cup = new Cup();
 		cup.importThings();
@@ -36,15 +36,15 @@ public class Game implements IGame {
 		
 		phaseManager = new PhaseManager(this);
 		
-		if (state == 1) {
-			GameStateFactory.setGameState(this, 1);
-		} else {
-			
-			for (Player player : playerManager.getPlayers()) {
-				int pos = playerManager.getPosition(player);
-				board.setStartingTile(player, pos);
-			}
-			
+		switch(state) {
+		
+			case "Minimal":
+				GameStateFactory.setGameState(this, state);
+				break;
+			default:
+				GameStateFactory.setGameState(this, state);
+				break;
+		
 		}
 		
 	}

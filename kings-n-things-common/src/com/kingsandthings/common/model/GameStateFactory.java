@@ -12,10 +12,24 @@ import com.kingsandthings.common.model.things.Thing;
 
 public class GameStateFactory {
 	
-	public static void setGameState(Game game, int state) {
+	public static void setGameState(Game game, String state) {
 		
-		if (state == 1) {
+		if (state.equals("Minimal")) {
 			setMinimumGameState(game);
+		} else if (state.equals("None")) {
+			setNoGameState(game);
+		}
+		
+	}
+	
+	private static void setNoGameState(Game game) {
+		
+		PlayerManager playerManager = game.getPlayerManager();
+		Board board = game.getBoard();
+		
+		for (Player player : playerManager.getPlayers()) {
+			int pos = playerManager.getPosition(player);
+			board.setStartingTile(player, pos);
 		}
 		
 	}
