@@ -170,7 +170,7 @@ public class Game implements IGame {
 			return;
 		}
 		
-		
+		combatPhase.applyHits(playerName, hits);
 		
 	}
 

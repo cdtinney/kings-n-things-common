@@ -93,14 +93,40 @@ public class Battle {
 		return attackerHits != null && defenderHits != null;
 	}
 	
-	public void setHits(int hits) {
+	public int getHitsToApply(String playerName) {
+		
+		if (attacker.getName().equals(playerName)) {
+			return defenderHits;
+		} else if (defender.getName().equals(playerName)) {
+			return attackerHits;
+		}
+		
+		return -1;
+		
+	}
+	
+	public void setHitsToApply(String playerName) {
+		
+		List<Creature> creatures = null;
+		
+		if (attacker.getName().equals(playerName)) {
+			creatures = attackerCreatures;
+		} else if (defender.getName().equals(playerName)) {
+			creatures = defenderCreatures;
+		}
+		
+		if (creatures == null) {
+			return;
+		}
+		
+	}
+	
+	public void setRolledHits(int hits) {
 		
 		if (currentPlayer == attacker) { 
 			LOGGER.log(LogLevel.DEBUG, "Setting attacker hits: " + hits);
 			attackerHits = hits;
-		}
-		
-		if (currentPlayer == defender) {
+		} else if (currentPlayer == defender) {
 			LOGGER.log(LogLevel.DEBUG, "Setting defender hits: " + hits);
 			defenderHits = hits;
 		}

@@ -3,6 +3,7 @@ package com.kingsandthings.common.model.phase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
@@ -84,12 +85,29 @@ public class CombatPhase extends Phase {
 		int hits = computeHits(currentBattle.getCurrentPlayerCreatures());
 		LOGGER.log(LogLevel.DEBUG, "Rolled dice for: " + hits + " hits.");
 		
-		currentBattle.setHits(hits);
+		currentBattle.setRolledHits(hits);
 		currentBattle.setNextPlayer();
 		
 		if (currentBattle.getAllPlayersRolled()) {
 			currentBattle.setCurrentStep(Battle.Step.APPLY_HITS);
 		}
+		
+	}
+	
+	public void applyHits(String playerName, Map<Thing, Integer> hitsToApply) {
+
+		if (currentBattle.getCurrentStep() != Step.APPLY_HITS) {
+			LOGGER.warning("Player can only apply hits during the apply hits step.");
+			return;
+		}
+		
+		if (!activePlayer(playerName)) {
+			LOGGER.warning("Player can only apply hits during their turn.");
+			return;
+		}
+		
+		
+		
 		
 	}
 	
