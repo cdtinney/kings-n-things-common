@@ -12,6 +12,7 @@ import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Board;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.combat.Battle;
+import com.kingsandthings.common.model.combat.Battle.Step;
 import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Creature.Ability;
 import com.kingsandthings.common.model.things.Thing;
@@ -60,6 +61,8 @@ public class CombatPhase extends Phase {
 		LOGGER.log(LogLevel.DEBUG, "Battle started");
 		PropertyChangeDispatcher.getInstance().notify(this, "currentBattle", null, currentBattle);
 		
+		setInstruction("resolve the battle!");
+		
 	}
 	
 	public Battle getCurrentBattle() {
@@ -67,6 +70,11 @@ public class CombatPhase extends Phase {
 	}
 	
 	public void rollForHits(String playerName) {
+		
+		if (currentBattle.getCurrentStep() != Step.ROLL_DICE) {
+			LOGGER.warning("Player can only roll dice during the roll dice step.");
+			return;
+		}
 		
 		if (!activePlayer(playerName)) {
 			LOGGER.warning("Player can only roll dice during their turn.");
@@ -78,6 +86,10 @@ public class CombatPhase extends Phase {
 		
 		currentBattle.setHits(hits);
 		currentBattle.setNextPlayer();
+		
+		if (currentBattle.getAllPlayersRolled()) {
+			currentBattle.setCurrentStep(Battle.Step.APPLY_HITS);
+		}
 		
 	}
 	

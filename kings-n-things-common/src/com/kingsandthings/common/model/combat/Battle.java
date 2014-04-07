@@ -14,7 +14,17 @@ public class Battle {
 
 	private static Logger LOGGER = Logger.getLogger(Battle.class.getName());
 	
+	public enum Step {
+		ROLL_DICE,
+		APPLY_HITS,
+		RETREAT,
+		NONE
+	}
+	
 	private transient Tile tile;
+	private Player currentPlayer;
+	
+	private Step currentStep;
 	
 	private Player attacker;
 	private Player defender;
@@ -22,12 +32,10 @@ public class Battle {
 	private List<Creature> attackerCreatures;
 	private List<Creature> defenderCreatures;
 	
-	private transient Player currentPlayer;
-	
 	private List<Creature> eliminated;
 	
-	private int attackerHits;
-	private int defenderHits;
+	private Integer attackerHits = null;
+	private Integer defenderHits = null;
 	
 	public Battle() { }
 	
@@ -45,10 +53,15 @@ public class Battle {
 	
 	public void start() {
 		currentPlayer = attacker;
+		setCurrentStep(Step.ROLL_DICE);
 	}
 	
 	public Player getCurrentPlayer() {
 		return currentPlayer;
+	}
+	
+	public Step getCurrentStep() {
+		return currentStep;
 	}
 	
 	public Player getAttacker() {
@@ -74,6 +87,10 @@ public class Battle {
 		
 		return null;
 		
+	}
+	
+	public boolean getAllPlayersRolled() {
+		return attackerHits != null && defenderHits != null;
 	}
 	
 	public void setHits(int hits) {
@@ -104,6 +121,10 @@ public class Battle {
 		
 		PropertyChangeDispatcher.getInstance().notify(this, "currentPlayer", prevPlayer, currentPlayer);
 		
+	}
+	
+	public void setCurrentStep(Step step) {
+		PropertyChangeDispatcher.getInstance().notify(this, "currentStep", currentStep, currentStep = step);
 	}
 	
 }

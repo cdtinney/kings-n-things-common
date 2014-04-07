@@ -3,6 +3,7 @@ package com.kingsandthings.common.util;
 import java.util.List;
 
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadowBuilder;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -15,6 +16,7 @@ public class DataImageView extends ImageView {
 	private static final float hoverRatio = 2.8f;
 	
 	private Object data;
+	private Label label;
 	
 	private DataImageView hoverImageView;
 	private boolean hover = false;
@@ -44,8 +46,16 @@ public class DataImageView extends ImageView {
 		this.data = object;
 	}
 	
+	public void setLabel(Label label) {
+		this.label = label;
+	}
+	
 	public Object getData() {
-		return this.data;
+		return data;
+	}
+	
+	public Label getLabel() {
+		return label;
 	}
 	
 	public void setSelected(boolean selected) {

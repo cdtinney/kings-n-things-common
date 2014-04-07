@@ -1,5 +1,6 @@
 package com.kingsandthings.common.model;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
@@ -7,6 +8,7 @@ import com.kingsandthings.common.model.board.Board;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.phase.PhaseManager;
+import com.kingsandthings.common.model.things.Thing;
 
 public class Game implements IGame {
 
@@ -151,11 +153,24 @@ public class Game implements IGame {
 
 		CombatPhase combatPhase = (CombatPhase) phaseManager.getCurrentPhase();
 		if (combatPhase == null) {
-			LOGGER.warning("Can only resolve roll dice during combat phase.");
+			LOGGER.warning("Can only roll dice during combat phase.");
 			return;
 		}
 		
 		combatPhase.rollForHits(playerName);
+		
+	}
+
+	@Override
+	public void applyHits(String playerName, Map<Thing, Integer> hits) {
+		
+		CombatPhase combatPhase = (CombatPhase) phaseManager.getCurrentPhase();
+		if (combatPhase == null) {
+			LOGGER.warning("Can only apply hits during combat phase.");
+			return;
+		}
+		
+		
 		
 	}
 

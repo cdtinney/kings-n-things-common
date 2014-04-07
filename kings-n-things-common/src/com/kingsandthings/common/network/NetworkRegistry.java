@@ -137,6 +137,7 @@ public class NetworkRegistry {
 		
 		classes.add(CombatPhase.class);
 		classes.add(Battle.class);
+		classes.add(Battle.Step.class);
 		
 		classes.add(ConstructionPhase.class);
 		classes.add(SpecialPowersPhase.class);
