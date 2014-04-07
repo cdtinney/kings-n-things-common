@@ -17,16 +17,16 @@ public class InitialRecruitmentPhase extends Phase {
 	public void begin() {
 		super.begin();
 		
-		currentStep = DRAW;
+		setStep(DRAW);
 		setInstruction("please draw your initial Things (hardcoded)");
 		
 	}
 	
 	@Override
 	protected void nextStep() {
-		super.next();
+		super.nextStep();
 		
-		currentStep = PLACEMENT;
+		setStep(PLACEMENT);
 		setInstruction("please place your Things");
 		
 	}

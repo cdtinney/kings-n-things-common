@@ -3,6 +3,7 @@ package com.kingsandthings.common.model.phase;
 import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.NotificationDispatcher;
+import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.model.Game;
 
 public abstract class Phase {
@@ -78,7 +79,7 @@ public abstract class Phase {
 	}
 	
 	protected void setStep(String text) {
-		currentStep = text;
+		PropertyChangeDispatcher.getInstance().notify(this, "currentStep", currentStep, currentStep = text);
 	}
 	
 	protected void begin() {

@@ -17,16 +17,16 @@ public class ThingRecruitmentPhase extends Phase {
 	public void begin() {
 		super.begin();
 		
-		currentStep = DRAW;
+		setStep(DRAW);
 		setInstruction("please recruit Things");
 		
 	}
 	
 	@Override
 	public void nextStep() {
-		notify(Notification.STEP);
+		super.nextStep();
 		
-		currentStep = PLACEMENT;
+		setStep(PLACEMENT);
 		setInstruction("please place your Things");
 		
 	}
