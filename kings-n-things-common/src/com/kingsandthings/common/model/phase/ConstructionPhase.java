@@ -11,7 +11,7 @@ public class ConstructionPhase extends Phase {
 	public ConstructionPhase() { }
 	
 	public ConstructionPhase(Game game) {
-		super(game, "Construction Phase (SKIP)", 1, false);
+		super(game, "Construction Phase", 1, false);
 	}
 	
 	@Override
