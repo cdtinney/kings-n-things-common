@@ -33,9 +33,9 @@ public class PhaseManager {
 		
 		// Main sequence
 		phases.add(new GoldCollectionPhase(game));
-		//phases.add(new RecruitCharactersPhase(game));
-		//phases.add(new ThingRecruitmentPhase(game));
-		//phases.add(new RandomEventsPhase(game));
+		phases.add(new RecruitCharactersPhase(game));
+		phases.add(new ThingRecruitmentPhase(game));
+		phases.add(new RandomEventsPhase(game));
 		phases.add(new MovementPhase(game));
 		phases.add(new CombatPhase(game));
 		phases.add(new ConstructionPhase(game));
@@ -75,9 +75,10 @@ public class PhaseManager {
 		
 		currentPhaseNumber = (currentPhaseNumber + 1) % phases.size();
 		
-		// Change player order on every turn
 		if (currentPhaseNumber == 0) {
 			game.getPlayerManager().changePlayerOrder();
+		} else {
+			game.getPlayerManager().setNextPlayerActive();
 		}
 		
 		Phase newPhase = phases.get(currentPhaseNumber);

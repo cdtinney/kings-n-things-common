@@ -188,7 +188,7 @@ public class GameClient {
 		@Override
 		public void disconnected(Connection connection) {
 			
-			System.out.println("disconnected");
+			LOGGER.log(LogLevel.DEBUG, "Game client disconnected.");
 			
 			PropertyChangeDispatcher.getInstance().notify(GameClient.this, "connected", connected, connected = false);
 			

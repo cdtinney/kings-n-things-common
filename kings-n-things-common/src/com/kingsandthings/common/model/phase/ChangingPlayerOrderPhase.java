@@ -10,4 +10,11 @@ public class ChangingPlayerOrderPhase extends Phase {
 		super(game, "Changing Player Order Phase", 1, false);
 	}
 	
+	@Override 
+	public void begin() {
+		super.begin();
+		
+		setInstruction("click end turn");
+	}
+	
 }
