@@ -7,11 +7,9 @@ import java.util.logging.Logger;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
-import com.kingsandthings.common.model.things.Fort;
 
 public class ConstructionPhase extends Phase {
 	
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(ConstructionPhase.class.getName());
 	
 	public static final int BUILD_FORT_COST = 5;

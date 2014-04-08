@@ -51,18 +51,16 @@ public abstract class Phase {
 	
 	public void nextTurn() {
 		
-		game.getPlayerManager().setNextPlayerActive();
 		currentNumberTurns++;
 		
 		if (isLastTurn()) {
 			
-			// End the phase
 			end();
-			
-			// Move to next phase
 			game.getPhaseManager().nextPhase();
 			
 		} else {
+			
+			game.getPlayerManager().setNextPlayerActive();
 			
 			if (allPlayersCompletedTurn()) {
 				nextStep();

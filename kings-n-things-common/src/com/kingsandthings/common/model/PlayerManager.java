@@ -123,7 +123,7 @@ public class PlayerManager {
 		}
 		
 		setFirstPlayerActive();
-		LOGGER.log(LogLevel.INFO, "Player order changing. First player set to: " + activePlayer.getName());
+		LOGGER.log(LogLevel.DEBUG, "Player order changing. First player set to: " + activePlayer.getName());
 		
 	}
 	
