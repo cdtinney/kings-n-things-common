@@ -99,13 +99,8 @@ public class ConstructionPhase extends Phase {
 		
 		for (Player player : players) {
 			
-			for (Fort f : player.getForts()) {
-				
-				if (f.getType() == Fort.Type.CITADEL) {
-					result.add(player);
-					break;
-				}
-				
+			if (player.hasCitadel()) {
+				result.add(player);
 			}
 			
 		}

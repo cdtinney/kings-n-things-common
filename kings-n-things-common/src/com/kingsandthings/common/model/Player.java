@@ -39,6 +39,8 @@ public class Player {
 	
 	private transient List<Creature> creatures;
 	
+	private boolean hasCitadel = false;
+	
 	public Player() { }
 	
 	public Player(String name) {
@@ -111,6 +113,10 @@ public class Player {
 		return numGold;
 	}
 	
+	public boolean hasCitadel() {
+		return hasCitadel;
+	}
+	
 	public void setControlMarker(Image controlMarker) {
 		this.controlMarker = controlMarker;
 	}
@@ -128,6 +134,11 @@ public class Player {
 		boolean success = tile.setFort(fort);
 		if (success && forts.contains(fort)) {
 			forts.get(forts.indexOf(fort)).setPlaced(true);
+			
+			if (fort.getType() == Fort.Type.CITADEL) {
+				hasCitadel = true;
+			}
+			
 		}
 
 		PropertyChangeDispatcher.getInstance().notify(this, "forts", null, forts);
