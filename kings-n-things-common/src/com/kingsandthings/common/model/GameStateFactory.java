@@ -59,13 +59,13 @@ public class GameStateFactory {
 		Player p1 = playerManager.getPlayerInPosition(1);
 		List<Thing> p1Things = cup.getPlayer1Stack1Min();
 		board.getTiles()[2][4].addThings(p1, p1Things);
-		cup.removeThingsFromCup(p1Things);
+		cup.removeThings(p1Things);
 		
 		// Player 2 Stack 2
 		Player p2 = playerManager.getPlayerInPosition(2);
 		List<Thing> p2Things = cup.getPlayer2Stack2Min();
 		board.getTiles()[3][4].addThings(p2, p2Things);
-		cup.removeThingsFromCup(p2Things);
+		cup.removeThings(p2Things);
 		
 	}
 	

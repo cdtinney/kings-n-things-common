@@ -58,6 +58,7 @@ public class NetworkRegistry {
 	    kryo.register(InitializeGame.class);
 	    kryo.register(UpdateGame.class);
 	    kryo.register(Instruction.class);
+	    kryo.register(WinGame.class);
 	    kryo.register(NetworkPlayerStatus.class);
 	    
 	    // Model classes
@@ -229,6 +230,18 @@ public class NetworkRegistry {
 		
 		public UpdateGame(Game game) {
 			this.game = game;
+		}
+		
+	}
+	
+	static public class WinGame {
+		
+		public Player winner;
+		
+		public WinGame() { }
+		
+		public WinGame(Player winner) {
+			this.winner = winner;
 		}
 		
 	}

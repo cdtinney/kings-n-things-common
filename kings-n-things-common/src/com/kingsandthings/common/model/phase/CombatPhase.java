@@ -106,9 +106,6 @@ public class CombatPhase extends Phase {
 			return;
 		}
 		
-		
-		
-		
 	}
 	
 	private boolean activePlayer(String name) {

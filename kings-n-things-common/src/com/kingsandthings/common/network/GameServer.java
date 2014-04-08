@@ -27,6 +27,7 @@ import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
 import com.kingsandthings.common.network.NetworkRegistry.PlayerConnection;
 import com.kingsandthings.common.network.NetworkRegistry.RegisterPlayer;
 import com.kingsandthings.common.network.NetworkRegistry.UpdateGame;
+import com.kingsandthings.common.network.NetworkRegistry.WinGame;
 
 public class GameServer  {
 	
@@ -262,6 +263,12 @@ public class GameServer  {
 	}
 	
 	@SuppressWarnings("unused")
+	private void onGameWon(PropertyChangeEvent evt) {
+		Player winner = (Player) evt.getNewValue();
+		sendObject(new WinGame(winner));
+	}
+	
+	@SuppressWarnings("unused")
 	private void onActivePlayerChange(PropertyChangeEvent evt) {
 		sendInstructions();	
 	}
@@ -273,9 +280,12 @@ public class GameServer  {
 	
 	private void addListeners() {
 
-		// Listen for game instruction changes
+		// Listen for game state changes in order to send updated instructions
 		PropertyChangeDispatcher.getInstance().addListener(Game.class, "instruction", this, "onInstructionChange");
 		PropertyChangeDispatcher.getInstance().addListener(PlayerManager.class, "activePlayer", this, "onActivePlayerChange");
+		
+		// Listen for the winner changing
+		PropertyChangeDispatcher.getInstance().addListener(Game.class, "winner", this, "onGameWon");
 		
 	}
 	

@@ -18,7 +18,7 @@ public class InitialRecruitmentPhase extends Phase {
 		super.begin();
 		
 		setStep(DRAW);
-		setInstruction("please draw your initial Things (hardcoded)");
+		setInstruction("please draw your initial Things");
 		
 	}
 	

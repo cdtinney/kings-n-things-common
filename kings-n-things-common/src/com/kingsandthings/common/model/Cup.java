@@ -16,6 +16,8 @@ public class Cup {
 
 	private static Logger LOGGER = Logger.getLogger(Cup.class.getName());
 	
+	private static final int INITIAL_NUM_THINGS = 10;
+	
 	private List<Thing> things = new ArrayList<Thing>();
 	
 	public Cup() { }
@@ -36,6 +38,12 @@ public class Cup {
 		
 		List<Thing> copy = new ArrayList<Thing>(things);
 		Collections.shuffle(copy);
+		
+		if (copy.size() < num ) {
+			LOGGER.warning("Not enough things to draw: " + num + "(size = " + copy.size());
+			return new ArrayList<Thing>();
+		}
+		
 		return copy.subList(0, num);
 		
 	}
@@ -58,7 +66,7 @@ public class Cup {
 			LOGGER.log(LogLevel.STATUS, player.getName() + " received: " + numFree  + " free, " + numPaid + " paid.");
 			
 			// Remove the Things from the Cup
-			removeThingsFromCup(drawn);
+			removeThings(drawn);
 			
 			// Take away player's gold
 			player.removeGold(goldRequired);
@@ -73,7 +81,7 @@ public class Cup {
 				LOGGER.log(LogLevel.STATUS, player.getName() + " received " + available + " free recruits " + ignored);
 				
 				player.getRack().addThings(drawn);
-				removeThingsFromCup(drawn);
+				removeThings(drawn);
 				
 				return true;
 				
@@ -94,22 +102,30 @@ public class Cup {
 	
 	public boolean recruitThingsInitial(Player player, int pos) {
 		
-		List<Thing> things = null;
-		if (pos == 1) {
-			things = getPlayer1Stack1Min();
-		} else if (pos == 2) {
-			things = getPlayer2Stack2Min();
+		List<Thing> recruitedThings = drawThings(INITIAL_NUM_THINGS);
+		
+		boolean result = player.getRack().addThings(recruitedThings);
+		if (result) {
+			removeThings(recruitedThings);
 		}
 		
-		if (things != null && player.getRack().addThings(things)) {
-			removeThingsFromCup(things);
-			return true;
-		}
+		return result;
 		
-		return false;
+//		List<Thing> things = null;
+//		if (pos == 1) {
+//			things = getPlayer1Stack1Min();
+//		} else if (pos == 2) {
+//			things = getPlayer2Stack2Min();
+//		}
+//		
+//		if (things != null && player.getRack().addThings(things)) {
+//			removeThings(things);
+//			return true;
+//		}
 		
 	}
 	
+	// TASK - move/fix hardcoded special income counters
 	public void recruitHardcodedThings(Player player, int pos) {
 
 		List<Thing> things = new ArrayList<Thing>();
@@ -125,12 +141,12 @@ public class Cup {
 		}
 		
 		if (things != null && player.getRack().addThings(things)) {
-			removeThingsFromCup(things);
+			removeThings(things);
 		}
 		
 	}
 	
-	public void removeThingsFromCup(List<Thing> list) {
+	public void removeThings(List<Thing> list) {
 		things.removeAll(list);
 	}
 	

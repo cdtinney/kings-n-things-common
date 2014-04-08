@@ -22,6 +22,8 @@ public class Game implements IGame {
 	
 	private String instruction;
 	
+	private transient Player winner;
+	
 	public Game() { 
 		playerManager = new PlayerManager();
 	}
@@ -87,6 +89,10 @@ public class Game implements IGame {
 		playerManager.setNumPlayers(num);
 	}
 	
+	public void setWinner(Player player) {
+		PropertyChangeDispatcher.getInstance().notifyListeners(this, "winner", this.winner, this.winner = player);
+	}
+	
 	public void addPlayer(String name) {
 		playerManager.addPlayer(name);
 	}
@@ -113,12 +119,12 @@ public class Game implements IGame {
 
 	@Override
 	public void recruitThings(int numPaidRecruits) {
-		
-		// TASK - paid Things / non-hardcoded recruitment
 
 		final Player player = getActivePlayer();
-		cup.recruitHardcodedThings(player, playerManager.getPosition(player));
-		phaseManager.endPlayerTurn();		
+		boolean result = cup.recruitThings(player, numPaidRecruits);
+		if (result) {
+			phaseManager.endPlayerTurn();	
+		}	
 		
 	}
 

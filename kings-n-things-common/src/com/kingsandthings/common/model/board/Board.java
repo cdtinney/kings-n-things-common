@@ -359,6 +359,7 @@ public class Board implements IBoard {
 		
 		Fort oldFort = modelTile.getFort();
 		Fort fort = FortFactory.getUpgradedFort(modelTile.getFort());
+		fort.setPlaced(true);
 		
 		player.addFort(fort);
 		player.removeFort(oldFort);
