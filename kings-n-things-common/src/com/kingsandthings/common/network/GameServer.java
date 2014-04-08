@@ -15,12 +15,12 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethod;
-import com.esotericsoftware.minlog.Log;
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.PlayerManager;
+import com.kingsandthings.common.network.NetworkRegistry.GameStatus;
 import com.kingsandthings.common.network.NetworkRegistry.InitializeGame;
 import com.kingsandthings.common.network.NetworkRegistry.Instruction;
 import com.kingsandthings.common.network.NetworkRegistry.NetworkPlayerStatus;
@@ -116,6 +116,13 @@ public class GameServer  {
 		}
 		
 		c.sendTCP(object);
+		
+	}
+	
+	public void sendStatus(String message) {
+		
+		String activePlayer = game.getActivePlayer().getName();
+		sendToPlayer(activePlayer, new GameStatus(message));
 		
 	}
 	

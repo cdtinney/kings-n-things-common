@@ -35,8 +35,6 @@ public class GoldCollectionPhase extends Phase {
 		
 		int total = computeIncome(player);
 		player.addGold(total);
-
-		LOGGER.log(LogLevel.STATUS, "Player '" + player.getName() + "' collected " + total + " gold.");
 		
 	}
 	
@@ -68,15 +66,14 @@ public class GoldCollectionPhase extends Phase {
 		// Add it all up
 		int total = controlledHexValue + fortValue + specialIncomeValue + specialCharacterValue;
 		
-		String message = "Gold collected:\n";
-		message += "\n\tControlled Hexes: " + controlledHexValue;
-		message += "\n\tForts: " + fortValue;
-		message += "\n\tSpecial Income: " + specialIncomeValue;
-		message += "\n\tSpecial Characters: " + specialCharacterValue;
-		message += "\n\nTotal: " + total;
-		LOGGER.log(LogLevel.DEBUG, "Player - " + player.getName() + " - " + message);
+		String message = "Gold collected: ";
+		message += "Controlled Hexes: " + controlledHexValue + ", ";
+		message += "Forts: " + fortValue + ", ";
+		message += "Special Income: " + specialIncomeValue + ", ";
+		message += "Special Characters: " + specialCharacterValue + " ";
+		message += "TOTAL: " + total;
 		
-		//Dialog.show(Type.NOTIFY, message);
+		LOGGER.log(LogLevel.STATUS, message);
 		
 		return total;
 		
