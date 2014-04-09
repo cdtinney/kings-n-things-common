@@ -146,6 +146,10 @@ public class Tile {
 	
 	public void setOwner(Player player) {
 		
+		if (owner != null) {
+			owner.setNumControlledTiles(owner.getNumControlledTiles() - 1);
+		}
+		
 		player.setNumControlledTiles(player.getNumControlledTiles() + 1);
 		discovered = true;
 		

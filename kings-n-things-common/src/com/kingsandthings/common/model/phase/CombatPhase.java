@@ -111,13 +111,15 @@ public class CombatPhase extends Phase {
 			return;
 		}
 		
+		int numCreaturesRemaining = currentBattle.getCurrentPlayerCreatures().size();		
+		
 		int hitsNeeded = currentBattle.getHitsToApply(playerName);
 		int hitsApplied = 0;
 		for (int h : hitsToApply.values()) {
 			hitsApplied += h;
 		}
 		
-		if (hitsNeeded != hitsApplied) {
+		if (numCreaturesRemaining > hitsApplied && hitsNeeded != hitsApplied) {
 			LOGGER.log(LogLevel.STATUS, "Player must apply all hits (applied=" + hitsApplied + ", needed=" + hitsNeeded + ")");
 			return;
 		}

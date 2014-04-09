@@ -72,8 +72,16 @@ public class Battle {
 		// Set this battle to resolved
 		resolved = true;
 		
-		// Set the tile owner, and battle resolved property
-		tile.setOwner(getPlayer(winner));
+		// Transfer the fort
+		Player prevOwner = tile.getOwner();
+		Player newOwner = getPlayer(winner);
+		if (tile.getFort() != null) {
+			prevOwner.removeFort(tile.getFort());
+			newOwner.addFort(tile.getFort());
+		}
+		
+		// Set the tile owner, and indicate the battle has been resolved
+		tile.setOwner(newOwner);
 		tile.setBattleToResolve(false);
 		
 		// Clear eliminated creatures
@@ -260,7 +268,7 @@ public class Battle {
 		
 		Player player = getPlayer(playerName);
 		
-		// Player must control an adjacent hex (TODO - without enemy counters)
+		// Player must control an adjacent hex TASK - without enemy counters
 		List<Tile> tiles = tile.getNeighbours();
 		Tile controlled = null;
 		for (Tile neighbour : tiles) {
@@ -294,11 +302,6 @@ public class Battle {
 			controlled.addThings(player, creatures);
 			tile.removeThings(player, creatures);
 			
-		}
-		
-		// Clear the eliminated creatures
-		if (player == attacker) {
-			tile.removeThings(defender, eliminatedDefenderThings);
 		}
 		
 		return true;
