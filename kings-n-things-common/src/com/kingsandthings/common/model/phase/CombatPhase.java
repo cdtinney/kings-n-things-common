@@ -140,10 +140,11 @@ public class CombatPhase extends Phase {
 			
 			int combatValue = creature.getCombatValue();
 			
-//			if (creature.getAbilities().contains(Ability.CHARGE)) {
-//				hits += rollForHits(2, combatValue);
-//				continue;
-//			}
+			// Roll twice for CHARGING creatures
+			if (creature.getAbilities().contains(Ability.CHARGE)) {
+				hits += computeHitsByCombatValue(2, combatValue);
+				continue;
+			}
 
 			hits += computeHitsByCombatValue(1, combatValue);
 		}
