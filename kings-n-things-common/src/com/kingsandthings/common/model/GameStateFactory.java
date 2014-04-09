@@ -154,18 +154,18 @@ public class GameStateFactory {
 		Board board = game.getBoard();
 		
 		Player p1 = playerManager.getPlayerInPosition(1);
-		setFort(p1, board.getTiles()[3][3], FortFactory.getFort(Type.KEEP, true, true));
+		setFort(p1, board.getTiles()[3][3], FortFactory.getFort(Type.KEEP, true, false));
 		setFort(p1, board.getTiles()[1][4], FortFactory.getFort(Type.CASTLE, true, false));
-		setFort(p1, board.getTiles()[2][4], FortFactory.getFort(Type.TOWER, true, true));
+		setFort(p1, board.getTiles()[2][4], FortFactory.getFort(Type.TOWER, true, false));
 		setFort(p1, board.getTiles()[1][5], FortFactory.getFort(Type.TOWER, true, false));
-		setFort(p1, board.getTiles()[0][6], FortFactory.getFort(Type.CASTLE, true, true));
+		setFort(p1, board.getTiles()[0][6], FortFactory.getFort(Type.CASTLE, true, false));
 		
 		Player p2 = playerManager.getPlayerInPosition(2);
 		setFort(p2, board.getTiles()[3][4], FortFactory.getFort(Type.TOWER, true, false));
 		setFort(p2, board.getTiles()[4][4], FortFactory.getFort(Type.CASTLE, true, false));
-		setFort(p2, board.getTiles()[2][5], FortFactory.getFort(Type.KEEP, true, true));
-		setFort(p2, board.getTiles()[3][5], FortFactory.getFort(Type.KEEP, true, true));
-		setFort(p2, board.getTiles()[1][6], FortFactory.getFort(Type.KEEP, true, true));
+		setFort(p2, board.getTiles()[2][5], FortFactory.getFort(Type.KEEP, true, false));
+		setFort(p2, board.getTiles()[3][5], FortFactory.getFort(Type.KEEP, true, false));
+		setFort(p2, board.getTiles()[1][6], FortFactory.getFort(Type.KEEP, true, false));
 		
 		Player p3 = playerManager.getPlayerInPosition(3);
 		if (p3 != null) {
@@ -175,8 +175,8 @@ public class GameStateFactory {
 		Player p4 = playerManager.getPlayerInPosition(4);
 		if (p4 != null) {
 			setFort(p4, board.getTiles()[0][0], FortFactory.getFort(Type.KEEP, true, false));
-			setFort(p4, board.getTiles()[0][1], FortFactory.getFort(Type.CASTLE, true, true));
-			setFort(p4, board.getTiles()[1][1], FortFactory.getFort(Type.TOWER, true, true));
+			setFort(p4, board.getTiles()[0][1], FortFactory.getFort(Type.CASTLE, true, false));
+			setFort(p4, board.getTiles()[1][1], FortFactory.getFort(Type.TOWER, true, false));
 		}
 		
 	}

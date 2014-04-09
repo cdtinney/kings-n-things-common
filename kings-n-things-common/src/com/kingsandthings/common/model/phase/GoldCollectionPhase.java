@@ -46,6 +46,7 @@ public class GoldCollectionPhase extends Phase {
 		// Add gold pieces for the combat value of controlled forts
 		int fortValue = 0;
 		for (Fort fort : player.getForts()) {
+			if (fort.getNeutralised()) continue;
 			fortValue += fort.getCombatValue();			
 		}
 		

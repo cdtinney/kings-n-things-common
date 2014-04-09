@@ -50,7 +50,13 @@ public class Cup {
 		
 	}
 	
+	public void returnThings(List<? extends Thing> things) {
+		LOGGER.log(LogLevel.DEBUG, things.size() + " Things returned to Cup.");
+		this.things.addAll(things);
+	}
+	
 	public void returnThing(Thing thing) {
+		LOGGER.log(LogLevel.DEBUG, "Thing - " + thing.toString() + " returned to Cup.");
 		things.add(thing);
 	}
 	

@@ -167,11 +167,19 @@ public class CombatPhase extends Phase {
 			boolean resolved = currentBattle.checkResolved();
 			if (resolved) {
 				currentBattle.end(false);
+				returnEliminatedCreatures(currentBattle);
 			} else {
 				currentBattle.setCurrentStep(Step.ROLL_DICE);
 			}
 			
 		}
+		
+	}
+	
+	private void returnEliminatedCreatures(Battle battle) {
+		
+		game.getCup().returnThings(battle.getElimAttackerThings());
+		game.getCup().returnThings(battle.getElimDefenderThings());
 		
 	}
 	

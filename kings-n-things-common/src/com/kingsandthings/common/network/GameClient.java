@@ -49,7 +49,7 @@ public class GameClient {
 		
 		if (client == null) {
 			
-			Log.TRACE();
+			//Log.TRACE();
 			
 			client = new Client(BUFFER, BUFFER);
 			client.start();

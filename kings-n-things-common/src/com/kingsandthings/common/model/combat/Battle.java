@@ -21,7 +21,6 @@ public class Battle {
 		ROLL_DICE,
 		APPLY_HITS,
 		RETREAT,
-		CHECK_WINNER,
 		RESOLVED,
 		NONE
 	}
