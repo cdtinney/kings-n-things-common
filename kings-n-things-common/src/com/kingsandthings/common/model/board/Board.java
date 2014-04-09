@@ -149,7 +149,7 @@ public class Board implements IBoard {
 		Tile boardEndTile = getTile(endTile);
 		
 		if (roll != 1 && roll != 6) {
-			// TASK - Explore tiles.
+			LOGGER.log(LogLevel.STATUS, "Movement to an unexplored tile has resulted in combat! (TODO)");
 			return false;
 		}
 		

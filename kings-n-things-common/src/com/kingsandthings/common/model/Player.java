@@ -29,7 +29,7 @@ public class Player {
 	
 	private int numGold = 0;
 	
-	private transient Rack rack;
+	private Rack rack;
 	
 	private transient List<Fort> forts;
 	private transient List<SpecialIncome> specialIncomeCounters;

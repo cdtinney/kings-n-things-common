@@ -16,12 +16,37 @@ public class GameStateFactory {
 		
 		if (state.equals("Minimal")) {
 			setMinimumGameState(game);
+		} else if (state.equals("Average")) {
+			setAverageGameState(game);
 		} else if (state.equals("None")) {
 			setNoGameState(game);
 		}
 		
 	}
 	
+	private static void setAverageGameState(Game game) {
+
+		PhaseManager phaseManager = game.getPhaseManager();
+		PlayerManager playerManager = game.getPlayerManager();
+		Cup cup = game.getCup();
+
+		phaseManager.skipInitialPhases();
+		setGold(game, 10);
+		setControlMarkers(game);
+		setForts(game);
+
+		Player p1 = playerManager.getPlayerInPosition(1);
+		List<Thing> rackThings1 = cup.getRackThingsAverage(1);
+		p1.getRack().addThings(rackThings1);
+		cup.removeThings(rackThings1);
+
+		Player p2 = playerManager.getPlayerInPosition(2);
+		List<Thing> rackThings2 = cup.getRackThingsAverage(2);
+		p2.getRack().addThings(rackThings2);
+		cup.removeThings(rackThings2);
+		
+	}
+
 	private static void setNoGameState(Game game) {
 		
 		PlayerManager playerManager = game.getPlayerManager();
@@ -44,15 +69,8 @@ public class GameStateFactory {
 		// Skip initial game phases
 		phaseManager.skipInitialPhases();
 		
-		// Give players 10 gold
-		for (Player p : playerManager.getPlayers()) {
-			p.addGold(10);
-		}
-		
-		// Set control markers
+		setGold(game, 10);
 		setControlMarkers(game);
-		
-		// Set forts
 		setForts(game);
 
 		// Player 1 Stack 1
@@ -66,6 +84,16 @@ public class GameStateFactory {
 		List<Thing> p2Things = cup.getPlayer2Stack2Min();
 		board.getTiles()[3][4].addThings(p2, p2Things);
 		cup.removeThings(p2Things);
+		
+	}
+	
+	private static void setGold(Game game, int num) {
+
+		PlayerManager playerManager = game.getPlayerManager();
+		
+		for (Player p : playerManager.getPlayers()) {
+			p.addGold(num);
+		}
 		
 	}
 	

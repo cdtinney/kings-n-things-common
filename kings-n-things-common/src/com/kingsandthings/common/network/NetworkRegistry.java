@@ -40,6 +40,7 @@ import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.Creature.Ability;
 import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.SpecialIncome;
+import com.kingsandthings.common.model.things.Treasure;
 
 public class NetworkRegistry {
 	
@@ -99,6 +100,7 @@ public class NetworkRegistry {
 		classes.add(Cup.class);
 		classes.add(Creature.class);
 		classes.add(SpecialIncome.class);
+		classes.add(Treasure.class);
 		classes.add(Ability.class);
 		classes.add(Terrain.class);
 

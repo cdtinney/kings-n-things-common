@@ -16,17 +16,17 @@ public class Rack {
 	
 	private ArrayList<Thing> things;
 	
-	private Player owner;
+	private String owner;
 	
 	public Rack() { }
 	
 	public Rack(Player owner) {
-		this.owner = owner;
+		this.owner = owner.getName();
 		
 		things = new ArrayList<Thing>();
 	}
 	
-	public Player getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 	

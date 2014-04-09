@@ -21,10 +21,10 @@ public class ThingImport {
 	
 	private static final String creaturePath = thingPath + "defenders\\";
 	private static final String specialIncomePath = thingPath + "special_income";
+	private static final String treasurePath = thingPath + "treasure";
 //	private static final String magicPath = thingPath + "magic";
 //	private static final String fortPath = thingPath + "fort";
 //	private static final String specialPath = thingPath + "special";
-//	private static final String treasurePath = thingPath + "treasure";
 	
 	private static final Map<String, String> options;
 	
@@ -130,7 +130,42 @@ public class ThingImport {
     	
     }
     
-   
+    public static List<Treasure> importTreasures() {
+    	
+    	List<Treasure> treasures = new ArrayList<Treasure>();
+    	
+        List<File> files = FileUtils.listFiles(treasurePath, FileUtils.imageExtensions);
+        
+        for (File file : files) {
+        	
+        	String fileName = file.getName();
+        	
+        	String name = getValue(fileName, options.get("name")).replace("_", " ");
+        	Integer goldValue = Integer.parseInt(getValue(fileName, options.get("value")));
+        	
+        	String path = getImagePath(treasurePath, null, fileName);
+        	
+        	Integer numOccurrences = 1;
+        	String num = getValue(fileName, options.get("num"));
+        	if (num != null) {
+        		numOccurrences = Integer.parseInt(num);
+        	}
+        	
+        	for (int i=0; i<numOccurrences; ++i) {
+        		
+        		Treasure treasure = new Treasure(name, goldValue, new Image(path));
+        		treasure.setImagePath(path);
+        		
+        		treasures.add(treasure);
+            	
+        	}
+        	
+        }
+        
+        return treasures;
+        
+    }
+    
 	private static List<String> getMultipleValues(String fileName, String optionSpecifier) {
     	
     	List<String> values = new ArrayList<String>();

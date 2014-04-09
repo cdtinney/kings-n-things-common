@@ -11,6 +11,7 @@ import com.kingsandthings.common.model.things.Creature;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
 import com.kingsandthings.common.model.things.ThingImport;
+import com.kingsandthings.common.model.things.Treasure;
 
 public class Cup {
 
@@ -27,6 +28,7 @@ public class Cup {
 		// TODO - Import all Things
 		things.addAll(ThingImport.importCreatures());
 		things.addAll(ThingImport.importSpecialIncomeCounters());
+		things.addAll(ThingImport.importTreasures());
 		
 	}
 	
@@ -46,6 +48,10 @@ public class Cup {
 		
 		return copy.subList(0, num);
 		
+	}
+	
+	public void returnThing(Thing thing) {
+		things.add(thing);
 	}
 	
 	public boolean recruitThings(Player player, int numPaid) {
@@ -111,46 +117,13 @@ public class Cup {
 		
 		return result;
 		
-//		List<Thing> things = null;
-//		if (pos == 1) {
-//			things = getPlayer1Stack1Min();
-//		} else if (pos == 2) {
-//			things = getPlayer2Stack2Min();
-//		}
-//		
-//		if (things != null && player.getRack().addThings(things)) {
-//			removeThings(things);
-//			return true;
-//		}
-		
-	}
-	
-	// TASK - move/fix hardcoded special income counters
-	public void recruitHardcodedThings(Player player, int pos) {
-
-		List<Thing> things = new ArrayList<Thing>();
-		
-		if (pos == 1) {
-			things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
-			things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
-			
-		} else if (pos == 2) {
-			things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
-			things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
-			
-		}
-		
-		if (things != null && player.getRack().addThings(things)) {
-			removeThings(things);
-		}
-		
 	}
 	
 	public void removeThings(List<Thing> list) {
 		things.removeAll(list);
 	}
 	
-	private Thing getCreatureThing(String name, Terrain terrain, int combatValue) {
+	private Thing findCreature(String name, Terrain terrain, int combatValue) {
 		
 		for (Thing thing : things) {
 			
@@ -192,17 +165,37 @@ public class Cup {
 		
 	}
 	
+	private Treasure findTreasure(String name, int goldValue) {
+
+		for (Thing thing : things) {
+			
+			if (!(thing instanceof Treasure)) {
+				continue;
+			}
+			
+			Treasure treasure = (Treasure) thing;
+			
+			if (treasure.getName().equals(name) && treasure.getGoldValue() == goldValue) {
+				return treasure;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
 	public List<Thing> getPlayer1Stack1Min() {
 
 		List<Thing> things = new ArrayList<Thing>();
 		
-		things.add(getCreatureThing("Crocodiles", Terrain.SWAMP, 2));
-		things.add(getCreatureThing("Mountain Men", Terrain.MOUNTAIN, 1));
-		things.add(getCreatureThing("Giant Lizard", Terrain.SWAMP, 2));
-		things.add(getCreatureThing("Swamp Beast", Terrain.SWAMP, 3));
-		things.add(getCreatureThing("Killer Racoon", Terrain.FOREST, 2));
-		things.add(getCreatureThing("Farmers", Terrain.PLAINS, 1));
-		things.add(getCreatureThing("Wild Cat", Terrain.FOREST, 2));
+		things.add(findCreature("Crocodiles", Terrain.SWAMP, 2));
+		things.add(findCreature("Mountain Men", Terrain.MOUNTAIN, 1));
+		things.add(findCreature("Giant Lizard", Terrain.SWAMP, 2));
+		things.add(findCreature("Swamp Beast", Terrain.SWAMP, 3));
+		things.add(findCreature("Killer Racoon", Terrain.FOREST, 2));
+		things.add(findCreature("Farmers", Terrain.PLAINS, 1));
+		things.add(findCreature("Wild Cat", Terrain.FOREST, 2));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 1 for Player 1.");
@@ -217,18 +210,36 @@ public class Cup {
 
 		List<Thing> things = new ArrayList<Thing>();
 		
-		things.add(getCreatureThing("Thing", Terrain.SWAMP, 2));
-		things.add(getCreatureThing("Giant Lizard", Terrain.SWAMP, 2));
-		things.add(getCreatureThing("Swamp Rat", Terrain.SWAMP, 1));
-		things.add(getCreatureThing("Unicorn", Terrain.FOREST, 4));
-		things.add(getCreatureThing("Bears", Terrain.FOREST, 2));
-		things.add(getCreatureThing("Giant Spider", Terrain.DESERT, 1));
-		things.add(getCreatureThing("Camel Corps", Terrain.DESERT, 3));
-		things.add(getCreatureThing("Sandworm", Terrain.DESERT, 3));
+		things.add(findCreature("Thing", Terrain.SWAMP, 2));
+		things.add(findCreature("Giant Lizard", Terrain.SWAMP, 2));
+		things.add(findCreature("Swamp Rat", Terrain.SWAMP, 1));
+		things.add(findCreature("Unicorn", Terrain.FOREST, 4));
+		things.add(findCreature("Bears", Terrain.FOREST, 2));
+		things.add(findCreature("Giant Spider", Terrain.DESERT, 1));
+		things.add(findCreature("Camel Corps", Terrain.DESERT, 3));
+		things.add(findCreature("Sandworm", Terrain.DESERT, 3));
 		
 		if (things.contains(null)) {
 			LOGGER.warning("Error creating stack 2 for Player 2.");
 			return null;
+		}
+		
+		return things;
+		
+	}
+	
+	public List<Thing> getRackThingsAverage(int pos) {
+
+		List<Thing> things = new ArrayList<Thing>();
+		
+		if (pos == 1) {
+			things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
+			things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
+			
+		} else if (pos == 2) {
+			things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
+			things.add(findSpecialIncome("Gold Mine", Terrain.MOUNTAIN, 3));
+			things.add(findTreasure("Diamond", 5));
 		}
 		
 		return things;

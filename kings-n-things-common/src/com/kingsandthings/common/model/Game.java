@@ -9,6 +9,7 @@ import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.phase.CombatPhase;
 import com.kingsandthings.common.model.phase.PhaseManager;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.common.model.things.Treasure;
 
 public class Game implements IGame {
 
@@ -178,6 +179,23 @@ public class Game implements IGame {
 		
 		combatPhase.applyHits(playerName, hits);
 		
+	}
+
+	@Override
+	public boolean redeemTreasure(String playerName, Treasure treasure) {
+		
+		Player p = playerManager.getPlayer(playerName);
+		if (p == null) {
+			return false;
+		}
+		
+		p.addGold(treasure.getGoldValue());
+		p.getRack().removeThing(treasure);
+		
+		cup.returnThing(treasure);
+		
+		return true;
+
 	}
 
 }
