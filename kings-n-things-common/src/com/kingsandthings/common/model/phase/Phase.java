@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.NotificationDispatcher;
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
+import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Game;
 
 public abstract class Phase {
@@ -50,6 +51,8 @@ public abstract class Phase {
 	}
 	
 	public void nextTurn() {
+		
+		LOGGER.log(LogLevel.STATUS, "");
 		
 		currentNumberTurns++;
 		

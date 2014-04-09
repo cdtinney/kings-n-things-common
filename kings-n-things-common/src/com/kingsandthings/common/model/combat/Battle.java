@@ -2,6 +2,8 @@ package com.kingsandthings.common.model.combat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
@@ -9,6 +11,7 @@ import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.Player;
 import com.kingsandthings.common.model.board.Tile;
 import com.kingsandthings.common.model.things.Creature;
+import com.kingsandthings.common.model.things.Thing;
 
 public class Battle {
 
@@ -32,7 +35,8 @@ public class Battle {
 	private List<Creature> attackerCreatures;
 	private List<Creature> defenderCreatures;
 	
-	private List<Creature> eliminated;
+	private List<Thing> eliminatedAttackerThings;
+	private List<Thing> eliminatedDefenderThings;
 	
 	private Integer attackerHits = null;
 	private Integer defenderHits = null;
@@ -48,7 +52,8 @@ public class Battle {
 		this.attackerCreatures = attackerCreatures;
 		this.defenderCreatures = defenderCreatures;
 		
-		eliminated = new ArrayList<Creature>();
+		eliminatedAttackerThings = new ArrayList<Thing>();	
+		eliminatedDefenderThings = new ArrayList<Thing>();
 	}
 	
 	public void start() {
@@ -80,6 +85,14 @@ public class Battle {
 		return defenderCreatures;
 	}
 	
+	public List<Thing> getElimAttackerThings() { 
+		return eliminatedAttackerThings;
+	}
+	
+	public List<Thing> getElimDefenderThings() {
+		return eliminatedDefenderThings;
+	}
+	
 	public List<Creature> getCurrentPlayerCreatures() {
 		
 		if (currentPlayer == attacker) return attackerCreatures;
@@ -91,6 +104,10 @@ public class Battle {
 	
 	public boolean getAllPlayersRolled() {
 		return attackerHits != null && defenderHits != null;
+	}
+	
+	public boolean getAllHitsApplied() {
+		return attackerHits == null && defenderHits == null;
 	}
 	
 	public int getHitsToApply(String playerName) {
@@ -105,7 +122,7 @@ public class Battle {
 		
 	}
 	
-	public void setHitsToApply(String playerName) {
+	public void setHitsToApply(String playerName, Map<Thing, Integer> hitsToApply) {
 		
 		List<Creature> creatures = null;
 		
@@ -118,6 +135,29 @@ public class Battle {
 		if (creatures == null) {
 			return;
 		}
+		
+		Set<Thing> eliminated = hitsToApply.keySet();
+		
+		for (Thing thing : eliminated) {
+			if (!creatures.contains(thing)) {
+				LOGGER.warning("Cannot apply hits to a creature not in battle.");
+				return;
+			}
+		}
+		
+		for (Thing thing : eliminated) {
+			creatures.remove(thing);
+		}
+		
+		if (creatures == attackerCreatures) {
+			eliminatedAttackerThings.addAll(eliminated);
+			defenderHits = null;
+		} else if (creatures == defenderCreatures) {
+			eliminatedDefenderThings.addAll(eliminated);			
+			attackerHits = null;
+		}
+		
+		PropertyChangeDispatcher.getInstance().notify(this, "creatures", null, creatures);
 		
 	}
 	

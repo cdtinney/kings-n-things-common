@@ -179,12 +179,12 @@ public class Board implements IBoard {
 		
 		if (!boardEndTile.getOwner().equals(player)) {
 			
-			LOGGER.log(LogLevel.DEBUG, "moving Things to an enemy tile");
+			String message = "You are moving things to an enemy tile. ";
 			
 			// If the tile has enemy things with combat values, movement is stopped
-			if (boardEndTile.hasThings()) {
+			if (boardEndTile.hasThingsWithCombatValue()) {
 				
-				LOGGER.log(LogLevel.DEBUG, "enemy tile has things");
+				message += " The enemy tile contains Things with combat values. Your Things are pinned.";
 				
 				success =  boardEndTile.addThings(player, things);
 				if (success) {
@@ -197,7 +197,7 @@ public class Board implements IBoard {
 			// Otherwise, the hex is conquered 
 			} else {
 				
-				LOGGER.log(LogLevel.DEBUG, "hex is conquered");
+				message += "The tile is conquered.";
 				
 				success =  boardEndTile.addThings(player, things);
 				if (success) {
@@ -210,6 +210,8 @@ public class Board implements IBoard {
 				boardEndTile.setOwner(player);
 				
 			}
+			
+			LOGGER.log(LogLevel.STATUS, message);
 			
 			return success;
 			

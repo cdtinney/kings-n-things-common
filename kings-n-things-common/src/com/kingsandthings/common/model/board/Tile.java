@@ -122,6 +122,13 @@ public class Tile {
 		return discovered;
 	}
 	
+	public boolean hasThingsWithCombatValue() {
+		
+		// TASK - combat value = creatures, forts, cities, villages
+		return hasThings() || fort != null;
+	
+	}
+	
 	public boolean hasThings() {
 		
 		for (List<Thing> playerThings : things.values()) {

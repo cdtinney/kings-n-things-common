@@ -106,6 +106,13 @@ public class CombatPhase extends Phase {
 			return;
 		}
 		
+		currentBattle.setHitsToApply(playerName, hitsToApply);
+		currentBattle.setNextPlayer();
+		
+		if (currentBattle.getAllHitsApplied()) {
+			currentBattle.setCurrentStep(Battle.Step.RETREAT);
+		}
+		
 	}
 	
 	private boolean activePlayer(String name) {

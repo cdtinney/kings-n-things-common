@@ -126,6 +126,10 @@ public class DataImageView extends ImageView {
 			imageView.setData(null);
 			imageView.setImage(null);
 			
+			if (imageView.getLabel() != null) {
+				imageView.getLabel().setText("");
+			}
+			
 			if (removeSelection) {
 				imageView.setSelected(false);
 			}
