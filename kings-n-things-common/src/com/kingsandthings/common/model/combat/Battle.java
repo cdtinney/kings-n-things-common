@@ -22,7 +22,8 @@ public class Battle {
 		APPLY_HITS,
 		RETREAT,
 		CHECK_WINNER,
-		RESOLVED
+		RESOLVED,
+		NONE
 	}
 	
 	private transient Tile tile;
@@ -57,6 +58,8 @@ public class Battle {
 		
 		this.attackerCreatures = attackerCreatures;
 		this.defenderCreatures = defenderCreatures;
+		
+		currentStep = Step.NONE;
 		
 		eliminatedAttackerThings = new ArrayList<Thing>();	
 		eliminatedDefenderThings = new ArrayList<Thing>();
@@ -249,10 +252,8 @@ public class Battle {
 	public void setNextPlayer() {
 		
 		if (isCurrentPlayer(attacker))  {
-			LOGGER.log(LogLevel.DEBUG, "Setting current battle player to defender");
 			currentPlayer = defender.getName();
 		} else if (isCurrentPlayer(defender)) {
-			LOGGER.log(LogLevel.DEBUG, "Setting current battle player to attacker");
 			currentPlayer = attacker.getName();
 		}
 		

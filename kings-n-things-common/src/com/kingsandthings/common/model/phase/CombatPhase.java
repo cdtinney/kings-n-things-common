@@ -35,6 +35,13 @@ public class CombatPhase extends Phase {
 	public void begin() {
 		super.begin();
 		
+		next();
+
+	}
+	
+	@Override
+	public void next() {
+		
 		battleTiles = findBattles();
 		
 		// Find battles involving the current player
@@ -45,7 +52,7 @@ public class CombatPhase extends Phase {
 		} else {
 			setInstruction("please select a battle to resolve");
 		}
-
+		
 	}
 	
 	public void setCurrentBattle(Tile tile) {
@@ -159,7 +166,6 @@ public class CombatPhase extends Phase {
 			
 			boolean resolved = currentBattle.checkResolved();
 			if (resolved) {
-				LOGGER.warning("BATTLE IS OVER");
 				currentBattle.end(false);
 			} else {
 				currentBattle.setCurrentStep(Step.ROLL_DICE);
