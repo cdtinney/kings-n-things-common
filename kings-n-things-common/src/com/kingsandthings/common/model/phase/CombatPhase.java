@@ -111,6 +111,17 @@ public class CombatPhase extends Phase {
 			return;
 		}
 		
+		int hitsNeeded = currentBattle.getHitsToApply(playerName);
+		int hitsApplied = 0;
+		for (int h : hitsToApply.values()) {
+			hitsApplied += h;
+		}
+		
+		if (hitsNeeded != hitsApplied) {
+			LOGGER.log(LogLevel.STATUS, "Player must apply all hits (applied=" + hitsApplied + ", needed=" + hitsNeeded + ")");
+			return;
+		}
+		
 		currentBattle.setHitsToApply(playerName, hitsToApply);
 		currentBattle.setNextPlayer();
 		
@@ -123,7 +134,7 @@ public class CombatPhase extends Phase {
 	public void retreat(String playerName, boolean skip) {
 		
 		if (!activePlayer(playerName)) {
-			LOGGER.warning("Player can only apply hits during their turn.");
+			LOGGER.warning("Player can only retreat or skip retreat during their turn.");
 			return;
 		}
 
@@ -132,24 +143,32 @@ public class CombatPhase extends Phase {
 			return;
 		}
 		
-		if (skip) {
-			currentBattle.setNextPlayer();
+		if (!skip && currentBattle.getRetreat(playerName)) {
+			currentBattle.end(true);
 			return;
 		}
 		
-		boolean retreat = currentBattle.getRetreat(playerName);
-		if (retreat) {
-			currentBattle.end();
+		currentBattle.setSkipRetreat(currentBattle.getSkipRetreat() + 1);
+		currentBattle.setNextPlayer();
+		
+		if (currentBattle.getAllPlayersSkipRetreat()) {
 			
-		} else {
-			currentBattle.setNextPlayer();
+			currentBattle.setSkipRetreat(0);
+			
+			boolean resolved = currentBattle.checkResolved();
+			if (resolved) {
+				LOGGER.warning("BATTLE IS OVER");
+				currentBattle.end(false);
+			} else {
+				currentBattle.setCurrentStep(Step.ROLL_DICE);
+			}
 			
 		}
 		
 	}
 	
 	private boolean activePlayer(String name) {
-		return currentBattle.getCurrentPlayer().getName().equals(name);
+		return currentBattle.isCurrentPlayer(name);
 	}
 	
 	private Player getAttacker(Tile tile) {

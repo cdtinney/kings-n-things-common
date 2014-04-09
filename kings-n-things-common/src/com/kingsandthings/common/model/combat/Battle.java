@@ -21,12 +21,14 @@ public class Battle {
 		ROLL_DICE,
 		APPLY_HITS,
 		RETREAT,
-		RESOLVED,
-		NONE
+		CHECK_WINNER,
+		RESOLVED
 	}
 	
 	private transient Tile tile;
-	private Player currentPlayer;
+	
+	private String winner;
+	private String currentPlayer;
 	
 	private Step currentStep;
 	
@@ -43,6 +45,7 @@ public class Battle {
 	private Integer defenderHits = null;
 	
 	private boolean resolved = false;
+	private int numSkipRetreat = 0;
 	
 	public Battle() { }
 	
@@ -60,18 +63,34 @@ public class Battle {
 	}
 	
 	public void start() {
-		currentPlayer = attacker;
+		currentPlayer = attacker.getName();
 		setCurrentStep(Step.ROLL_DICE);
 	}
 	
-	public void end() {
+	public void end(boolean retreat) {
+		
+		// Set this battle to resolved
 		resolved = true;
+		
+		// Set the tile owner, and battle resolved property
+		tile.setOwner(getPlayer(winner));
 		tile.setBattleToResolve(false);
+		
+		// Clear eliminated creatures
+		tile.removeThings(attacker, eliminatedAttackerThings);
+		tile.removeThings(defender, eliminatedDefenderThings);
+		
+		// Set the step to resolved
 		setCurrentStep(Step.RESOLVED);
+	
+	}
+
+	public boolean isCurrentPlayer(String name) {
+		return currentPlayer.equals(name);
 	}
 	
-	public Player getCurrentPlayer() {
-		return currentPlayer;
+	public boolean isCurrentPlayer(Player player) {
+		return currentPlayer.equals(player.getName());
 	}
 	
 	public Step getCurrentStep() {
@@ -108,8 +127,8 @@ public class Battle {
 	
 	public List<Creature> getCurrentPlayerCreatures() {
 		
-		if (currentPlayer == attacker) return attackerCreatures;
-		if (currentPlayer == defender) return defenderCreatures;
+		if (isCurrentPlayer(attacker)) return attackerCreatures;
+		if (isCurrentPlayer(defender)) return defenderCreatures;
 		
 		return null;
 		
@@ -123,6 +142,14 @@ public class Battle {
 		return attackerHits == null && defenderHits == null;
 	}
 	
+	public boolean getAllPlayersSkipRetreat() {
+		return numSkipRetreat == 2;
+	}
+	
+	public int getSkipRetreat() {
+		return numSkipRetreat;
+	}
+	
 	public int getHitsToApply(String playerName) {
 		
 		if (attacker.getName().equals(playerName)) {
@@ -133,6 +160,31 @@ public class Battle {
 		
 		return -1;
 		
+	}
+
+	public boolean checkResolved() {
+		
+		// Attacking = eliminated, hex owner = defender 
+		if (attackerCreatures.isEmpty()) {
+			LOGGER.warning("All attacking counters eliminated, owner is still defender.");
+			winner = defender.getName();
+			return true;
+		}
+		
+		// Defending = eliminated, attacking > = 1, hex owner = attacker
+		if (defenderCreatures.isEmpty() && !attackerCreatures.isEmpty()) {
+			LOGGER.warning("All defending counters eliminated, owner is now attacker.");
+			winner = attacker.getName();
+			tile.setOwner(attacker);
+			return true;
+		}
+		
+		return false;
+
+	}
+	
+	public void setSkipRetreat(int num) {
+		numSkipRetreat = num;
 	}
 	
 	public void setHitsToApply(String playerName, Map<Thing, Integer> hitsToApply) {
@@ -176,10 +228,10 @@ public class Battle {
 	
 	public void setRolledHits(int hits) {
 		
-		if (currentPlayer == attacker) { 
+		if (isCurrentPlayer(attacker)) { 
 			LOGGER.log(LogLevel.DEBUG, "Setting attacker hits: " + hits);
 			attackerHits = hits;
-		} else if (currentPlayer == defender) {
+		} else if (isCurrentPlayer(defender)) {
 			LOGGER.log(LogLevel.DEBUG, "Setting defender hits: " + hits);
 			defenderHits = hits;
 		}
@@ -188,17 +240,15 @@ public class Battle {
 	
 	public void setNextPlayer() {
 		
-		Player prevPlayer = currentPlayer;
-		
-		if (currentPlayer == attacker)  {
-			LOGGER.log(LogLevel.DEBUG, "Setting current player to defender");
-			currentPlayer = defender;
-		} else if (currentPlayer == defender) {
-			LOGGER.log(LogLevel.DEBUG, "Setting current player to attacker");
-			currentPlayer = attacker;
+		if (isCurrentPlayer(attacker))  {
+			LOGGER.log(LogLevel.DEBUG, "Setting current battle player to defender");
+			currentPlayer = defender.getName();
+		} else if (isCurrentPlayer(defender)) {
+			LOGGER.log(LogLevel.DEBUG, "Setting current battle player to attacker");
+			currentPlayer = attacker.getName();
 		}
 		
-		PropertyChangeDispatcher.getInstance().notify(this, "currentPlayer", prevPlayer, currentPlayer);
+		PropertyChangeDispatcher.getInstance().notify(this, "currentPlayer", null, currentPlayer);
 		
 	}
 	
@@ -237,7 +287,7 @@ public class Battle {
 			LOGGER.warning(diff + " Things retreated.");
 			
 			// TODO - return excess to Cup rather than just "lose" them
-			tile.removeThings(player, creatures);
+			tile.removeThings(player, creatures.subList(diff, creatures.size() - 1));
 			
 		} else {
 			
