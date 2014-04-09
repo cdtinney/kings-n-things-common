@@ -155,6 +155,7 @@ public class GameStateFactory {
 		
 		Player p1 = playerManager.getPlayerInPosition(1);
 		setFort(p1, board.getTiles()[3][3], FortFactory.getFort(Type.KEEP, true, false));
+		setFort(p1, board.getTiles()[0][4], FortFactory.getFort(Type.KEEP, true, false));
 		setFort(p1, board.getTiles()[1][4], FortFactory.getFort(Type.CASTLE, true, false));
 		setFort(p1, board.getTiles()[2][4], FortFactory.getFort(Type.TOWER, true, false));
 		setFort(p1, board.getTiles()[1][5], FortFactory.getFort(Type.TOWER, true, false));
