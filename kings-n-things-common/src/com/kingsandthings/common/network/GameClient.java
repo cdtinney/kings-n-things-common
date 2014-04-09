@@ -28,6 +28,8 @@ public class GameClient {
 	private final int ATTEMPT_TIMEOUT = 5000; 		// milliseconds
 	private final int CONNECTION_TIMEOUT = 5000;	// milliseconds
 	
+	private final int BUFFER = 16384;
+	
 	// Networking
 	private Client client;
 	private boolean connected = false;
@@ -47,7 +49,7 @@ public class GameClient {
 			
 			//Log.DEBUG();
 			
-			client = new Client(8192, 8192);
+			client = new Client(BUFFER, BUFFER);
 			client.start();
 			client.addListener(new ClientListener());
 			

@@ -37,6 +37,7 @@ public class GameServer  {
 	// Constants
 	private final int MAX_ATTEMPTS = 20;		// # of max connection attempts
 	private final int ATTEMPT_TIMEOUT = 5000; 	// milliseconds
+	private final int BUFFER = 16384;
 	
 	// Networking
 	private final ObjectSpace objectSpace = new ObjectSpace();
@@ -70,7 +71,7 @@ public class GameServer  {
 			
 			//Log.TRACE();
 			
-			server = new Server(8192, 8192) {
+			server = new Server(BUFFER, BUFFER) {
 				
 				@Override
 				protected Connection newConnection () {
