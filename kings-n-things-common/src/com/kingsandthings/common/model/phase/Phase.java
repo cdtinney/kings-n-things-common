@@ -9,7 +9,6 @@ import com.kingsandthings.common.model.Game;
 
 public abstract class Phase {
 	
-	@SuppressWarnings("unused")
 	private static Logger LOGGER = Logger.getLogger(Phase.class.getName());
 	
 	public enum Notification {

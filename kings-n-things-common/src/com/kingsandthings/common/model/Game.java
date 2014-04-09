@@ -142,6 +142,23 @@ public class Game implements IGame {
 	}
 
 	@Override
+	public boolean redeemTreasure(String playerName, Treasure treasure) {
+		
+		Player p = playerManager.getPlayer(playerName);
+		if (p == null) {
+			return false;
+		}
+		
+		p.addGold(treasure.getGoldValue());
+		p.getRack().removeThing(treasure);
+		
+		cup.returnThing(treasure);
+		
+		return true;
+
+	}
+
+	@Override
 	public void resolveCombat(Tile tile) {
 		
 		CombatPhase combatPhase = (CombatPhase) phaseManager.getCurrentPhase();
@@ -182,20 +199,16 @@ public class Game implements IGame {
 	}
 
 	@Override
-	public boolean redeemTreasure(String playerName, Treasure treasure) {
+	public void retreat(String playerName, boolean skip) {
 		
-		Player p = playerManager.getPlayer(playerName);
-		if (p == null) {
-			return false;
+		CombatPhase combatPhase = (CombatPhase) phaseManager.getCurrentPhase();
+		if (combatPhase == null) {
+			LOGGER.warning("Can only apply hits during combat phase.");
+			return;
 		}
 		
-		p.addGold(treasure.getGoldValue());
-		p.getRack().removeThing(treasure);
+		combatPhase.retreat(playerName, skip);
 		
-		cup.returnThing(treasure);
-		
-		return true;
-
 	}
 
 }

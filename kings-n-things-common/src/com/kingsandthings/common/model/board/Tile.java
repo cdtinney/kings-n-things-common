@@ -178,7 +178,7 @@ public class Tile {
 		PropertyChangeDispatcher.getInstance().notify(this, "battleToResolve", this.battleToResolve, this.battleToResolve = battleToResolve);
 	}
 	
-	public boolean addThings(Player player, List<Thing> list) {
+	public boolean addThings(Player player, List<? extends Thing> list) {
 		
 		if (things.get(player) == null) {
 			things.put(player, new ArrayList<Thing>());
@@ -201,7 +201,7 @@ public class Tile {
 		return true;
 	}
 	
-	public boolean removeThings(Player player, List<Thing> thingsToRemove) {
+	public boolean removeThings(Player player, List<? extends Thing> thingsToRemove) {
 		
 		for (Thing thing : thingsToRemove) {
 			if (!removeThing(player, thing)) {
@@ -255,7 +255,7 @@ public class Tile {
     	
     }
 	
-	private boolean thingsContained(List<Thing> playerThings, List<Thing> list) {
+	private boolean thingsContained(List<? extends Thing> playerThings, List<? extends Thing> list) {
 		
 		for (Thing thing : list) {
 			if (playerThings.contains(thing)) {

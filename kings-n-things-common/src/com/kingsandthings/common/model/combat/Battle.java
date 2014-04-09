@@ -21,6 +21,7 @@ public class Battle {
 		ROLL_DICE,
 		APPLY_HITS,
 		RETREAT,
+		RESOLVED,
 		NONE
 	}
 	
@@ -40,6 +41,8 @@ public class Battle {
 	
 	private Integer attackerHits = null;
 	private Integer defenderHits = null;
+	
+	private boolean resolved = false;
 	
 	public Battle() { }
 	
@@ -61,12 +64,22 @@ public class Battle {
 		setCurrentStep(Step.ROLL_DICE);
 	}
 	
+	public void end() {
+		resolved = true;
+		tile.setBattleToResolve(false);
+		setCurrentStep(Step.RESOLVED);
+	}
+	
 	public Player getCurrentPlayer() {
 		return currentPlayer;
 	}
 	
 	public Step getCurrentStep() {
 		return currentStep;
+	}
+	
+	public boolean getResolved() {
+		return resolved;
 	}
 	
 	public Player getAttacker() {
@@ -191,6 +204,81 @@ public class Battle {
 	
 	public void setCurrentStep(Step step) {
 		PropertyChangeDispatcher.getInstance().notify(this, "currentStep", currentStep, currentStep = step);
+	}
+
+	public boolean getRetreat(String playerName) {
+		
+		Player player = getPlayer(playerName);
+		
+		// Player must control an adjacent hex (TODO - without enemy counters)
+		List<Tile> tiles = tile.getNeighbours();
+		Tile controlled = null;
+		for (Tile neighbour : tiles) {
+			if (neighbour.getOwner().equals(player)) {
+				controlled = neighbour;
+				break;
+			}
+		}
+		
+		if (controlled == null) {
+			LOGGER.warning("Player cannot retreat - no adjacent hexes controlled.");
+			return false;
+		}
+		
+		List<? extends Thing> creatures = getThings(player);
+		
+		List<? extends Thing> friendlyThings = controlled.getThings().get(player);
+		if (friendlyThings != null && (friendlyThings.size() + creatures.size() > 10)) {
+			LOGGER.warning("All Things cannot be moved due to hex limits.");
+			
+			int diff = 10 - friendlyThings.size();
+			controlled.addThings(player, creatures.subList(0, diff));
+			
+			LOGGER.warning(diff + " Things retreated.");
+			
+			// TODO - return excess to Cup rather than just "lose" them
+			tile.removeThings(player, creatures);
+			
+		} else {
+			
+			controlled.addThings(player, creatures);
+			tile.removeThings(player, creatures);
+			
+		}
+		
+		// Clear the eliminated creatures
+		if (player == attacker) {
+			tile.removeThings(defender, eliminatedDefenderThings);
+		}
+		
+		return true;
+		
+	}
+	
+	private Player getPlayer(String playerName) {
+		
+		if (attacker.getName().equals(playerName)) {
+			return attacker;
+		} else if (defender.getName().equals(playerName)) {
+			return defender;
+		}
+		
+		return null;
+		
+	}
+	
+	private List<? extends Thing> getThings(Player player) {
+		
+		if (player == attacker) {
+			return attackerCreatures;
+		}
+		
+		if (player == defender) {
+			return defenderCreatures;
+		}
+		
+		return null;
+		
 	}
 	
 }

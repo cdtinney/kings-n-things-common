@@ -50,6 +50,11 @@ public class CombatPhase extends Phase {
 	
 	public void setCurrentBattle(Tile tile) {
 		
+		if (tile == null) {
+			currentBattle = null;
+			return;
+		}
+		
 		Player attacker = getAttacker(tile);
 		Player defender = getDefender(tile);
 
@@ -72,13 +77,13 @@ public class CombatPhase extends Phase {
 	
 	public void rollForHits(String playerName) {
 		
-		if (currentBattle.getCurrentStep() != Step.ROLL_DICE) {
-			LOGGER.warning("Player can only roll dice during the roll dice step.");
+		if (!activePlayer(playerName)) {
+			LOGGER.warning("Player can only roll dice during their turn.");
 			return;
 		}
 		
-		if (!activePlayer(playerName)) {
-			LOGGER.warning("Player can only roll dice during their turn.");
+		if (currentBattle.getCurrentStep() != Step.ROLL_DICE) {
+			LOGGER.warning("Player can only roll dice during the roll dice step.");
 			return;
 		}
 		
@@ -95,14 +100,14 @@ public class CombatPhase extends Phase {
 	}
 	
 	public void applyHits(String playerName, Map<Thing, Integer> hitsToApply) {
-
-		if (currentBattle.getCurrentStep() != Step.APPLY_HITS) {
-			LOGGER.warning("Player can only apply hits during the apply hits step.");
-			return;
-		}
 		
 		if (!activePlayer(playerName)) {
 			LOGGER.warning("Player can only apply hits during their turn.");
+			return;
+		}
+
+		if (currentBattle.getCurrentStep() != Step.APPLY_HITS) {
+			LOGGER.warning("Player can only apply hits during the apply hits step.");
 			return;
 		}
 		
@@ -111,6 +116,34 @@ public class CombatPhase extends Phase {
 		
 		if (currentBattle.getAllHitsApplied()) {
 			currentBattle.setCurrentStep(Battle.Step.RETREAT);
+		}
+		
+	}
+	
+	public void retreat(String playerName, boolean skip) {
+		
+		if (!activePlayer(playerName)) {
+			LOGGER.warning("Player can only apply hits during their turn.");
+			return;
+		}
+
+		if (currentBattle.getCurrentStep() != Step.RETREAT) {
+			LOGGER.warning("Player cannot retreat at this time.");
+			return;
+		}
+		
+		if (skip) {
+			currentBattle.setNextPlayer();
+			return;
+		}
+		
+		boolean retreat = currentBattle.getRetreat(playerName);
+		if (retreat) {
+			currentBattle.end();
+			
+		} else {
+			currentBattle.setNextPlayer();
+			
 		}
 		
 	}

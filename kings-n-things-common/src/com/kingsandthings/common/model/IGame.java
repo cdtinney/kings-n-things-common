@@ -20,6 +20,7 @@ public interface IGame {
 	public void resolveCombat(Tile tile);
 	public void rollCombatDice(String playerName);
 	public void applyHits(String playerName, Map<Thing, Integer> hits);
+	public void retreat(String playerName, boolean skip);
 	
 	// Treasure
 	public boolean redeemTreasure(String playerName, Treasure treasure);
