@@ -16,11 +16,6 @@ public class LogFormatter extends Formatter {
     	
         StringBuilder sb = new StringBuilder();
         
-        if (r.getLevel() == LogLevel.STATUS) {
-            sb.append(formatMessage(r));
-            return sb.toString();
-        }
-        
        	sb.append(r.getLevel() + ": ");
         sb.append(r.getSourceClassName() + ":" + r.getSourceMethodName() + " - ");
         sb.append(formatMessage(r));
