@@ -11,6 +11,8 @@ import com.esotericsoftware.kryonet.FrameworkMessage.KeepAlive;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace.InvokeMethodResult;
+import com.esotericsoftware.kryonet.rmi.RemoteObject;
+import com.esotericsoftware.minlog.Log;
 import com.kingsandthings.common.events.PropertyChangeDispatcher;
 import com.kingsandthings.common.logging.LogLevel;
 import com.kingsandthings.common.model.IGame;
@@ -28,7 +30,7 @@ public class GameClient {
 	private final int ATTEMPT_TIMEOUT = 5000; 		// milliseconds
 	private final int CONNECTION_TIMEOUT = 5000;	// milliseconds
 	
-	private final int BUFFER = 16384;
+	private final int BUFFER = 30000;
 	
 	// Networking
 	private Client client;
@@ -47,7 +49,7 @@ public class GameClient {
 		
 		if (client == null) {
 			
-			//Log.DEBUG();
+			Log.TRACE();
 			
 			client = new Client(BUFFER, BUFFER);
 			client.start();
@@ -77,8 +79,30 @@ public class GameClient {
 		client.sendTCP(object);
 	}
 	
+	public IGame requestGameNonBlocking() {
+		
+		IGame game = ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.GAME_ID, IGame.class);
+		
+		RemoteObject rem = (RemoteObject) game;
+		rem.setNonBlocking(true);
+		
+		return game;
+		
+	}
+	
 	public IGame requestGame() {
 		return ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.GAME_ID, IGame.class);
+	}
+	
+	public IBoard requestBoardNonBlocking() {
+		
+		IBoard board = ObjectSpace.getRemoteObject ((Connection) client, NetworkRegistry.BOARD_ID, IBoard.class);
+		
+		RemoteObject rem = (RemoteObject) board;
+		rem.setNonBlocking(true);
+		
+		return board;
+		
 	}
 	
 	public IBoard requestBoard() {

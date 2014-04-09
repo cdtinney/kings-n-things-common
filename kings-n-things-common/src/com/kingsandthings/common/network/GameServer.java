@@ -37,7 +37,7 @@ public class GameServer  {
 	// Constants
 	private final int MAX_ATTEMPTS = 20;		// # of max connection attempts
 	private final int ATTEMPT_TIMEOUT = 5000; 	// milliseconds
-	private final int BUFFER = 16384;
+	private final int BUFFER = 30000;
 	
 	// Networking
 	private final ObjectSpace objectSpace = new ObjectSpace();
