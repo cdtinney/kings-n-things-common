@@ -131,6 +131,10 @@ public class Tile {
 	
 	public boolean hasThings() {
 		
+		if (specialIncome != null) {
+			return true;
+		}
+		
 		for (List<Thing> playerThings : things.values()) {
 			if (!playerThings.isEmpty()) {
 				return true;
