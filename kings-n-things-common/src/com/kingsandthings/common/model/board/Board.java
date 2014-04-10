@@ -139,6 +139,10 @@ public class Board implements IBoard {
 				if (playerThings == null) {
 					continue;
 				}
+				
+				if (tile.hasEnemyThings()) {
+					continue;
+				}
 					
 				for (Thing t : playerThings) {
 					if (!((Creature) t).getMovementEnded()) {
@@ -195,6 +199,12 @@ public class Board implements IBoard {
 		// Only flying things can move across sea tiles
 		if (!checkFlying(endTile, things)) {
 			return false;
+		}
+		
+		// Things are pinned if enemy Things are on the tile
+		if (boardBeginTile.hasEnemyThings()) {
+			LOGGER.log(LogLevel.STATUS, "There are enemy Things on this Tile. You cannot move Things from this tile.");
+			return false;			
 		}
 		
 		// The selected end tile is not owned by the player

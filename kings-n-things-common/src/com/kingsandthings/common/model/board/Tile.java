@@ -122,6 +122,10 @@ public class Tile {
 		return discovered;
 	}
 	
+	public boolean hasEnemyThings() {
+		return things.keySet().size() > 1;
+	}
+	
 	public boolean hasThingsWithCombatValue() {
 		
 		// TASK - combat value = creatures, forts, cities, villages
