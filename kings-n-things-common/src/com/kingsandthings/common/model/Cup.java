@@ -75,7 +75,7 @@ public class Cup {
 		boolean success = player.getRack().addThings(drawn);
 		
 		if (success) {
-			LOGGER.log(LogLevel.STATUS, player.getName() + " received: " + numFree  + " free, " + numPaid + " paid.");
+			LOGGER.log(LogLevel.DEBUG, player.getName() + " received: " + numFree  + " free, " + numPaid + " paid.");
 			
 			// Remove the Things from the Cup
 			removeThings(drawn);
@@ -90,7 +90,7 @@ public class Cup {
 			
 			if (numFree >= available) {
 				String ignored = " (" + (numFree - available) + " free, " + numPaid + " paid ignored due to rack limit).";
-				LOGGER.log(LogLevel.STATUS, player.getName() + " received " + available + " free recruits " + ignored);
+				LOGGER.log(LogLevel.DEBUG, player.getName() + " received " + available + " free recruits " + ignored);
 				
 				player.getRack().addThings(drawn);
 				removeThings(drawn);
