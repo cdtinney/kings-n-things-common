@@ -266,7 +266,7 @@ public class Board implements IBoard {
 		Tile boardTile = getTile(tile);
 		Player player = game.getActivePlayer();
 		
-		if (boardTile.getTerrainType() != specialIncome.getTerrainType()) {
+		if (specialIncome.getType() == SpecialIncome.Type.OTHER && boardTile.getTerrainType() != specialIncome.getTerrainType()) {
 			LOGGER.log(LogLevel.STATUS, "Cannot place special income counter in a tile with different terrain type.");
 			return false;
 		}
