@@ -103,9 +103,16 @@ public class ThingImport {
     		if (terrainType == null) {
     			terrainType = Terrain.NONE.toString();
     		}
-        	
-        	// TODO - Import cities and villages
-        	String neutralised = getValue(fileName, options.get("special"));
+    		
+    		SpecialIncome.Type type = SpecialIncome.Type.OTHER;
+    		
+    		if (name.equals(CITY_NAME)) {
+    			type = SpecialIncome.Type.CITY;
+    		}
+    		
+    		if (name.equals(VILLAGE_NAME)) {
+    			type = SpecialIncome.Type.VILLAGE;
+    		}
         	
         	String path = getImagePath(specialIncomePath, null, fileName);
         	
@@ -117,7 +124,7 @@ public class ThingImport {
         	
         	for (int i=0; i<numOccurrences; ++i) {
         		
-        		SpecialIncome counter = new SpecialIncome(name, value, terrainType, new Image(path));
+        		SpecialIncome counter = new SpecialIncome(name, value, terrainType, type, new Image(path));
         		counter.setImagePath(path);
         		
         		counters.add(counter);

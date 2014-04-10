@@ -27,18 +27,18 @@ public class PhaseManager {
 		phases = new ArrayList<Phase>();
 		
 		// Add the phases (in order)
-		phases.add(new StartingKingdomsPhase(game));
-		phases.add(new TowerPlacementPhase(game));
+//		phases.add(new StartingKingdomsPhase(game));
+//		phases.add(new TowerPlacementPhase(game));
 		phases.add(new InitialRecruitmentPhase(game));
 		
 		// Main sequence
-		phases.add(new GoldCollectionPhase(game));
-		phases.add(new RecruitCharactersPhase(game));
+//		phases.add(new GoldCollectionPhase(game));
+//		phases.add(new RecruitCharactersPhase(game));
 		phases.add(new ThingRecruitmentPhase(game));
-		phases.add(new RandomEventsPhase(game));
+//		phases.add(new RandomEventsPhase(game));
 		phases.add(new MovementPhase(game));
 		phases.add(new CombatPhase(game));
-		phases.add(new ConstructionPhase(game));
+//		phases.add(new ConstructionPhase(game));
 		//phases.add(new SpecialPowersPhase(game));
 		phases.add(new ChangingPlayerOrderPhase(game));
 		
@@ -93,6 +93,7 @@ public class PhaseManager {
 		currentPhase = newPhase;
 		newPhase.begin();
 		notifyPhaseChange(oldPhase, newPhase);
+		
 		
 	}
 	

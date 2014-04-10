@@ -191,6 +191,25 @@ public class Cup {
 		
 	}
 	
+	public SpecialIncome getSpecialIncomeCounter(String name) {
+		
+		for (Thing t : things) {
+			
+			if (!(t instanceof SpecialIncome)) {
+				continue;
+			}
+			
+			SpecialIncome s = (SpecialIncome) t;
+			if (s.getName().equals(name)) {
+				return s;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
 	public List<Thing> getPlayer1Stack1Min() {
 
 		List<Thing> things = new ArrayList<Thing>();
