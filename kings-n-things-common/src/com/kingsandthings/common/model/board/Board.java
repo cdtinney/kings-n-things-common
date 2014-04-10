@@ -15,6 +15,7 @@ import com.kingsandthings.common.model.things.Fort;
 import com.kingsandthings.common.model.things.FortFactory;
 import com.kingsandthings.common.model.things.SpecialIncome;
 import com.kingsandthings.common.model.things.Thing;
+import com.kingsandthings.common.model.things.Creature.Ability;
 
 public class Board implements IBoard {
 	
@@ -152,6 +153,37 @@ public class Board implements IBoard {
 		
 	}
 	
+	private boolean checkFlying(Tile tile, List<Thing> things) {
+		
+		if (tile.getTerrainType() != Terrain.SEA) {
+			return true;
+		}
+			
+		boolean nonFlyingFound = false;
+		for (Thing thing : things) {
+			
+			if (!(thing instanceof Creature)) {
+				nonFlyingFound = true;
+				break;
+			}
+			
+			Creature c = (Creature) thing;
+			if (!c.getAbilities().contains(Ability.FLY)) {
+				nonFlyingFound = true;
+				break;
+			}
+			
+		}
+		
+		if (nonFlyingFound) {
+			LOGGER.log(LogLevel.STATUS, "Only Flying creatures can move to a sea tile.");
+			return false;
+		}
+
+		return true;
+		
+	}
+	
 	public boolean moveThingsToUnexploredTile(int roll, Tile beginTile, Tile endTile, List<Thing> things) {
 		
 		Tile boardBeginTile = getTile(beginTile);
@@ -163,6 +195,11 @@ public class Board implements IBoard {
 		}
 		
 		Player player = game.getActivePlayer();
+
+		// Only flying things can move across sea tiles
+		if (!checkFlying(endTile, things)) {
+			return false;
+		}
 		
 		boolean success = boardEndTile.addThings(player, things);
 		if (success) {
@@ -186,6 +223,12 @@ public class Board implements IBoard {
 		
 		Player player = game.getActivePlayer();
 		
+		// Only flying things can move across sea tiles
+		if (!checkFlying(endTile, things)) {
+			return false;
+		}
+		
+		// The selected end tile is not owned by the player
 		if (!boardEndTile.getOwner().equals(player)) {
 			
 			String message = "You are moving things to an enemy tile. ";

@@ -290,6 +290,7 @@ public class Cup {
 		if (pos == 1) {
 			things.add(findSpecialIncome("Diamond Field", Terrain.DESERT, 1));
 			things.add(findSpecialIncome("Peat Bog", Terrain.SWAMP, 1));
+			things.add(findCreature("Pixies", Terrain.FOREST, 1));
 			
 		} else if (pos == 2) {
 			things.add(findSpecialIncome("Copper Mine", Terrain.MOUNTAIN, 1));
