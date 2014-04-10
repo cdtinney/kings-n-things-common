@@ -28,6 +28,7 @@ public class GameStateFactory {
 
 		PhaseManager phaseManager = game.getPhaseManager();
 		PlayerManager playerManager = game.getPlayerManager();
+		Board board = game.getBoard();
 		Cup cup = game.getCup();
 
 		phaseManager.skipInitialPhases();
@@ -35,15 +36,27 @@ public class GameStateFactory {
 		setControlMarkers(game);
 		setForts(game);
 
+		// Player 1 rack
 		Player p1 = playerManager.getPlayerInPosition(1);
 		List<Thing> rackThings1 = cup.getRackThingsAverage(1);
 		p1.getRack().addThings(rackThings1);
 		cup.removeThings(rackThings1);
 
+		// Player 2 rack
 		Player p2 = playerManager.getPlayerInPosition(2);
 		List<Thing> rackThings2 = cup.getRackThingsAverage(2);
 		p2.getRack().addThings(rackThings2);
 		cup.removeThings(rackThings2);
+		
+		// Player 1 Stack 1
+		List<Thing> p1Things = cup.getPlayer1StackAverage();
+		board.getTiles()[2][4].addThings(p1, p1Things);
+		cup.removeThings(p1Things);
+		
+		// Player 2 Stack 2
+		List<Thing> p2Things = cup.getPlayer2StackAverage();
+		board.getTiles()[3][4].addThings(p2, p2Things);
+		cup.removeThings(p2Things);
 		
 	}
 

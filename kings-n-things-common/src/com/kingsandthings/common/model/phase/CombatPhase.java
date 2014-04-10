@@ -1,7 +1,6 @@
 package com.kingsandthings.common.model.phase;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -95,7 +94,6 @@ public class CombatPhase extends Phase {
 		}
 		
 		int hits = computeHits(currentBattle.getCurrentPlayerCreatures());
-		LOGGER.log(LogLevel.DEBUG, "Rolled dice for: " + hits + " hits.");
 		
 		currentBattle.setRolledHits(hits);
 		currentBattle.setNextPlayer();
@@ -202,6 +200,35 @@ public class CombatPhase extends Phase {
 	
 	private int computeHits(List<Creature> creatures) {
 
+		int totalHits = 0;
+		
+		// Roll for magic creatures
+		List<Creature> magicCreatures = getCreaturesByAbility(creatures, Ability.MAGIC);
+		int magicHits = computeCreatureHits(magicCreatures);
+		
+		// Roll for range creatures
+		List<Creature> rangedCreatures = getCreaturesByAbility(creatures, Ability.RANGE);
+		int rangeHits = computeCreatureHits(rangedCreatures);
+		
+		// Roll for melee creatures
+		List<Creature> meleeCreatures = getMeleeCreatures(creatures);
+		int meleeHits = computeCreatureHits(meleeCreatures);
+		
+		totalHits = magicHits + rangeHits + meleeHits;
+		
+		String message = "Rolled for: ";
+		message += magicCreatures.size() + " magic, "; 
+		message += rangedCreatures.size() + " ranged, "; 
+		message += meleeCreatures.size() + " melee "; 
+		message += " = " + magicHits + " + " + rangeHits + " + " + meleeHits + " = " + totalHits;
+		LOGGER.log(LogLevel.DEBUG, message);
+		
+		return totalHits;
+		
+	}
+	
+	private int computeCreatureHits(List<Creature> creatures) {
+		
 		int hits = 0;
 		
 		for (Creature creature : creatures) {
@@ -253,36 +280,16 @@ public class CombatPhase extends Phase {
 		return result;
 	}
 	
-	private List<Creature> getMagicCreatures(List<Creature> creatures) {
-		List<Creature> magicCreatures = Collections.<Creature>emptyList();
-		for (Creature creature : creatures) {
-			if (creature.getAbilities().contains(Ability.MAGIC)) {
-				magicCreatures.add(creature);
-			}
-		}
-		return magicCreatures;
-	}
-	
-	private List<Creature> getRangedCreatures(List<Creature> creatures) {
-		List<Creature> rangedCreatures = Collections.<Creature>emptyList();
-		for (Creature creature : creatures) {
-			if (creature.getAbilities().contains(Ability.RANGE)) {
-				rangedCreatures.add(creature);
-			}
-		}
-		return rangedCreatures;
-	}
-	
 	private List<Creature> getMeleeCreatures(List<Creature> creatures) {
-		List<Creature> meleeCreatures = Collections.<Creature>emptyList();
+		List<Creature> result = new ArrayList<Creature>();
 		
 		for (Creature creature : creatures) {
 			if (!((creature.getAbilities().contains(Ability.RANGE)) || (creature.getAbilities().contains(Ability.MAGIC)))) {
-				meleeCreatures.add(creature);
+				result.add(creature);
 			}
 		}
 		
-		return meleeCreatures;
+		return result;
 	}
 	
 	private List<Tile> findPlayerBattles(Player player, List<Tile> battleTiles) {

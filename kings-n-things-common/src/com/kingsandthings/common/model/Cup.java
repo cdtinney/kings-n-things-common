@@ -234,6 +234,55 @@ public class Cup {
 		
 	}
 	
+	public List<Thing> getPlayer1StackAverage() {
+		
+		List<Thing> things = new ArrayList<Thing>();
+		
+		things.add(findCreature("Crocodiles", Terrain.SWAMP, 2));
+		things.add(findCreature("Mountain Men", Terrain.MOUNTAIN, 1));
+		things.add(findCreature("Nomads", Terrain.DESERT, 1));
+		things.add(findCreature("Giant Spider", Terrain.DESERT, 1));
+		things.add(findCreature("Killer Racoon", Terrain.FOREST, 2));
+		things.add(findCreature("Farmers", Terrain.PLAINS, 1));
+		things.add(findCreature("Ice Giant", Terrain.FROZEN_WASTE, 5));
+		things.add(findCreature("White Dragon", Terrain.FROZEN_WASTE, 5));
+		things.add(findCreature("Mammoth", Terrain.FROZEN_WASTE, 5));
+		things.add(findCreature("Head Hunter", Terrain.JUNGLE, 2));
+		
+		if (things.contains(null)) {
+			LOGGER.warning("Error creating stack 1 for Player 1 (average).");
+			return null;
+		}
+		
+		return things;
+
+	}
+	
+	public List<Thing> getPlayer2StackAverage() {
+
+		List<Thing> things = new ArrayList<Thing>();
+		
+		things.add(findCreature("Thing", Terrain.SWAMP, 2));
+		things.add(findCreature("Giant Lizard", Terrain.SWAMP, 2));
+		things.add(findCreature("Swamp Rat", Terrain.SWAMP, 1));
+		things.add(findCreature("Unicorn", Terrain.FOREST, 4));
+		things.add(findCreature("Bears", Terrain.FOREST, 2));
+		things.add(findCreature("Camel Corps", Terrain.DESERT, 3));
+		things.add(findCreature("Sandworm", Terrain.DESERT, 3));
+		
+		things.add(findCreature("Black Knight", Terrain.SWAMP, 3));
+		things.add(findCreature("Dervish", Terrain.DESERT, 2));
+		things.add(findCreature("Forester", Terrain.FOREST, 2));
+		
+		if (things.contains(null)) {
+			LOGGER.warning("Error creating stack 2 for Player 2 (average).");
+			return null;
+		}
+		
+		return things;
+		
+	}
+	
 	public List<Thing> getRackThingsAverage(int pos) {
 
 		List<Thing> things = new ArrayList<Thing>();

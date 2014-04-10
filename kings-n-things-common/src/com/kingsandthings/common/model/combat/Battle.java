@@ -95,6 +95,26 @@ public class Battle {
 	
 	}
 
+	public boolean checkResolved() {
+		
+		// Attacking = eliminated, hex owner = defender 
+		if (attackerCreatures.isEmpty()) {
+			LOGGER.warning("All attacking counters eliminated, owner is still defender.");
+			winner = defender.getName();
+			return true;
+		}
+		
+		// Defending = eliminated, attacking > = 1, hex owner = attacker
+		if (defenderCreatures.isEmpty() && !attackerCreatures.isEmpty()) {
+			LOGGER.warning("All defending counters eliminated, owner is now attacker.");
+			winner = attacker.getName();
+			return true;
+		}
+		
+		return false;
+
+	}
+
 	public boolean isCurrentPlayer(String name) {
 		return currentPlayer.equals(name);
 	}
@@ -170,27 +190,6 @@ public class Battle {
 		
 		return -1;
 		
-	}
-
-	public boolean checkResolved() {
-		
-		// Attacking = eliminated, hex owner = defender 
-		if (attackerCreatures.isEmpty()) {
-			LOGGER.warning("All attacking counters eliminated, owner is still defender.");
-			winner = defender.getName();
-			return true;
-		}
-		
-		// Defending = eliminated, attacking > = 1, hex owner = attacker
-		if (defenderCreatures.isEmpty() && !attackerCreatures.isEmpty()) {
-			LOGGER.warning("All defending counters eliminated, owner is now attacker.");
-			winner = attacker.getName();
-			tile.setOwner(attacker);
-			return true;
-		}
-		
-		return false;
-
 	}
 	
 	public void setSkipRetreat(int num) {
