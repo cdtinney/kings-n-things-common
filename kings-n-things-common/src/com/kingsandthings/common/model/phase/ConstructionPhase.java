@@ -97,7 +97,7 @@ public class ConstructionPhase extends Phase {
 		
 		for (Player player : players) {
 			
-			if (player.hasCitadel()) {
+			if (player.getHasCitadel()) {
 				result.add(player);
 			}
 			

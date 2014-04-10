@@ -187,7 +187,10 @@ public class GameStateFactory {
 		player.addFort(fort);
 		tile.setFort(fort);
 		
+		if (fort.getType() == Type.CITADEL) {
+			player.setHasCitadel(true);
+		}
+		
 	}
-	
 
 }

@@ -113,8 +113,12 @@ public class Player {
 		return numGold;
 	}
 	
-	public boolean hasCitadel() {
+	public boolean getHasCitadel() {
 		return hasCitadel;
+	}
+	
+	public void setHasCitadel(boolean hasCitadel) {
+		this.hasCitadel = hasCitadel;
 	}
 	
 	public void setControlMarker(Image controlMarker) {

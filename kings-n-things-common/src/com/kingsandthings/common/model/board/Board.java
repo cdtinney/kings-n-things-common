@@ -362,9 +362,14 @@ public class Board implements IBoard {
 		Fort oldFort = modelTile.getFort();
 		Fort fort = FortFactory.getUpgradedFort(modelTile.getFort());
 		
-		if (fort.getType() == Fort.Type.CITADEL && player.hasCitadel()) {
-			LOGGER.log(LogLevel.STATUS, "A player can only build one citadel.");
-			return false;
+		if (fort.getType() == Fort.Type.CITADEL) {
+			
+			if (player.getHasCitadel()) {
+				LOGGER.log(LogLevel.STATUS, "A player can only build one citadel.");
+				return false;
+			}
+			
+			player.setHasCitadel(true);
 		}
 		
 		fort.setPlaced(true);
