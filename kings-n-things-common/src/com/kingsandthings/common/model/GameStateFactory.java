@@ -19,7 +19,7 @@ public class GameStateFactory {
 		} else if (state.equals("Average")) {
 			setAverageGameState(game);
 		} else if (state.equals("None")) {
-			setNoGameState(game);
+			// Do nothing
 		}
 		
 	}
@@ -57,18 +57,6 @@ public class GameStateFactory {
 		List<Thing> p2Things = cup.getPlayer2StackAverage();
 		board.getTiles()[3][4].addThings(p2, p2Things);
 		cup.removeThings(p2Things);
-		
-	}
-
-	private static void setNoGameState(Game game) {
-		
-		PlayerManager playerManager = game.getPlayerManager();
-		Board board = game.getBoard();
-		
-		for (Player player : playerManager.getPlayers()) {
-			int pos = playerManager.getPosition(player);
-			board.setStartingTile(player, pos);
-		}
 		
 	}
 	

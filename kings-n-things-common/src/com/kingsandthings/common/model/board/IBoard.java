@@ -8,6 +8,7 @@ import com.kingsandthings.common.model.things.Thing;
 
 public interface IBoard {
 
+	public boolean selectStartingPosition(Tile tile);
 	public boolean setTileControl(Tile tile, boolean initial);
 	
 	public boolean addThingsToTile(Tile tile, List<Thing> things);

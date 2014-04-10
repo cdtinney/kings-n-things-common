@@ -1,14 +1,9 @@
 package com.kingsandthings.common.model.phase;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
 import com.kingsandthings.common.model.Game;
 import com.kingsandthings.common.model.Player;
 
 public class StartingKingdomsPhase extends Phase {
-	
-	private final static BooleanProperty active = new SimpleBooleanProperty(false);
 	
 	private final int initialNumGold = 10;
 	
@@ -21,9 +16,8 @@ public class StartingKingdomsPhase extends Phase {
 	@Override
 	public void begin() {
 		super.begin();
-		active.set(true);
 		
-		setInstruction("please place a control marker");
+		setInstruction("please select a starting position and place a control marker");
 		
 		for (Player player: game.getPlayerManager().getPlayers()) {
 			
@@ -34,15 +28,16 @@ public class StartingKingdomsPhase extends Phase {
 		
 	}
 	
-	@Override 
-	public void end() {
-		super.end();
-		active.set(false);
+	@Override
+	public void next() {
+		super.next();
+		
+		if (game.getActivePlayer().isStartingPositionSelected()) {
+			setInstruction("please place a control marker");
+		} else {
+			setInstruction("please select a starting position and place a control marker");
+		}
+		
 	}
-	
-	public static BooleanProperty getActive() {
-		return active;
-	}
-	
 
 }

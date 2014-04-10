@@ -23,6 +23,8 @@ public class Player {
 	
 	private transient Image controlMarker;
 	private String controlMarkerURL;
+	
+	private boolean startingPositionSelected = false;
 
 	private transient List<Tile> controlledTiles;
 	private int numControlledTiles = 0;
@@ -58,6 +60,14 @@ public class Player {
 		
 		creatures = new ArrayList<Creature>();
 		
+	}
+
+	public boolean isStartingPositionSelected() {
+		return startingPositionSelected;
+	}
+
+	public void setStartingPositionSelected(boolean startingPositionSelected) {
+		this.startingPositionSelected = startingPositionSelected;
 	}
 	
 	public String getName() {

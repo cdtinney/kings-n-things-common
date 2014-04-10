@@ -25,6 +25,8 @@ public class Board implements IBoard {
 	private transient Game game;
 	private Tile[][] tiles;
 	
+	private transient List<Tile> startingTiles;
+	
 	public Board() { }
 	
 	public Board(Game game) {
@@ -33,6 +35,13 @@ public class Board implements IBoard {
 	
 	public void generateBoard(int numPlayers) {
 		tiles = generateTiles(10);
+		
+		startingTiles = new ArrayList<Tile>();
+		startingTiles.add(tiles[0][5]);
+		startingTiles.add(tiles[4][5]);
+		startingTiles.add(tiles[4][1]);
+		startingTiles.add(tiles[0][1]);
+		
 	}
 	
 	public Tile[][] getTiles() {
@@ -263,6 +272,36 @@ public class Board implements IBoard {
 		return success;	
 		
 	}
+
+	@Override
+	public boolean selectStartingPosition(Tile tile) {
+
+		Player player = game.getActivePlayer();
+		if (player.isStartingPositionSelected()) {
+			return false;
+		}
+		
+		Tile modelTile = getTile(tile);
+		if (modelTile == null) {
+			LOGGER.warning("Board tile not found");
+			return false;
+		}
+		
+		if (modelTile.getOwner() != null && !modelTile.getOwner().equals(player)) {
+			LOGGER.log(LogLevel.STATUS, "Tile is owned by another player.");
+			return false;
+		}
+		
+		if (!startingTiles.contains(modelTile)) {
+			LOGGER.log(LogLevel.STATUS, "Not a valid starting tile.");
+			return false;
+		}
+		
+		modelTile.setOwner(player);
+		player.setStartingPositionSelected(true);
+		return true;
+		
+	}
 	
 	public boolean setTileControl(Tile tile, boolean initial) {
 		
@@ -438,14 +477,16 @@ public class Board implements IBoard {
 			return false;
 		}
 		
-		if (tile.getOwner() == player) {
-			LOGGER.log(LogLevel.STATUS, "Tile is already owned by the player.");
+		if (tile.getOwner() != null) {
+			
+			if (tile.getOwner().equals(player)) {
+				LOGGER.log(LogLevel.STATUS, "Tile is already owned by the player.");
+			} else {
+				LOGGER.log(LogLevel.STATUS, "Tile is owned by another player.");
+			}
+			
 			return false;
-		}
-		
-		if (tile.getOwner() != null && !tile.getOwner().equals(player)) {
-			LOGGER.log(LogLevel.STATUS, "Tile is owned by another player.");
-			return false;
+			
 		}
 		
 		List<Tile> neighbours = getNeighbours(tiles, tile);
@@ -573,21 +614,6 @@ public class Board implements IBoard {
 		}
 		
 		return tiles;
-		
-	}
-	
-	private void setNeighbours() {
-		
-		for (Tile[] row : tiles) {
-			for (Tile tile : row) {
-				
-				if (tile != null) {
-					tile.setNeighbours(getNeighbours(tiles, tile));
-				}
-				
-			}
-			
-		}
 		
 	}
 	
