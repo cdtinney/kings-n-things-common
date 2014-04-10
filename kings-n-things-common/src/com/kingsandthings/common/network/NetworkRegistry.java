@@ -100,6 +100,7 @@ public class NetworkRegistry {
 		classes.add(Cup.class);
 		classes.add(Creature.class);
 		classes.add(SpecialIncome.class);
+		classes.add(SpecialIncome.Type.class);
 		classes.add(Treasure.class);
 		classes.add(Ability.class);
 		classes.add(Terrain.class);

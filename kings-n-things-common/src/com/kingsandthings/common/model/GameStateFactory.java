@@ -61,21 +61,21 @@ public class GameStateFactory {
 		
 		// Special income counters
 		SpecialIncome s1 = cup.getSpecialIncomeCounter("Village"); 
-		board.getTiles()[0][4].setSpecialIncome(s1);
+		p1.placeSpecialIncome(s1, board.getTiles()[0][4]);
 		
 		SpecialIncome s2 = cup.getSpecialIncomeCounter("Village");
-		board.getTiles()[2][6].setSpecialIncome(s2);
+		p2.placeSpecialIncome(s2, board.getTiles()[2][6]);
 		
 		Player p3 = playerManager.getPlayerInPosition(3);
 		if (p3 != null) {
 			SpecialIncome s3 = cup.getSpecialIncomeCounter("City");  
-			board.getTiles()[4][1].setSpecialIncome(s3);
+			p3.placeSpecialIncome(s3, board.getTiles()[4][1]);
 		}
 		
 		Player p4 = playerManager.getPlayerInPosition(4);
 		if (p4 != null) {
 			SpecialIncome s4 = cup.getSpecialIncomeCounter("Village"); 
-			board.getTiles()[1][0].setSpecialIncome(s4);
+			p4.placeSpecialIncome(s4, board.getTiles()[1][0]);
 		}
 		
 	}
