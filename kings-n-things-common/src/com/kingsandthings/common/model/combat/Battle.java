@@ -77,6 +77,12 @@ public class Battle {
 		// Transfer the fort
 		Player prevOwner = tile.getOwner();
 		Player newOwner = getPlayer(winner);
+		
+		if (newOwner == null) {
+			LOGGER.warning("The winner of the battle has not been set.");
+			return;
+		}
+		
 		if (tile.getFort() != null) {
 			prevOwner.removeFort(tile.getFort());
 			newOwner.addFort(tile.getFort());
@@ -297,6 +303,12 @@ public class Battle {
 			tile.removeThings(player, creatures.subList(diff, creatures.size() - 1));
 			
 		} else {
+			
+			if (player == attacker) {
+				winner = defender.getName();
+			} else if (player == defender) {
+				winner = attacker.getName();
+			}
 			
 			controlled.addThings(player, creatures);
 			tile.removeThings(player, creatures);

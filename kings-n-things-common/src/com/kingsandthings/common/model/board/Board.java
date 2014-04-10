@@ -153,37 +153,6 @@ public class Board implements IBoard {
 		
 	}
 	
-	private boolean checkFlying(Tile tile, List<Thing> things) {
-		
-		if (tile.getTerrainType() != Terrain.SEA) {
-			return true;
-		}
-			
-		boolean nonFlyingFound = false;
-		for (Thing thing : things) {
-			
-			if (!(thing instanceof Creature)) {
-				nonFlyingFound = true;
-				break;
-			}
-			
-			Creature c = (Creature) thing;
-			if (!c.getAbilities().contains(Ability.FLY)) {
-				nonFlyingFound = true;
-				break;
-			}
-			
-		}
-		
-		if (nonFlyingFound) {
-			LOGGER.log(LogLevel.STATUS, "Only Flying creatures can move to a sea tile.");
-			return false;
-		}
-
-		return true;
-		
-	}
-	
 	public boolean moveThingsToUnexploredTile(int roll, Tile beginTile, Tile endTile, List<Thing> things) {
 		
 		Tile boardBeginTile = getTile(beginTile);
@@ -479,6 +448,37 @@ public class Board implements IBoard {
 		}
 		
 		return null;
+		
+	}
+	
+	private boolean checkFlying(Tile tile, List<Thing> things) {
+		
+		if (tile.getTerrainType() != Terrain.SEA) {
+			return true;
+		}
+			
+		boolean nonFlyingFound = false;
+		for (Thing thing : things) {
+			
+			if (!(thing instanceof Creature)) {
+				nonFlyingFound = true;
+				break;
+			}
+			
+			Creature c = (Creature) thing;
+			if (!c.getAbilities().contains(Ability.FLY)) {
+				nonFlyingFound = true;
+				break;
+			}
+			
+		}
+		
+		if (nonFlyingFound) {
+			LOGGER.log(LogLevel.STATUS, "Only Flying creatures can move to a sea tile.");
+			return false;
+		}
+
+		return true;
 		
 	}
 	
